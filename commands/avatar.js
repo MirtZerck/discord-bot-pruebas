@@ -29,7 +29,7 @@ export const userAvatarCommand = {
       )
       .setTitle(`Avatar de ${user.user.username}`)
       .setImage(user.user.displayAvatarURL({ size: 1024, dynamic: true },))
-      .setColor("#8B728E")
+      .setColor("#81d4fa")
       .setFooter(`ID ${user_id}`)
       .setTimestamp();
 
