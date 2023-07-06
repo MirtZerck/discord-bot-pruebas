@@ -42,7 +42,7 @@ export const userInfoCommand = {
         },
         { name: "Ingreso", value: fechaIngreso, inline: true }
       )
-      .setColor("#8B728E")
+      .setColor("#81d4fa")
       .setFooter(`ID ${user_id}`)
       .setTimestamp();
     
