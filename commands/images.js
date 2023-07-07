@@ -13,7 +13,7 @@ export const onImageCreate = async (client) => {
     const content = message.content.slice(prefix.length);
     const args = content.toLowerCase().split(" ");
     const commandName = args.shift();
-    const arrayLinks = Object.keys();
+    /* const arrayLinks = Object.keys(); */
 
                                
     const imageEmbed = new MessageEmbed(linksImages)
