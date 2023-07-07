@@ -11,9 +11,39 @@ export const onMessageCreate = async (client) => {
     const content = message.content.slice(prefix.length);
     const args = content.toLowerCase().split(" ");
     const commandName = args.shift();
-    const commandBody = content.slice(commandName.length);
+    /* const commandBody = content.slice(commandName.length); */
 
-    if (commandName === "ona") {
+    const replys = {
+      ona: "Onaaaa",
+      inu: '"OH mi querido michi que inteligente eres, y observador, tienes razon, no hay staff, pero te tenemos a ti, quieres ser staff? mandame privado te dare 1 año de nitro adicional"',
+      loxes: "Losex",
+      nya: "Nya ~<3",
+      michi: "Yo quiero uno de esos",
+      sexo: "¿Sexo? Te vendo 1 kilo",
+      game: "¿Eres minita o por qué quieres jugar conmigo?",
+      pinkdreams: '¡Hola! ¿te gustaría ser rosita? Si es así, ¡Pink dreams es para tí! Servimos galletas y pastelitos todos los días y somos como una gran familia, ¡Únete a Pink dreams! No te arrepentirás, si quieres pasar un buen rato, aquí te esperamos',
+      lnds: '¡Hola! ¿te gustaría ser una linda nena destroza sables? Si es así, ¡LNDS es para tí! Destrazamos sables todos los días y somos como una gran familia, ¡Únete a LNDS! No te arrepentirás, si quieres pasar un buen rato y ser una linda nena, aquí te esperamos'
+    };
+    
+    const arrayReplys = Object.keys(replys)
+    
+    if (arrayReplys.includes(commandName)) {
+      message.reply(replys[commandName])
+    }
+
+    const command = arrayCommands.find(
+      (cmd) =>
+        cmd.name === commandName ||
+        (cmd.alias && cmd.alias.includes(commandName))
+    );
+    if (command) {
+      command.execute(message, args);
+    }
+  });
+};
+
+
+ /* if (commandName === "ona") {
       return message.reply("Onaaaa");
     } else {
       if (commandName === "loxess") {
@@ -43,13 +73,4 @@ export const onMessageCreate = async (client) => {
           }
         }
       }
-    }
-
-    const command = arrayCommands.find(
-      (cmd) => cmd.name === commandName || (cmd.alias && cmd.alias.includes(commandName))
-    );
-    if (command) {
-      command.execute(message, args);
-    }
-  });
-};
+    } */

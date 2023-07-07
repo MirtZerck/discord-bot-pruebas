@@ -13,9 +13,10 @@ export const onImageCreate = async (client) => {
     const content = message.content.slice(prefix.length);
     const args = content.toLowerCase().split(" ");
     const commandName = args.shift();
+    const arrayLinks = Object.keys();
 
-    
-    const imageEmbed = new MessageEmbed()
+                               
+    const imageEmbed = new MessageEmbed(linksImages)
       .setAuthor(
         "Gatos Gatunos",
         "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
