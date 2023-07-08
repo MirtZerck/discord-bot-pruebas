@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 import dotenv from "dotenv";
 import { onMessageCreate } from "./commands/answers.js"; 
-/* import { onImageCreate } from "./commands/images.js"; */
+import { onImageCreate } from "./commands/images.js";
 import { curiousFact } from "./commands/dato_curioso.js";
 import { arrayCommands } from "./commands/index.js";
 
@@ -27,4 +27,4 @@ client.on("ready", () => {
 
 await onMessageCreate(client);
 await curiousFact(client); 
-/* await onImageCreate(client); */
+await onImageCreate(client); 

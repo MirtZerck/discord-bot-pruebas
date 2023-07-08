@@ -28,7 +28,7 @@ export const userAvatarCommand = {
         "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
       )
       .setTitle(`Avatar de ${user.user.username}`)
-      .setImage(user.user.displayAvatarURL({ size: 1024, dynamic: true },))
+      .setImage(user.user.displayAvatarURL({ size: 1024, dynamic: true }))
       .setColor("#81d4fa")
       .setFooter(`ID ${user_id}`)
       .setTimestamp();

@@ -1,6 +1,5 @@
 import { obtenerDatoCurioso } from "../utils/api_dato_curioso.js";
 import { MessageEmbed } from "discord.js";
-import { arrayCommands } from "./index.js"; 
 import { prefijo } from "../utils/prefix.js";
 
 

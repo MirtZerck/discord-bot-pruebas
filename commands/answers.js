@@ -17,7 +17,7 @@ export const onMessageCreate = async (client) => {
     const replys = {
       ona: 'Onaaaa',
       inu: `"OH mi querido ${args[0] ?? 'Michi'} que inteligente eres, y observador, tienes razon, no hay staff, pero te tenemos a ti, quieres ser staff? mandame privado te dare 1 año de nitro adicional"`,
-      loxes: 'Losex',
+      loxess: 'Losex',
       nya: 'Nya ~<3',
       michi: 'Yo quiero uno de esos',
       sexo: '¿Sexo? Te vendo 1 kilo',
@@ -30,7 +30,8 @@ export const onMessageCreate = async (client) => {
       br: 'pink dreams 1 - gatos gatunos 0',
       yui: 'BOE 🙄',
       ban: `### Baneen a ${args[0] ?? message.author.username}`,
-      xpellit: `Hola! ${args[0] ?? message.author.username} Xpellit es un juego Indie, de estilo Animé, en el que existe un sistema gacha, en el cual puedes adquirir equipamiento como armaduras, arma y habilidades para crear el rol que más te guste y hacer equipo con otras personas para completar calabozos o bien para enfrentarte contra otros jugadores.`
+      xpellit: `Hola! ${args[0] ?? message.author.username} Xpellit es un juego Indie, de estilo Animé, en el que existe un sistema gacha, en el cual puedes adquirir equipamiento como armaduras, arma y habilidades para crear el rol que más te guste y hacer equipo con otras personas para completar calabozos o bien para enfrentarte contra otros jugadores.`,
+      nuke: '¡Borrando 1000 mensajes!'
     };
     
     const arrayReplys = Object.keys(replys)
