@@ -1,13 +1,14 @@
 import { obtenerDatoCurioso } from "../utils/api_dato_curioso.js";
 import { MessageEmbed } from "discord.js";
 import { arrayCommands } from "./index.js"; 
+import { prefijo } from "../utils/prefix.js";
 
 
-
+/* const prefijo = prefix() */
 /* console.log(dato_curioso); */
 
 export const curiousFact = async (client) => {
-  const prefix = ".";
+   const prefix = prefijo; 
 
   client.on("message", async (message) => {
     if (message.author.bot) return;
@@ -28,7 +29,7 @@ export const curiousFact = async (client) => {
       .setColor("#81d4fa")
       .setTimestamp();
 
-    if (commandName === "dato") {
+    if (commandName === 'dato') {
 
       message.channel.send(curiosoDato);
 
