@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import { getUserByID } from "../utils/get-user.js";
+import { getUserByID } from "../constants/get-user.js";
 
 export const userAvatarCommand = {
   name: "avatar",

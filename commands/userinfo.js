@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { convertDateToString } from "../utils/format-date.js";
-import { getUserByID } from "../utils/get-user.js";
+import { getUserByID } from "../constants/get-user.js";
 
 export const userInfoCommand = {
   name: "userinfo",
