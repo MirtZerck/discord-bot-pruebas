@@ -24,7 +24,7 @@ export const userInfoCommand = {
 
     if (!user) return message.reply("El usuario no existe");
 
-    const fechaRegistro = convertDateToString(user.createdAt);
+    const fechaRegistro = convertDateToString(user.user.createdAt);
     const fechaIngreso = convertDateToString(message.member.joinedAt);
     const messageEmbed = new MessageEmbed()
       .setAuthor(

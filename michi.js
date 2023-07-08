@@ -1,10 +1,6 @@
 import { Client } from "discord.js";
 import dotenv from "dotenv";
 import { onMessageCreate } from "./commands/answers.js"; 
-import { onMessageDeleteCreate } from "./commands/answers_delete.js";
-import { onImageCreate } from "./commands/images.js";
-import { curiousFact } from "./commands/dato_curioso.js";
-import { sendMeme } from "./commands/meme.js";
 import { arrayCommands } from "./commands/index.js";
 
 dotenv.config();
@@ -29,7 +25,3 @@ client.on("ready", () => {
 });
 
 await onMessageCreate(client);
-await onMessageDeleteCreate(client);
-await curiousFact(client); 
-await sendMeme(client);
-await onImageCreate(client); 

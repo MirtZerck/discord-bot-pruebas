@@ -1,5 +1,8 @@
 import { arrayCommands } from "./index.js";
 import { prefijo } from "../constants/prefix.js";
+import { linksImages } from "../constants/links_images.js";
+import { getReplysDelete } from "../constants/answers_delete.js";
+import { imageEmbed } from "../utils/images.js";
 
 export const onMessageCreate = async (client) => {
   const prefix = prefijo;
@@ -36,12 +39,22 @@ export const onMessageCreate = async (client) => {
       vanir: "fototeta",
       kuon: "salamadre que t||ostado||tas",
       kairi: "Quiero pene",
+      aubrey: "Hola chat",
+      au: "Hola chat",
     };
 
+    const replysDelete = getReplysDelete(message, commandBody, commandName, args);
     const arrayReplys = Object.keys(replys);
+    const arrayLinksImages = Object.keys(linksImages);
+    const arrayDeleteReplys = Object.keys(replysDelete);
 
     if (arrayReplys.includes(commandName)) {
       message.channel.send(replys[commandName]);
+    } else if (arrayLinksImages.includes(commandName)) {
+      message.channel.send(imageEmbed(commandName, linksImages));
+    } else if (arrayDeleteReplys.includes(commandName)) {
+      message.delete();
+      message.channel.send(replysDelete[commandName]);
     }
 
     const command = arrayCommands.find(
@@ -50,39 +63,7 @@ export const onMessageCreate = async (client) => {
         (cmd.alias && cmd.alias.includes(commandName))
     );
     if (command) {
-      command.execute(message, args);
+      command.execute(message, args, commandBody);
     }
   });
 };
-
-/* if (commandName === "ona") {
-      return message.reply("Onaaaa");
-    } else {
-      if (commandName === "loxess") {
-        return message.reply("Losex");
-      } else {
-        if (commandName === "nya") {
-          return message.reply("Nya ~<3");
-        } else {
-          if (commandName === "michi") {
-            return message.reply("Yo quiero uno de esos");
-          } else {
-            if (commandName === "inu") {
-              return message.reply(
-                '"OH mi querido michi que inteligente eres, y observador, tienes razon, no hay staff, pero te tenemos a ti, quieres ser staff? mandame privado te dare 1 año de nitro adicional"'
-              );
-            } else {
-              if (commandName === "sexo") {
-                return message.reply("¿Sexo? Te vendo 1 kilo");
-              } else {
-                if (commandName === "game") {
-                  return message.reply(
-                    "¿Eres minita o por qué quieres jugar conmigo?"
-                  );
-                }
-              }
-            }
-          }
-        }
-      }
-    }  */
