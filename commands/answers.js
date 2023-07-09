@@ -29,9 +29,8 @@ export const onMessageCreate = async (client) => {
       game: "¿Eres minita o por qué quieres jugar conmigo?",
       pinkdreams: `¡Hola! ${commandBody} ¿te gustaría ser rosita? Si es así, ¡Pink dreams es para tí! Servimos galletas y pastelitos todos los días y somos como una gran familia, ¡Únete a Pink dreams! No te arrepentirás, si quieres pasar un buen rato, aquí te esperamos`,
       pd: `¡Hola! ${commandBody} ¿te gustaría ser rosita? Si es así, ¡Pink dreams es para tí! Servimos galletas y pastelitos todos los días y somos como una gran familia, ¡Únete a Pink dreams! No te arrepentirás, si quieres pasar un buen rato, aquí te esperamos`,
-      lnds: "¡Hola! ¿te gustaría ser una linda nena destroza sables? Si es así, ¡LNDS es para tí! Destrazamos sables todos los días y somos como una gran familia, ¡Únete a LNDS! No te arrepentirás, si quieres pasar un buen rato y ser una linda nena, aquí te esperamos",
+      lnds: "¡Hola! ¿te gustaría ser una linda nena destroza sables? Si es así, ¡LNDS es para tí! Destrozamos sables todos los días y somos como una gran familia, ¡Únete a LNDS! No te arrepentirás, si quieres pasar un buen rato y ser una linda nena, aquí te esperamos",
       ahrigato: "Amo, adoro y respeto al @staff",
-      br: "pink dreams 1 - gatos gatunos 0",
       yui: "BOE 🙄",
       ban: `### Baneen a ${
         commandBody === "" ? message.author.username : commandBody

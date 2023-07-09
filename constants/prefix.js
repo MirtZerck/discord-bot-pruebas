@@ -1,1 +1,1 @@
-export const prefijo = ",";
+export const prefijo = "+";
