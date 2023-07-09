@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 
 export const help2Command = {
-  name: "help 2",
+  name: "help2",
   alias: ["h2"],
 
   async execute(message, args) {
@@ -15,7 +15,7 @@ export const help2Command = {
         `**>> Estos son los comandos de respuesta anónima actuales** \n > - Say \n > - Xpellit`
       )
       .setColor("#81d4fa")
-      .setFooter('Usa +help 3 para ver siguiente página')
+      .setFooter('Usa +help3 para ver siguiente página')
       .setTimestamp();
 
     message.channel.send(embedHelp2);

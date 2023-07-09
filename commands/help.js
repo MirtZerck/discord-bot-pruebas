@@ -15,7 +15,7 @@ export const helpCommand = {
         `**>> Estos son los comandos de respuesta actuales** \n > - Ona \n > - Inu \n > - Loxess \n > - Nya \n > - Michi \n > - Sexo \n > - Game \n > - Pinkdreams(pd) \n > - Lnds \n > - Ahrigato \n > - Yui \n > - Ban \n > - Vanir \n > - Kuon \n > - Kairi \n > - Aubrey (Au)`
       )
       .setColor("#81d4fa")
-      .setFooter('Usa +help 2 para ver siguiente página')
+      .setFooter('Usa +help2 para ver siguiente página')
       .setTimestamp();
 
     message.channel.send(embedHelp);

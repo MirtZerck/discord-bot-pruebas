@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 
 export const help4Command = {
-  name: "help 4",
+  name: "help4",
   alias: ["h4"],
 
   async execute(message, args) {

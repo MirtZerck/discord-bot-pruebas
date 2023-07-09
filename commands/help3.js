@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 
 export const help3Command = {
-  name: "help 3",
+  name: "help3",
   alias: ["h3"],
 
   async execute(message, args) {
@@ -15,7 +15,7 @@ export const help3Command = {
         `**>> Estos son los comandos de Imágen actuales** \n > - Grr \n > - Puñito \n > - Triste \n > - Laffey \n > - Mujer \n > - Lucas \n > - Empty \n > - Duro \n > - Pijas \n > - Arvin \n > - Some \n > - Carlos`
       )
       .setColor("#81d4fa")
-      .setFooter('Usa +help 4 para ver siguiente página')
+      .setFooter('Usa +help4 para ver siguiente página')
       .setTimestamp();
 
     message.channel.send(embedHelp3);
