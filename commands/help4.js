@@ -15,6 +15,7 @@ export const help4Command = {
         `**>> Estos son los comandos de APIs actuales** \n > - DatoCurioso(dato, dc) \n > - Meme(me, chistaco) \n > - MichiHablando(mh)`
       )
       .setColor("#81d4fa")
+      .setFooter('Usa +help para regresar al inicio')
       .setTimestamp();
 
     message.channel.send(embedHelp4);

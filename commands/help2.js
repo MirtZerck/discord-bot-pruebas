@@ -15,6 +15,7 @@ export const help2Command = {
         `**>> Estos son los comandos de respuesta anónima actuales** \n > - Say \n > - Xpellit`
       )
       .setColor("#81d4fa")
+      .setFooter('Usa +help 3 para ver siguiente página')
       .setTimestamp();
 
     message.channel.send(embedHelp2);

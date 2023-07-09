@@ -15,6 +15,7 @@ export const help3Command = {
         `**>> Estos son los comandos de Imágen actuales** \n > - Grr \n > - Puñito \n > - Triste \n > - Laffey \n > - Mujer \n > - Lucas \n > - Empty \n > - Duro \n > - Pijas \n > - Arvin \n > - Some \n > - Carlos`
       )
       .setColor("#81d4fa")
+      .setFooter('Usa +help 4 para ver siguiente página')
       .setTimestamp();
 
     message.channel.send(embedHelp3);
