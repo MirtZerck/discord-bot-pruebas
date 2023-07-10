@@ -45,7 +45,7 @@ export const userInfoCommand = {
       .setColor("#81d4fa")
       .setFooter(`ID ${user_id}`)
       .setTimestamp();
-    
+
     message.channel.send(messageEmbed);
   },
 };

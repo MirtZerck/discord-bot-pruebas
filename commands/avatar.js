@@ -3,9 +3,9 @@ import { getUserByID } from "../constants/get-user.js";
 
 export const userAvatarCommand = {
   name: "avatar",
-  alias: ["av", 'avt'],
+  alias: ["av", "avt"],
 
-   execute(message, args) {
+  execute(message, args) {
     const userMention = message.mentions.members.first();
     let user_id;
 
@@ -21,7 +21,6 @@ export const userAvatarCommand = {
 
     if (!user) return message.reply("El usuario no existe");
 
-   
     const messageEmbed = new MessageEmbed()
       .setAuthor(
         "Gatos Gatunos",
@@ -34,8 +33,5 @@ export const userAvatarCommand = {
       .setTimestamp();
 
     message.channel.send(messageEmbed);
-
-    
-  }, 
-   
+  },
 };

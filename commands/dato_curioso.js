@@ -5,10 +5,9 @@ export const curiosFactCommand = {
   name: "datocurioso",
   alias: ["dato", "dc"],
 
-  async execute(message, args)  { 
-
+  async execute(message, args) {
     const dato_curioso = await obtenerDatoCurioso();
-    
+
     const embedDato = new MessageEmbed()
       .setAuthor(
         "Gatos Gatunos",
@@ -19,8 +18,6 @@ export const curiosFactCommand = {
       .setColor("#81d4fa")
       .setTimestamp();
 
-   
-      message.channel.send(embedDato);
-    
+    message.channel.send(embedDato);
   },
 };
