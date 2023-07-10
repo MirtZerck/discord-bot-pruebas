@@ -33,7 +33,7 @@ export async function enviarGatoALas(hora, canal) {
     now.getMonth(),
     now.getDate(),
     hora,
-    0,
+    19,
     0
   );
 
@@ -49,6 +49,6 @@ export async function enviarGatoALas(hora, canal) {
   setTimeout(() => {
     canal.send(embed);
 
-    enviarGatoALas(hora, canales);
+    enviarGatoALas(hora, canal);
   }, diferencia);
 }
