@@ -8,6 +8,7 @@ export const sendMichiTextCommand = {
   async execute(message, args, commandBody) {
     if (!commandBody) return message.reply("Envía lo que quieres que diga");
 
+    /* const usuarioMention = message.mentions.members.username; */
     const michiHablador = await obtenerMichiHablador(commandBody);
 
     const embedMichiHablador = new MessageEmbed()
