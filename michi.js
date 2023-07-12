@@ -54,7 +54,7 @@ client.on("ready", async () => {
 
   const canal_general_xpellit = client.channels.cache.get(generalXpellit);
 
-  const canal_general_mirtzerck = client.channels.cache.get(generalMirtZerck);
+  const canal_general_mirtzerck = client.channels.cache.get(generalPruebasBot);
 
   if (canal_general_xpellit) {
     canal_general_xpellit.send("Hola, vengo a espiarlos a todos c:");

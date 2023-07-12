@@ -89,19 +89,38 @@ export const onMessageCreate = async (client) => {
         case "random_replys": {
           const values = Object.values(reply);
           const index = getRandomNumber(0, values.length - 1);
-          message.channel.send(values[index]);
-          break;
+          const messageDb = values[index];
+          const linkindex = "https";
+
+          if (messageDb.startsWith(linkindex)) {
+            const randomEmbed = new MessageEmbed()
+              .setAuthor(
+                "Gatos Gatunos",
+                "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
+              )
+              .setTitle(`${commandName}`)
+              .setImage(messageDb)
+              .setColor("#81d4fa")
+              .setTimestamp();
+
+            message.channel.send(randomEmbed);
+            break;
+          } else {
+            message.channel.send(values[index]);
+            break;
+          }
         }
+
         case "linksImages": {
           const imageEmbed = new MessageEmbed()
-          .setAuthor(
-            "Gatos Gatunos",
-            "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-          )
-          .setTitle(`${commandName}`)
-          .setImage(reply)
-          .setColor("#81d4fa")
-          .setTimestamp();
+            .setAuthor(
+              "Gatos Gatunos",
+              "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
+            )
+            .setTitle(`${commandName}`)
+            .setImage(reply)
+            .setColor("#81d4fa")
+            .setTimestamp();
 
           message.channel.send(imageEmbed);
           break;
