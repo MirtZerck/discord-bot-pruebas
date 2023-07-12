@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+/* import { MessageEmbed } from "discord.js";
 
 export const imageEmbed = (commandName, linksImages) => {
   return new MessageEmbed()
@@ -11,3 +11,4 @@ export const imageEmbed = (commandName, linksImages) => {
     .setColor("#81d4fa")
     .setTimestamp();
 };
+ */
