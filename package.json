@@ -15,5 +15,8 @@
     "discord.js": "^12.3.0",
     "dotenv": "^16.3.1",
     "firebase-admin": "^11.9.0"
+  },
+  "engines": {
+    "node": ">=18.16.1"
   }
 }
