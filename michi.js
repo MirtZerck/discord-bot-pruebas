@@ -69,7 +69,7 @@ client.on("ready", async () => {
     enviarGatoALas(7, canal_gatos_gatunos);
   }
   if (canal_general_mirtzerck) {
-    enviarGatoALas(14, canal_general_mirtzerck);
+    enviarGatoALas(8, canal_general_mirtzerck);
   }
 });
 

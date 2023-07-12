@@ -33,7 +33,7 @@ export async function enviarGatoALas(hora, canal) {
     now.getMonth(),
     now.getDate(),
     hora,
-    25,
+    0,
     0
   );
 
