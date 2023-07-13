@@ -71,7 +71,9 @@ export const onMessageCreate = async (client) => {
             commandName,
             args
           );
-          message.channel.send(respuesta);
+          const respuestaFormateado = respuesta.replace(/\\n/g, '\n')
+
+          message.channel.send(respuestaFormateado);
           break;
         }
         case "delete_replys": {
@@ -82,8 +84,10 @@ export const onMessageCreate = async (client) => {
             commandName,
             args
           );
-          message.channel.send(delete_respuesta);
-          message.delete();
+          const deleteRespuestaFormateado = delete_respuesta.replace(/\\n/g, '\n')
+          
+          message.channel.send(deleteRespuestaFormateado);
+          message.delete(); 
           break;
         }
         case "random_replys": {
