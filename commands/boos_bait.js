@@ -5,8 +5,13 @@ export const sendBossBait = {
   name: "bo",
   alias: ["b"],
 
-  async execute(message, args, commandBody) { 
-    if (message.author.id !== "526597356091604994" && message.author.id !== "591050519242342431") return;
+  async execute(message, args, commandBody) {
+    if (
+      message.author.id !== "526597356091604994" &&
+      message.author.id !== "591050519242342431" &&
+      message.author.id !== "228709857249722369"
+    )
+      return;
     const bar = "▮";
     let lifebar = bar;
     const maxhealth = 7000;
@@ -31,7 +36,7 @@ export const sendBossBait = {
       .setColor("#51B317")
       .setFooter("Tiempo restante 0h 10m 0s");
 
-    message.delete(); 
+    message.delete();
     return message.channel.send(bossMsg);
   },
 };
