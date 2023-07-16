@@ -1,16 +1,23 @@
 import { MessageEmbed } from "discord.js";
 import { getRandomNumber } from "./utilsFunctions.js";
 import { buenosNyas } from "../constants/buenos_nyas.js";
-
-async function obtenerMichiDiario() {
+import { Api_Michi_URL } from "../constants/apis_url.js";
+import { obtenerDataApi } from "./apiserver.js";
+/* export async function obtenerMichiDiario() {
   const url = `https://api.thecatapi.com/v1/images/search`;
   const respuesta = await fetch(url);
   const data = await respuesta.json();
-  return data[0].url;
-}
+  return data[0].url;  */
+  
+//AXIOS
+/* GET
+POST -> usuario: 'mirt' contraseña: '1234';
+PATCH/PUT -> EDITAR;
+REMOVE/DELETE -> ELIMINAR; */
 
 export async function obtenerEmbedMichiDiario() {
-  const url = await obtenerMichiDiario();
+  const response = await obtenerDataApi(Api_Michi_URL);
+  const imgUrl = response[0].url;
   const index = getRandomNumber(0, buenosNyas.length - 1);
   const mensaje = buenosNyas[index];
 
@@ -21,7 +28,7 @@ export async function obtenerEmbedMichiDiario() {
     )
     .setDescription(mensaje)
     .setTimestamp()
-    .setImage(url)
+    .setImage(imgUrl)
     .setColor("RANDOM");
   return embedMichiDiario;
 }

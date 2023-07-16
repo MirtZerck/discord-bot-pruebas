@@ -15,6 +15,7 @@ import {
 } from "./constants/canalesID.js";
 import firebase from "firebase-admin";
 import { createRequire } from "module";
+import { obtenerTraduccion } from "./utils/api_traductor.js";
 
 const require = createRequire(import.meta.url);
 
@@ -47,14 +48,14 @@ client.on("ready", async () => {
       type: "STREAMING",
     },
   });
-
+  
 /*   await db.child('users').set('Mirt').then(res => {
     console.log('Se ha guardado el dato');
   }) */
 
   const canal_general_xpellit = client.channels.cache.get(generalXpellit);
 
-  const canal_general_mirtzerck = client.channels.cache.get(generalMirtZerck);
+  const canal_general_mirtzerck = client.channels.cache.get(generalPruebasBot);
 
   if (canal_general_xpellit) {
     canal_general_xpellit.send("Hola, vengo a espiarlos a todos c:");
