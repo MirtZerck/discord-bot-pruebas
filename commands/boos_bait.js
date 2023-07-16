@@ -36,7 +36,7 @@ export const sendBossBait = {
       .setColor("#51B317")
       .setFooter("Tiempo restante 0h 10m 0s");
 
-    message.delete();
+    /* message.delete(); */
     return message.channel.send(bossMsg);
   },
 };

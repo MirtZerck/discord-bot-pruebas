@@ -15,6 +15,10 @@ export async function setCommandByCategory(categoria, key, value){
     return await db.child('commands').child(categoria).child(key).set(value);
 } 
 
+export async function setCommandBySubcategory(categoria, subcategoria, key, value){
+  return await db.child('commands').child(categoria).child(subcategoria).child(key).set(value);
+} 
+
 
 export function replaceArgumentText(
   text,

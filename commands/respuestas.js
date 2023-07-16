@@ -10,6 +10,7 @@ import {
   getCommandsValue,
   replaceArgumentText,
   setCommandByCategory,
+  setCommandBySubcategory,
 } from "../db_service/commands_service.js";
 import { getRandomNumber } from "../utils/utilsFunctions.js";
 import { MessageEmbed } from "discord.js";
@@ -34,10 +35,15 @@ export const onMessageCreate = async (client) => {
       const messageContent = message.content.trim();
       const content = messageContent.slice(specialPrefix.length, -3).trim();
       const categoria = content.split(" ")[1];
+      let subcategoria;
+      if (categoria.includes("/")) {
+        subcategoria = categoria.split("/")[1];
+      }
       const key = content.split("{")[1].split(":")[0];
       const value = content.split('"')[1];
 
-      await setCommandByCategory(categoria, key, value)
+      if(!subcategoria){
+        await setCommandByCategory(categoria, key, value)
         .then((res) => {
           message.channel.send("Actualizado.");
         })
@@ -45,8 +51,18 @@ export const onMessageCreate = async (client) => {
           message.channel.send("Inválido");
         });
 
+      } else {
+        await setCommandBySubcategory(categoria, subcategoria, key, value)
+        .then((res) => {
+          message.channel.send("Actualizado.");
+        })
+        .catch((err) => {
+          message.channel.send("Inválido");
+        });
+      }      
+
       setTimeout(() => {
-        message.delete();
+       /*  message.delete(); */
       }, 5 * 1000);
     }
 
@@ -71,7 +87,7 @@ export const onMessageCreate = async (client) => {
             commandName,
             args
           );
-          const respuestaFormateado = respuesta.replace(/\\n/g, '\n')
+          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
 
           message.channel.send(respuestaFormateado);
           break;
@@ -84,10 +100,13 @@ export const onMessageCreate = async (client) => {
             commandName,
             args
           );
-          const deleteRespuestaFormateado = delete_respuesta.replace(/\\n/g, '\n')
-          
+          const deleteRespuestaFormateado = delete_respuesta.replace(
+            /\\n/g,
+            "\n"
+          );
+
           message.channel.send(deleteRespuestaFormateado);
-          message.delete(); 
+          /* message.delete(); */
           break;
         }
         case "random_replys": {

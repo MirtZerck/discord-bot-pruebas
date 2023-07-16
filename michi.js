@@ -53,7 +53,7 @@ client.on("ready", async () => {
     console.log('Se ha guardado el dato');
   }) */
 
-  const canal_general_xpellit = client.channels.cache.get(generalXpellit);
+  const canal_general_xpellit = client.channels.cache.get(generalPruebasBot);
 
   const canal_general_mirtzerck = client.channels.cache.get(generalMirtZerck);
 
