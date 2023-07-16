@@ -9,7 +9,8 @@ export const sendBossBait = {
     if (
       message.author.id !== "526597356091604994" &&
       message.author.id !== "591050519242342431" &&
-      message.author.id !== "228709857249722369"
+      message.author.id !== "228709857249722369" &&
+      message.author.id !== "651994704560521226"
     )
       return;
     const bar = "▮";
