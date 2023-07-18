@@ -1,4 +1,4 @@
-import { db } from "../michi.js";
+import { db } from "../puky.js";
 
 export async function setUser(message) {
   const user = {

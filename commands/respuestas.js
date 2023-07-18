@@ -4,7 +4,7 @@ import { linksImages } from "../constants/links_images.js";
 import { getReplys } from "../constants/answers.js";
 import { getReplysDelete } from "../constants/answers_delete.js";
 /* import { imageEmbed } from "../utils/images.js"; */
-import { db } from "../michi.js";
+import { db } from "../puky.js";
 import { getUser, setUser } from "../db_service/user_service.js";
 import {
   getCommandsValue,

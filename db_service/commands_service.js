@@ -1,4 +1,4 @@
-import { db } from "../michi.js";
+import { db } from "../puky.js";
 
 export async function getCommandsValue(commandName) {
   const comandos_db = await db.child("commands").once("value");

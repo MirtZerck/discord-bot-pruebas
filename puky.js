@@ -9,6 +9,7 @@ import {
 import {
   gatosGatunosXpellit,
   generalMirtZerck,
+  generalNekoPalace,
   generalPruebasBot,
   generalXpellit,
   simularGatosBot,
@@ -16,6 +17,7 @@ import {
 import firebase from "firebase-admin";
 import { createRequire } from "module";
 import { obtenerTraduccion } from "./utils/api_traductor.js";
+import { MessageEmbed } from "discord.js";
 
 const require = createRequire(import.meta.url);
 
@@ -48,17 +50,31 @@ client.on("ready", async () => {
       type: "STREAMING",
     },
   });
-  
-/*   await db.child('users').set('Mirt').then(res => {
-    console.log('Se ha guardado el dato');
-  }) */
 
-  const canal_general_xpellit = client.channels.cache.get(generalPruebasBot);
+  /*   await db.child('users').set('Mirt').then(res => {
+      console.log('Se ha guardado el dato');
+    }) */
+
+  const canal_general_neko = client.channels.cache.get(generalNekoPalace);
 
   const canal_general_mirtzerck = client.channels.cache.get(generalMirtZerck);
 
-  if (canal_general_xpellit) {
-    canal_general_xpellit.send("Hola, vengo a espiarlos a todos c:");
+  if (canal_general_neko) {
+    const embedXpellitEcendido = new MessageEmbed()
+      .setAuthor(
+        "Puky Bot",
+        "https://i.pinimg.com/564x/21/63/44/2163449951b8332afffb5d0bc17a86ef.jpg"
+      )
+      .setTitle(`Holis, estoy lista para cuidar un día mas al reino`)
+      .setImage(
+        "https://i.pinimg.com/originals/55/db/d2/55dbd2694ae8b30c4720724b77d5274f.gif"
+      )
+      .setDescription("Soy Puky ñam :3")
+      .setColor("#f2d6ff")
+      .setFooter(`Tengo fiyito`)
+      .setTimestamp();
+
+    canal_general_neko.send(embedXpellitEcendido);
   }
   if (canal_general_mirtzerck) {
     canal_general_mirtzerck.send("Hola, vengo a espiarlos a todos c:");
