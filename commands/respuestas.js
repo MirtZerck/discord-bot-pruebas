@@ -22,7 +22,6 @@ export const onMessageCreate = async (client) => {
     if (message.author.bot) return;
 
     /*     const user = await getUser(message.author.id);
-
     if (!user){
       setUser(message).then(res => {
         console.log('Se ha ingresado');
@@ -42,27 +41,26 @@ export const onMessageCreate = async (client) => {
       const key = content.split("{")[1].split(":")[0];
       const value = content.split('"')[1];
 
-      if(!subcategoria){
+      if (!subcategoria) {
         await setCommandByCategory(categoria, key, value)
-        .then((res) => {
-          message.channel.send("Actualizado.");
-        })
-        .catch((err) => {
-          message.channel.send("Inválido");
-        });
-
+          .then((res) => {
+            message.channel.send("Actualizado.");
+          })
+          .catch((err) => {
+            message.channel.send("Inválido");
+          });
       } else {
         await setCommandBySubcategory(categoria, subcategoria, key, value)
-        .then((res) => {
-          message.channel.send("Actualizado.");
-        })
-        .catch((err) => {
-          message.channel.send("Inválido");
-        });
-      }      
+          .then((res) => {
+            message.channel.send("Actualizado.");
+          })
+          .catch((err) => {
+            message.channel.send("Inválido");
+          });
+      }
 
       setTimeout(() => {
-       /*  message.delete(); */
+        /*  message.delete(); */
       }, 5 * 1000);
     }
 

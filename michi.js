@@ -10,16 +10,18 @@ import {
   gatosGatunosXpellit,
   generalMirtZerck,
   generalPruebasBot,
+  generalVale,
   generalXpellit,
   simularGatosBot,
 } from "./constants/canalesID.js";
 import firebase from "firebase-admin";
 import { createRequire } from "module";
 import { obtenerTraduccion } from "./utils/api_traductor.js";
+import { MessageEmbed } from "discord.js";
 
 const require = createRequire(import.meta.url);
 
-const serviceAccount = require('./gatos-gatunos-firebase-adminsdk-23njm-da6890c263.json');
+const serviceAccount = require("./gatos-gatunos-firebase-adminsdk-23njm-da6890c263.json");
 
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
@@ -28,7 +30,7 @@ firebase.initializeApp({
 
 firebase.auth();
 
-export const db = firebase.database().ref('/');
+export const db = firebase.database().ref("/");
 
 dotenv.config();
 
@@ -48,20 +50,48 @@ client.on("ready", async () => {
       type: "STREAMING",
     },
   });
-  
-/*   await db.child('users').set('Mirt').then(res => {
+
+  /*   await db.child('users').set('Mirt').then(res => {
     console.log('Se ha guardado el dato');
   }) */
 
   const canal_general_xpellit = client.channels.cache.get(generalPruebasBot);
 
-  const canal_general_mirtzerck = client.channels.cache.get(generalMirtZerck);
+  const canal_general_mirtzerck = client.channels.cache.get(generalVale);
 
   if (canal_general_xpellit) {
-    canal_general_xpellit.send("Hola, vengo a espiarlos a todos c:");
+    const embedXpellitEcendido = new MessageEmbed()
+      .setAuthor(
+        "Mordisquitos Bot",
+        "https://w0.peakpx.com/wallpaper/961/897/HD-wallpaper-bunny-cute-rabbit-animal.jpg"
+      )
+      .setTitle(`Hola, ya desperté`)
+      .setImage(
+        "https://w0.peakpx.com/wallpaper/471/32/HD-wallpaper-sweetest-bunny-cute-bunny-sweetest-cuddly.jpg"
+      )
+      .setDescription("Soy mordisquitos grr :3")
+      .setColor("#81d4fa")
+      .setFooter(`Tengo hambre`)
+      .setTimestamp();
+
+    canal_general_xpellit.send(embedXpellitEcendido);
   }
   if (canal_general_mirtzerck) {
-    canal_general_mirtzerck.send("Hola, vengo a espiarlos a todos c:");
+    const embedEcendido = new MessageEmbed()
+      .setAuthor(
+        "Mordisquitos Bot",
+        "https://w0.peakpx.com/wallpaper/961/897/HD-wallpaper-bunny-cute-rabbit-animal.jpg"
+      )
+      .setTitle(`Hola, ya desperté`)
+      .setImage(
+        "https://w0.peakpx.com/wallpaper/471/32/HD-wallpaper-sweetest-bunny-cute-bunny-sweetest-cuddly.jpg"
+      )
+      .setDescription("Soy mordisquitos grr :3")
+      .setColor("#81d4fa")
+      .setFooter(`Tengo hambre`)
+      .setTimestamp();
+
+    canal_general_mirtzerck.send(embedEcendido);
   }
 
   const canal_gatos_gatunos = client.channels.cache.get(gatosGatunosXpellit);
