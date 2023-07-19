@@ -9,6 +9,7 @@ import {
 import {
   gatosGatunosXpellit,
   generalMirtZerck,
+  generalNekoPalace,
   generalPruebasBot,
   generalVale,
   generalXpellit,
@@ -50,34 +51,21 @@ client.on("ready", async () => {
       type: "STREAMING",
     },
   });
-
+})
   /*   await db.child('users').set('Mirt').then(res => {
     console.log('Se ha guardado el dato');
   }) */
 
-  const canal_general_xpellit = client.channels.cache.get(generalPruebasBot);
+  /*   await db.child('users').set('Mirt').then(res => {
+      console.log('Se ha guardado el dato');
+    }) */
 
-  const canal_general_mirtzerck = client.channels.cache.get(generalVale);
+  const canal_general_neko = client.channels.cache.get(generalNekoPalace);
 
-  if (canal_general_xpellit) {
-    const embedXpellitEcendido = new MessageEmbed()
-      .setAuthor(
-        "Mordisquitos Bot",
-        "https://w0.peakpx.com/wallpaper/961/897/HD-wallpaper-bunny-cute-rabbit-animal.jpg"
-      )
-      .setTitle(`Hola, ya desperté`)
-      .setImage(
-        "https://w0.peakpx.com/wallpaper/471/32/HD-wallpaper-sweetest-bunny-cute-bunny-sweetest-cuddly.jpg"
-      )
-      .setDescription("Soy mordisquitos grr :3")
-      .setColor("#81d4fa")
-      .setFooter(`Tengo hambre`)
-      .setTimestamp();
+  const canal_general_mirtzerck = client.channels.cache.get(generalPruebasBot);
 
-    canal_general_xpellit.send(embedXpellitEcendido);
-  }
   if (canal_general_mirtzerck) {
-    const embedEcendido = new MessageEmbed()
+    const embedMirtZerckEcendido = new MessageEmbed()
       .setAuthor(
         "Mordisquitos Bot",
         "https://w0.peakpx.com/wallpaper/961/897/HD-wallpaper-bunny-cute-rabbit-animal.jpg"
@@ -91,10 +79,29 @@ client.on("ready", async () => {
       .setFooter(`Tengo hambre`)
       .setTimestamp();
 
-    canal_general_mirtzerck.send(embedEcendido);
+    canal_general_xpellit.send(embedMirtZerckEcendido);
+  
   }
 
-  const canal_gatos_gatunos = client.channels.cache.get(gatosGatunosXpellit);
+  if (canal_general_neko) {
+    const embedNekoEcendido = new MessageEmbed()
+      .setAuthor(
+        "Puky Bot",
+        "https://i.pinimg.com/564x/21/63/44/2163449951b8332afffb5d0bc17a86ef.jpg"
+      )
+      .setTitle(`Holis, estoy lista para cuidar un día mas al reino`)
+      .setImage(
+        "https://i.pinimg.com/originals/55/db/d2/55dbd2694ae8b30c4720724b77d5274f.gif"
+      )
+      .setDescription("Soy Puky ñam :3")
+      .setColor("#f2d6ff")
+      .setFooter(`Tengo fiyito`)
+      .setTimestamp();
+
+    canal_general_neko.send(embedNekoEcendido)
+  }
+
+ const canal_gatos_gatunos = client.channels.cache.get(gatosGatunosXpellit);
 
   if (canal_gatos_gatunos) {
     enviarGatoALas(7, canal_gatos_gatunos);
@@ -102,6 +109,6 @@ client.on("ready", async () => {
   if (canal_general_mirtzerck) {
     enviarGatoALas(8, canal_general_mirtzerck);
   }
-});
+
 
 await onMessageCreate(client);

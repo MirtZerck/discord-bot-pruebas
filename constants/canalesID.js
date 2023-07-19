@@ -9,3 +9,6 @@ export const generalXpellit = '1116428930044416031';
 export const generalMirtZerck = '1071587973428150312';
 
 export const generalVale = '1130185911167111222';
+
+export const generalNekoPalace = "1130185911167111222";
+
