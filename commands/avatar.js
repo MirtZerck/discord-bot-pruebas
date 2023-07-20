@@ -29,9 +29,6 @@ export const userAvatarCommand = {
         message.author.displayAvatarURL({ dynamic: true })
       )
       .setTitle(`Avatar de ${user.user.username}`)
-
-      .setAuthor(message.member.nickname === null ? message.author.username: message.member.nickname, message.author.displayAvatarURL({ dynamic: true }))
-      .setTitle(`Fotito de ${user.user.username} :D`)
       .setImage(user.user.displayAvatarURL({ size: 1024, dynamic: true }))
       .setColor("#81d4fa")
       .setFooter(`ID ${user_id}`)
