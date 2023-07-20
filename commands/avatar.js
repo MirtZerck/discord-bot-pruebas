@@ -33,8 +33,8 @@ export const userAvatarCommand = {
       .setAuthor(message.member.nickname === null ? message.author.username: message.member.nickname, message.author.displayAvatarURL({ dynamic: true }))
       .setTitle(`Fotito de ${user.user.username} :D`)
       .setImage(user.user.displayAvatarURL({ size: 1024, dynamic: true }))
-      .setColor("#f2d6ff")
-      .setFooter(`Que bonita fotito c:`)
+      .setColor("#81d4fa")
+      .setFooter(`ID ${user_id}`)
       .setTimestamp();
 
     message.channel.send(messageEmbed);
