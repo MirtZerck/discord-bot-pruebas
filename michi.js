@@ -51,7 +51,7 @@ client.on("ready", async () => {
       type: "STREAMING",
     },
   });
-})
+
   /*   await db.child('users').set('Mirt').then(res => {
     console.log('Se ha guardado el dato');
   }) */
@@ -60,12 +60,12 @@ client.on("ready", async () => {
       console.log('Se ha guardado el dato');
     }) */
 
-  const canal_general_neko = client.channels.cache.get(generalNekoPalace);
+  const canal_general_uno = client.channels.cache.get(generalNekoPalace);
 
-  const canal_general_mirtzerck = client.channels.cache.get(generalPruebasBot);
+  const canal_general_dos = client.channels.cache.get(generalMirtZerck);
 
-  if (canal_general_mirtzerck) {
-    const embedMirtZerckEcendido = new MessageEmbed()
+  if (canal_general_uno) {
+    const embedNekoEcendido = new MessageEmbed()
       .setAuthor(
         "Mordisquitos Bot",
         "https://w0.peakpx.com/wallpaper/961/897/HD-wallpaper-bunny-cute-rabbit-animal.jpg"
@@ -79,12 +79,12 @@ client.on("ready", async () => {
       .setFooter(`Tengo hambre`)
       .setTimestamp();
 
-    canal_general_xpellit.send(embedMirtZerckEcendido);
+    canal_general_uno.send(embedNekoEcendido);
   
   }
 
-  if (canal_general_neko) {
-    const embedNekoEcendido = new MessageEmbed()
+  if (canal_general_dos) {
+    const embedMirtZerckEcendido = new MessageEmbed()
       .setAuthor(
         "Puky Bot",
         "https://i.pinimg.com/564x/21/63/44/2163449951b8332afffb5d0bc17a86ef.jpg"
@@ -98,7 +98,7 @@ client.on("ready", async () => {
       .setFooter(`Tengo fiyito`)
       .setTimestamp();
 
-    canal_general_neko.send(embedNekoEcendido)
+    canal_general_dos.send(embedMirtZerckEcendido)
   }
 
  const canal_gatos_gatunos = client.channels.cache.get(gatosGatunosXpellit);
@@ -106,9 +106,10 @@ client.on("ready", async () => {
   if (canal_gatos_gatunos) {
     enviarGatoALas(7, canal_gatos_gatunos);
   }
-  if (canal_general_mirtzerck) {
-    enviarGatoALas(8, canal_general_mirtzerck);
+  if (canal_general_dos) {
+    enviarGatoALas(7, canal_general_uno);
   }
+})
 
 
 await onMessageCreate(client);
