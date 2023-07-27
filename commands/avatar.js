@@ -21,11 +21,10 @@ export const userAvatarCommand = {
 
     if (!user) return message.reply("El usuario no existe");
 
+    // Si sale null, se iguala a ??
     const messageEmbed = new MessageEmbed()
       .setAuthor(
-        message.member.nickname === null
-          ? message.author.username
-          : message.member.nickname,
+        message.member.nickname ?? message.author.username,
         message.author.displayAvatarURL({ dynamic: true })
       )
       .setTitle(`Avatar de ${user.user.username}`)
@@ -35,5 +34,5 @@ export const userAvatarCommand = {
       .setTimestamp();
 
     message.channel.send(messageEmbed);
-  },
+    },
 };

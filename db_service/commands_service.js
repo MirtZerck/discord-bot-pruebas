@@ -3,12 +3,17 @@ import { db } from "../michi.js";
 export async function getCommandsValue(commandName) {
   const comandos_db = await db.child("commands").once("value");
   const comandos = Object.entries(comandos_db.val());
-
+    
   // comandos[0] son categorías y comandos[1] los valores
   const comando = comandos.find((comando) => comando[1][commandName]);
-
   return comando;
 }
+
+/* export async function getInteraccionesValue(commandName){
+  const comandos_db = await db.child("interacciones").once("value");
+  const comandos = Object.entries(comandos_db.val());
+  return comandos; 
+} */
 
 
 export async function setCommandByCategory(categoria, key, value){

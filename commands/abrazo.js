@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+i/* mport { MessageEmbed } from "discord.js";
 import { getUserByID } from "../constants/get-user.js";
 import { db } from "../michi.js";
 
@@ -48,4 +48,4 @@ export const hugUserCommand = {
 
     message.channel.send(messageEmbed);
   },
-};
+}; */
