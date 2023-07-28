@@ -1,3 +1,3 @@
-export const prefijo = "+";
+export const prefijo = ".";
 
 export const specialPrefix = "```javascript";

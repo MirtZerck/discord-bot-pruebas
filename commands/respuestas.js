@@ -146,6 +146,27 @@ export const onMessageCreate = async (client) => {
           message.channel.send(imageEmbed);
           break;
         }
+
+        case "clanes": {
+          const values = Object.values(reply);
+          const img = values[0];
+          const text = values[1];
+
+          const imageEmbed = new MessageEmbed()
+            .setAuthor(
+              message.member.nickname ?? message.author.username,
+              message.author.displayAvatarURL({ dynamic: true })
+            )
+            .setTitle(`Invitación al Clan`)
+            .setDescription(text)
+            .setImage(img)
+            .setColor("#81d4fa")
+            .setTimestamp();
+
+          message.channel.send(imageEmbed);
+
+          break;
+        }
       }
     } else {
       const command = arrayCommands.find(

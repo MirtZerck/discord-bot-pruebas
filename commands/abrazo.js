@@ -1,4 +1,4 @@
-i/* mport { MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { getUserByID } from "../constants/get-user.js";
 import { db } from "../michi.js";
 
@@ -23,7 +23,8 @@ export const hugUserCommand = {
 
     if (!user) return message.reply("El usuario no existe");
 
-    if (message.author.id === user.user.id) return message.reply("No te puedes abrazar a ti mismo xd") 
+    if (message.author.id === user.user.id)
+      return message.reply("No te puedes abrazar a ti mismo xd");
 
     const messageEmbed = new MessageEmbed()
       .setAuthor(
@@ -31,12 +32,8 @@ export const hugUserCommand = {
         "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
       )
       .setTitle(
-        `${
-          message.member.nickname === null
-            ? message.author.username
-            : message.member.nickname
-        } abrazó a ${
-          user.nickname === null ? user.user.username : user.nickname
+        `${message.member.nickname ?? message.author.username} abrazó a ${
+          user.nickname ?? user.user.username
         }`
       )
       .setImage(
@@ -48,4 +45,4 @@ export const hugUserCommand = {
 
     message.channel.send(messageEmbed);
   },
-}; */
+};

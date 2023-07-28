@@ -7,7 +7,8 @@ import { helpCommand } from "./help.js";
 import { sendBossBait } from "./boos_bait.js";
 import { horaServer } from "./hora.js";
 import { mostrarPing } from "./ping.js";
-/* import { hugUserCommand } from "./abrazo.js"; */
+import { hugUserCommand } from "./abrazo.js";
+/* import { SendTraduccion } from "./traducir.js"; */
 
 export const arrayCommands = [
   userInfoCommand,
@@ -19,5 +20,6 @@ export const arrayCommands = [
   sendBossBait,
   horaServer,
   mostrarPing,
-  /* hugUserCommand, */
+  hugUserCommand,
+  /* SendTraduccion, */
 ];

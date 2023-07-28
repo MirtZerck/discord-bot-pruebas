@@ -17,7 +17,7 @@ import {
 } from "./constants/canalesID.js";
 import firebase from "firebase-admin";
 import { createRequire } from "module";
-import { obtenerTraduccion } from "./utils/api_traductor.js";
+import { obtenerTraduccionEnEs } from "./utils/api_traductor.js";
 import { MessageEmbed } from "discord.js";
 
 const require = createRequire(import.meta.url);
