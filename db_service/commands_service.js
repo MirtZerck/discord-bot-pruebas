@@ -3,7 +3,7 @@ import { db } from "../michi.js";
 export async function getCommandsValue(commandName) {
   const comandos_db = await db.child("commands").once("value");
   const comandos = Object.entries(comandos_db.val());
-    
+
   // comandos[0] son categorías y comandos[1] los valores
   const comando = comandos.find((comando) => comando[1][commandName]);
   return comando;
@@ -15,15 +15,23 @@ export async function getCommandsValue(commandName) {
   return comandos; 
 } */
 
+export async function setCommandByCategory(categoria, key, value) {
+  return await db.child("commands").child(categoria).child(key).set(value);
+}
 
-export async function setCommandByCategory(categoria, key, value){
-    return await db.child('commands').child(categoria).child(key).set(value);
-} 
-
-export async function setCommandBySubcategory(categoria, subcategoria, key, value){
-  return await db.child('commands').child(categoria).child(subcategoria).child(key).set(value);
-} 
-
+export async function setCommandBySubcategory(
+  categoria,
+  subcategoria,
+  key,
+  value
+) {
+  return await db
+    .child("commands")
+    .child(categoria)
+    .child(subcategoria)
+    .child(key)
+    .set(value);
+}
 
 export function replaceArgumentText(
   text,
@@ -46,7 +54,10 @@ export function replaceArgumentText(
     respuesta = commandBody;
   }
   if (commandName === "say") {
-    respuesta = commandBody;  
+    respuesta = commandBody;
+  }
+  if (commandBody === "gg") {
+    respuesta = commandBody;
   }
   return text.replace("respuesta", respuesta);
 }

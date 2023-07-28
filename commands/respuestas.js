@@ -151,14 +151,24 @@ export const onMessageCreate = async (client) => {
           const values = Object.values(reply);
           const img = values[0];
           const text = values[1];
+          const respuesta = replaceArgumentText(
+            text,
+            message,
+            commandBody,
+            commandName,
+            args
+          );
+          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
+          console.log(respuestaFormateado);
 
           const imageEmbed = new MessageEmbed()
             .setAuthor(
-              message.member.nickname ?? message.author.username,
-              message.author.displayAvatarURL({ dynamic: true })
+              "Gatos Gatunos",
+              "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
             )
             .setTitle(`Invitación al Clan`)
-            .setDescription(text)
+            .setDescription(respuestaFormateado)
+            .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
             .setImage(img)
             .setColor("#81d4fa")
             .setTimestamp();
