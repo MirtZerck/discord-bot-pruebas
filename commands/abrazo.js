@@ -1,6 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { getMemberByID } from "../constants/get-user.js";
 import { db } from "../michi.js";
+import { getHugImages } from "../constants/clanService.js";
 
 export const hugUserCommand = {
   name: "abrazo",

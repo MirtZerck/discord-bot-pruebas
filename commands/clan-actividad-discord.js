@@ -1,7 +1,10 @@
 import { db } from "../michi.js";
 import { getRankTabla1 } from "../constants/clanService.js";
 import { MessageEmbed } from "discord.js";
-import { rolGatosGatunosXpellit } from "../constants/rolesID.js";
+import {
+  rolGatosGatunosXpellit,
+  rolIDClanPRuebas,
+} from "../constants/rolesID.js";
 
 export const clanRankingServidor = {
   name: "rankingservidor",
@@ -13,6 +16,7 @@ export const clanRankingServidor = {
     const rankt1 = await getRankTabla1();
     if (!rankt1) return message.reply("No existe todavía");
     const rank = Object.entries(rankt1);
+
     let puestos = "";
     //ordenar rank de mayor a menor
     rank.sort((a, b) => {
@@ -31,11 +35,11 @@ export const clanRankingServidor = {
         "Gatos Gatunos",
         "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
       )
-      .setTitle(`Ranking de la Tabla 1`)
+      .setTitle(`Ranking miembros más activos en Discord`)
       .setDescription(`${puestos}`)
       .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
       .setColor("#81d4fa")
-      .setFooter("Este es el ranking de actividad en discord")
+      .setFooter("Este es el ranking de actividad del clan")
       .setTimestamp();
 
     message.channel.send(embed);

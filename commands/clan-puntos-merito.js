@@ -16,7 +16,7 @@ export const clanRankingClan = {
   alias: ["rankclan", "rc"],
 
   async execute(message, args) {
-    if (!message.member.roles.cache.get(rolGatosGatunosXpellit)) return;
+    if (!message.member.roles.cache.get(rolIDClanPRuebas)) return;
 
     const rankt2 = await getRankTabla2();
     if (!rankt2) return message.reply("No existe todavía");
@@ -46,11 +46,11 @@ export const clanRankingClan = {
           "Gatos Gatunos",
           "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
         )
-        .setTitle(`Ranking del Clan`)
+        .setTitle(`**El ganador se llevará 10$**`)
         .setDescription(`${puestos}`)
         .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
         .setColor("#81d4fa")
-        .setFooter("Este es el ranking de actividad en el clan")
+        .setFooter("Ranking del Clan del Evento")
         .setTimestamp();
 
       return message.channel.send(embed);
