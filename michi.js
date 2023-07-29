@@ -60,9 +60,9 @@ client.on("ready", async () => {
       console.log('Se ha guardado el dato');
     }) */
 
-  const canal_general_uno = client.channels.cache.get(generalNekoPalace);
+  const canal_general_uno = client.channels.cache.get("");
 
-  const canal_general_dos = client.channels.cache.get("");
+  const canal_general_dos = client.channels.cache.get(generalPruebasBot);
 
   if (canal_general_uno) {
     const embedNekoEcendido = new MessageEmbed()

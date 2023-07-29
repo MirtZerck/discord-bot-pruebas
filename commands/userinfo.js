@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { convertDateToString } from "../utils/format-date.js";
-import { getUserByID } from "../constants/get-user.js";
+import { getMemberByID } from "../constants/get-user.js";
 
 export const userInfoCommand = {
   name: "userinfo",
@@ -20,7 +20,7 @@ export const userInfoCommand = {
       user_id = message.author.id;
     }
 
-    const user = getUserByID(message, user_id);
+    const user = getMemberByID(message, user_id);
 
     if (!user) return message.reply("El usuario no existe");
 

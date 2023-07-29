@@ -14,6 +14,8 @@ import {
 } from "../db_service/commands_service.js";
 import { getRandomNumber } from "../utils/utilsFunctions.js";
 import { MessageEmbed } from "discord.js";
+import { rolGatosGatunosXpellit, rolIDClanPRuebas } from "../constants/rolesID.js";
+import { getRankTabla1, setUserRankTabla1 } from "../constants/clanService.js";
 
 export const onMessageCreate = async (client) => {
   const prefix = prefijo;
@@ -28,6 +30,36 @@ export const onMessageCreate = async (client) => {
       });
     }
     */
+
+    //Sumarle puntos
+
+    // Si son del clan
+    if (message.member.roles.cache.get(rolGatosGatunosXpellit)) {
+      const timestamp = new Date().getTime();
+      const rankt1 = await getRankTabla1();
+      const keys = Object.keys(rankt1);
+
+      //Revisar si ya existe
+      if (keys.includes(message.author.id)) {
+        const user = rankt1[message.author.id];
+        // Si ha pasado 1 minuto
+        if (timestamp - user.last >= 60 * 1000) {
+          user.puntos = user.puntos + 1;
+          user.last = timestamp
+          setUserRankTabla1(message.author.id, user)
+        }
+
+      } else {
+        //Si no existe, se registra con puntos: 1
+        const user = {
+          last: timestamp,
+          nickname: message.member.nickname ?? message.author.username,
+          puntos: 1,
+        };
+        setUserRankTabla1(message.author.id, user);
+      }
+    }
+
     if (message.content.startsWith(specialPrefix)) {
       if (message.author.id !== "526597356091604994") return;
 

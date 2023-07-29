@@ -8,6 +8,8 @@ import { sendBossBait } from "./boos_bait.js";
 import { horaServer } from "./hora.js";
 import { mostrarPing } from "./ping.js";
 import { hugUserCommand } from "./abrazo.js";
+import { clanRankingServidor } from "./clan-actividad-discord.js";
+import { clanRankingClan } from "./clan-puntos-merito.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 
 export const arrayCommands = [
@@ -21,5 +23,7 @@ export const arrayCommands = [
   horaServer,
   mostrarPing,
   hugUserCommand,
+  clanRankingServidor,
+  clanRankingClan,
   /* SendTraduccion, */
 ];

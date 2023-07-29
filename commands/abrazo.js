@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import { getUserByID } from "../constants/get-user.js";
+import { getMemberByID } from "../constants/get-user.js";
 import { db } from "../michi.js";
 
 export const hugUserCommand = {
@@ -19,7 +19,7 @@ export const hugUserCommand = {
       return;
     }
 
-    const user = getUserByID(message, user_id);
+    const user = getMemberByID(message, user_id);
 
     if (!user) return message.reply("El usuario no existe");
 

@@ -1,0 +1,125 @@
+import { db } from "../michi.js";
+import {
+  getRankTabla2,
+  removeUserRankTabla2,
+  setUserRankTabla2,
+} from "../constants/clanService.js";
+import { MessageEmbed } from "discord.js";
+import {
+  rolGatosGatunosXpellit,
+  rolIDClanPRuebas,
+} from "../constants/rolesID.js";
+import { getMemberByID } from "../constants/get-user.js";
+
+export const clanRankingClan = {
+  name: "rankingclan",
+  alias: ["rankclan", "rc"],
+
+  async execute(message, args) {
+    if (!message.member.roles.cache.get(rolIDClanPRuebas)) return;
+
+    const rankt2 = await getRankTabla2();
+    if (!rankt2) return message.reply("No existe todavía");
+    const rank = Object.entries(rankt2);
+    const keys = Object.keys(rankt2);
+
+    const arg = args[0];
+    const userID = args[1];
+    const nuevosPuntos = args[2];
+
+    if (!arg) {
+      let puestos = "";
+      //ordenar rank de mayor a menor
+      rank.sort((a, b) => {
+        return b[1].puntos - a[1].puntos;
+      });
+
+      rank.forEach((val, i) => {
+        //val[0]: key (ID)
+        //val[1]: value({nickname, puntos})
+        puestos += `**${i + 1}.** ${val[1].nickname}: ${val[1].puntos}\n`;
+        //1. Si: 3\n2. MirtZerck: 1
+      });
+
+      const embed = new MessageEmbed()
+        .setAuthor(
+          "Gatos Gatunos",
+          "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
+        )
+        .setTitle(`Ranking del Clan`)
+        .setDescription(`${puestos}`)
+        .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+        .setColor("#81d4fa")
+        .setFooter("Este es el ranking de actividad en el clan")
+        .setTimestamp();
+
+      return message.channel.send(embed);
+    } else if (arg === "-add") {
+      if (message.author.id !== "526597356091604994")
+        return message.reply("No tienes permiso.");
+      if (!userID) return message.reply("Ingresa el ID del usuario");
+      if (!nuevosPuntos) return message.reply("Ingresa los puntos");
+      const puntos = parseInt(nuevosPuntos);
+      if (isNaN(puntos))
+        return message.reply("Los puntos a ingresar deben ser enteros");
+
+      if (keys.includes(userID)) {
+        const user = rankt2[userID];
+        user.puntos = user.puntos + puntos;
+        setUserRankTabla2(userID, user).then((res) => {
+          if (puntos > 0) {
+            message.channel.send(
+              `Se han añadido ${puntos} a **${user.nickname}**.`
+            );
+          } else {
+            message.channel.send(`Se han removido **${Math.abs(puntos)}** puntos a **${user.nickname}**`);
+          }
+        });
+      } else {
+        return message.reply(
+          `El usuario de ID **${userID}** no existe en el ranking.`
+        );
+      }
+    } else if (arg === "-set") {
+      if (message.author.id !== "526597356091604994")
+        return message.reply("No tienes permiso.");
+      if (!userID) return message.reply("Ingresa el ID del usuario");
+      if (!nuevosPuntos) return message.reply("Ingresa los puntos");
+      const puntos = parseInt(nuevosPuntos);
+      if (isNaN(puntos))
+        return message.reply("Los puntos a ingresar deben ser enteros");
+      const member = getMemberByID(message, userID);
+      if (!member) return message.reply(`El ID ${userID} no es válido.`);
+
+      const user = {
+        nickname: member.nickname ?? member.user.username,
+        puntos: puntos,
+      };
+
+      setUserRankTabla2(userID, user).then((res) => {
+        message.channel.send(
+          `Se ha ingresado el usuario **${user.nickname}** con **${puntos}** puntos.`
+        );
+      });
+    } else if (arg === "-remove") {
+      if (message.author.id !== "526597356091604994")
+        return message.reply("No tienes permiso.");
+
+      if (keys.includes(userID)) {
+        removeUserRankTabla2(userID).then((res) => {
+          message.reply(
+            `Se ha eliminado al usuario con ID ${userID} del ranking`
+          );
+        });
+      } else {
+        return message.reply(
+          `El usuario de ID **${userID}** no existe en el ranking.`
+        );
+      }
+    } else {
+      return message.reply(
+        "Argumento no válido. \n\n**Disponibles:** -add, -set, -remove"
+      );
+    }
+  },
+};
