@@ -14,7 +14,10 @@ import {
 } from "../db_service/commands_service.js";
 import { getRandomNumber } from "../utils/utilsFunctions.js";
 import { MessageEmbed } from "discord.js";
-import { rolGatosGatunosXpellit, rolIDClanPRuebas } from "../constants/rolesID.js";
+import {
+  rolGatosGatunosXpellit,
+  rolIDClanPRuebas,
+} from "../constants/rolesID.js";
 import { getRankTabla1, setUserRankTabla1 } from "../constants/clanService.js";
 
 export const onMessageCreate = async (client) => {
@@ -45,10 +48,9 @@ export const onMessageCreate = async (client) => {
         // Si ha pasado 1 minuto
         if (timestamp - user.last >= 60 * 1000) {
           user.puntos = user.puntos + 1;
-          user.last = timestamp
-          setUserRankTabla1(message.author.id, user)
+          user.last = timestamp;
+          setUserRankTabla1(message.author.id, user);
         }
-
       } else {
         //Si no existe, se registra con puntos: 1
         const user = {
@@ -191,16 +193,15 @@ export const onMessageCreate = async (client) => {
             args
           );
           const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
-          console.log(respuestaFormateado);
 
           const imageEmbed = new MessageEmbed()
             .setAuthor(
-              "Gatos Gatunos",
-              "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
+              message.member.nickname ?? message.author.username,
+              message.author.displayAvatarURL({ dynamic: true })
             )
             .setTitle(`Invitación al Clan`)
             .setDescription(respuestaFormateado)
-            .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+            .setThumbnail()
             .setImage(img)
             .setColor("#81d4fa")
             .setTimestamp();
