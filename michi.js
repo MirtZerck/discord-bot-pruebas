@@ -62,7 +62,7 @@ client.on("ready", async () => {
 
   const canal_general_uno = client.channels.cache.get("");
 
-  const canal_general_dos = client.channels.cache.get(generalPruebasBot);
+  const canal_general_dos = client.channels.cache.get("");
 
   if (canal_general_uno) {
     const embedNekoEcendido = new MessageEmbed()
