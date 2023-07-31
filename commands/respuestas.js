@@ -1,5 +1,10 @@
 import { arrayCommands } from "./index.js";
-import { prefijo, specialPrefix } from "../constants/prefix.js";
+import {
+  prefijo,
+  prefixPersonalPrefix,
+  prefixXpellitPrefix,
+  specialPrefix,
+} from "../constants/prefix.js";
 import { linksImages } from "../constants/links_images.js";
 import { getReplys } from "../constants/answers.js";
 import { getReplysDelete } from "../constants/answers_delete.js";
@@ -37,6 +42,14 @@ export const onMessageCreate = async (client) => {
     //Sumarle puntos
 
     // Si son del clan
+
+    if (
+      message.content.startsWith(prefixXpellitPrefix) ||
+      message.content.startsWith(prefixPersonalPrefix)
+    ) {
+      message.reply(`El prefijo es ${prefijo}`);
+    }
+
     if (message.member.roles.cache.get(rolGatosGatunosXpellit)) {
       const timestamp = new Date().getTime();
       const rankt1 = await getRankTabla1();

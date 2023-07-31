@@ -19,6 +19,7 @@ import firebase from "firebase-admin";
 import { createRequire } from "module";
 import { obtenerTraduccionEnEs } from "./utils/api_traductor.js";
 import { MessageEmbed } from "discord.js";
+import { prefijo } from "./constants/prefix.js";
 
 const require = createRequire(import.meta.url);
 
@@ -60,6 +61,7 @@ client.on("ready", async () => {
       console.log('Se ha guardado el dato');
     }) */
 
+ 
   const canal_general_uno = client.channels.cache.get("");
 
   const canal_general_dos = client.channels.cache.get("");
