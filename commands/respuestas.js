@@ -44,10 +44,28 @@ export const onMessageCreate = async (client) => {
     // Si son del clan
 
     if (
-      message.content.startsWith(prefixXpellitPrefix) ||
-      message.content.startsWith(prefixPersonalPrefix)
+      message.content.startsWith(prefixPersonalPrefix) ||
+      message.content.startsWith(prefixXpellitPrefix)
     ) {
-      message.reply(`El prefijo es ${prefijo}`);
+      const embedPrefix = new MessageEmbed()
+        .setAuthor(
+          "Gatos Gatunos",
+          "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
+        )
+        .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+        .setTitle(`Información del Bot`)
+        .addFields(
+          {
+            name: "Prefijo",
+            value: `El prefijo es ${prefijo}`,
+            inline: true,
+          },
+          { name: "Información", value: `Escribe ${prefijo}help`, inline: true }
+        )
+        .setColor("#81d4fa")
+        .setTimestamp();
+
+      message.reply(embedPrefix);
     }
 
     if (message.member.roles.cache.get(rolGatosGatunosXpellit)) {
