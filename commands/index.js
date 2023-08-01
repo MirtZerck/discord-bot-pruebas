@@ -14,6 +14,7 @@ import { patUserCommand } from "./caricia.js";
 import { cookieUserCommand } from "./cookie.js";
 import { hornyUserCommand } from "./horny.js";
 import { pokeUserCommand } from "./poke.js";
+import { danceUserCommand } from "./dance.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 
 export const arrayCommands = [
@@ -33,5 +34,6 @@ export const arrayCommands = [
   cookieUserCommand,
   hornyUserCommand,
   pokeUserCommand,
+  danceUserCommand,
   /* SendTraduccion, */
 ];
