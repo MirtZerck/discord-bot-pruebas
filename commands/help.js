@@ -3,6 +3,7 @@ import { getReplys } from "../constants/answers.js";
 import { getReplysDelete } from "../constants/answers_delete.js";
 import { linksImages } from "../constants/links_images.js";
 import { getArrayCommandsObject } from "../constants/lista_comandosxd.js";
+import { prefijo } from "../constants/prefix.js";
 
 export const helpCommand = {
   name: "help",
@@ -52,7 +53,7 @@ export const helpCommand = {
       .setThumbnail(author.displayAvatarURL({ dynamic: true }))
       .setDescription(`**>> Estos son los comandos actuales** ${description}`)
       .setColor("#81d4fa")
-      .setFooter("Ona")
+      .setFooter(`${prefijo}help 1-4`)
       .setTimestamp();
 
     message.channel.send(embedHelp);

@@ -20,6 +20,7 @@ import { createRequire } from "module";
 import { obtenerTraduccionEnEs } from "./utils/api_traductor.js";
 import { MessageEmbed } from "discord.js";
 import { prefijo } from "./constants/prefix.js";
+import { getInteraccionesValue } from "./db_service/commands_service.js";
 
 const require = createRequire(import.meta.url);
 
@@ -61,45 +62,40 @@ client.on("ready", async () => {
       console.log('Se ha guardado el dato');
     }) */
 
- 
-  const canal_general_uno = client.channels.cache.get("");
+  const canal_general_uno = client.channels.cache.get(generalXpellit);
 
-  const canal_general_dos = client.channels.cache.get("");
+  const canal_general_dos = client.channels.cache.get(generalMirtZerck);
 
   if (canal_general_uno) {
-    const embedNekoEcendido = new MessageEmbed()
+    const embedUnoEcendido = new MessageEmbed()
       .setAuthor(
-        "Mordisquitos Bot",
+        "Gatos Gatunos Bot",
         "https://w0.peakpx.com/wallpaper/961/897/HD-wallpaper-bunny-cute-rabbit-animal.jpg"
       )
-      .setTitle(`Hola, ya desperté`)
-      .setImage(
-        "https://w0.peakpx.com/wallpaper/471/32/HD-wallpaper-sweetest-bunny-cute-bunny-sweetest-cuddly.jpg"
-      )
-      .setDescription("Soy mordisquitos grr :3")
+      .setTitle(`Hola, he sido actualizado y ya desperté`)
+      .setImage("https://media.tenor.com/n1d_M_lXA1kAAAAd/molestar-gatos.gif")
+      .setDescription("Soy un michito grr :3")
       .setColor("#81d4fa")
       .setFooter(`Tengo hambre`)
       .setTimestamp();
 
-    canal_general_uno.send(embedNekoEcendido);
+    canal_general_uno.send(embedUnoEcendido);
   }
 
   if (canal_general_dos) {
-    const embedMirtZerckEcendido = new MessageEmbed()
+    const embedDosEcendido = new MessageEmbed()
       .setAuthor(
-        "Mordisquitos Bot",
+        "Gatos Gatunos Bot",
         "https://w0.peakpx.com/wallpaper/961/897/HD-wallpaper-bunny-cute-rabbit-animal.jpg"
       )
-      .setTitle(`Hola, ya desperté`)
-      .setImage(
-        "https://w0.peakpx.com/wallpaper/471/32/HD-wallpaper-sweetest-bunny-cute-bunny-sweetest-cuddly.jpg"
-      )
-      .setDescription("Soy mordisquitos grr :3")
+      .setTitle(`Hola, he sido actualizado y ya desperté`)
+      .setImage("https://media.tenor.com/n1d_M_lXA1kAAAAd/molestar-gatos.gif")
+      .setDescription("Soy un michito grr :3")
       .setColor("#81d4fa")
       .setFooter(`Tengo hambre`)
       .setTimestamp();
 
-    canal_general_dos.send(embedMirtZerckEcendido);
+    canal_general_dos.send(embedDosEcendido);
   }
 
   const canal_gatos_gatunos = client.channels.cache.get(gatosGatunosXpellit);

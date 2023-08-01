@@ -10,6 +10,10 @@ import { mostrarPing } from "./ping.js";
 import { hugUserCommand } from "./abrazo.js";
 import { clanRankingServidor } from "./clan-actividad-discord.js";
 import { clanRankingClan } from "./clan-puntos-merito.js";
+import { patUserCommand } from "./caricia.js";
+import { cookieUserCommand } from "./cookie.js";
+import { hornyUserCommand } from "./horny.js";
+import { pokeUserCommand } from "./poke.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 
 export const arrayCommands = [
@@ -25,5 +29,9 @@ export const arrayCommands = [
   hugUserCommand,
   clanRankingServidor,
   clanRankingClan,
+  patUserCommand,
+  cookieUserCommand,
+  hornyUserCommand,
+  pokeUserCommand,
   /* SendTraduccion, */
 ];

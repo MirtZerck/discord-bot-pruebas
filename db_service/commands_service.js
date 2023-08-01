@@ -9,11 +9,12 @@ export async function getCommandsValue(commandName) {
   return comando;
 }
 
-/* export async function getInteraccionesValue(commandName){
+export async function getInteraccionesValue() {
   const comandos_db = await db.child("interacciones").once("value");
   const comandos = Object.entries(comandos_db.val());
-  return comandos; 
-} */
+
+  return comandos;
+}
 
 export async function setCommandByCategory(categoria, key, value) {
   return await db.child("commands").child(categoria).child(key).set(value);

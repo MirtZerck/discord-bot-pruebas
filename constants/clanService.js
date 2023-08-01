@@ -18,15 +18,6 @@ export async function getRankTabla2() {
   }
 }
 
-export async function getHugImages() {
-  const hugs = await db.child("interacciones").child("abrazos").once("value");
-  if (hugs.exists()) {
-    return hugs.val();
-  } else {
-    return undefined;
-  }
-}
-
 export async function setUserRankTabla1(id, values) {
   return await db.child("clan").child("tabla1").child(id).set(values);
 }
@@ -38,5 +29,3 @@ export async function setUserRankTabla2(id, values) {
 export async function removeUserRankTabla2(id) {
   return await db.child("clan").child("tabla2").child(id).remove();
 }
-
-
