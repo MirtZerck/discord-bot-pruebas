@@ -15,6 +15,7 @@ import { cookieUserCommand } from "./cookie.js";
 import { hornyUserCommand } from "./horny.js";
 import { pokeUserCommand } from "./poke.js";
 import { danceUserCommand } from "./dance.js";
+import { blockHugCommand } from "./bloquear-interacciones.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 
 export const arrayCommands = [
@@ -35,5 +36,6 @@ export const arrayCommands = [
   hornyUserCommand,
   pokeUserCommand,
   danceUserCommand,
+  blockHugCommand,
   /* SendTraduccion, */
 ];

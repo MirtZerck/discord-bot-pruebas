@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { convertDateToString } from "../utils/format-date.js";
 import { getMemberByID } from "../constants/get-user.js";
 
@@ -26,11 +26,11 @@ export const userInfoCommand = {
 
     const fechaRegistro = convertDateToString(user.user.createdAt);
     const fechaIngreso = convertDateToString(message.member.joinedAt);
-    const messageEmbed = new MessageEmbed()
-      .setAuthor(
-        "Gatos Gatunos",
-        "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-      )
+    const messageEmbed = new EmbedBuilder()
+      .setAuthor({
+        name: message.member.nickname ?? message.author.username,
+        iconURL: message.author.displayAvatarURL({ dynamic: true }),
+      })
       .setTitle(`Información de ${user.user.username}`)
       .setThumbnail(user.user.displayAvatarURL({ dynamic: true }))
       .setDescription(`Información del usuario en el servidor`)
@@ -42,10 +42,10 @@ export const userInfoCommand = {
         },
         { name: "Ingreso", value: fechaIngreso, inline: true }
       )
-      .setColor("#81d4fa")
+      .setColor(0x81d4fa)
       .setFooter(`ID ${user_id}`)
       .setTimestamp();
 
-    message.channel.send(messageEmbed);
+    message.channel.send({ embeds: [messageEmbed] });
   },
 };

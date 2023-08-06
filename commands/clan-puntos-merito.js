@@ -4,7 +4,7 @@ import {
   removeUserRankTabla2,
   setUserRankTabla2,
 } from "../constants/clanService.js";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import {
   rolGatosGatunosXpellit,
   rolIDClanPRuebas,
@@ -41,38 +41,46 @@ export const clanRankingClan = {
         //1. Si: 3\n2. MirtZerck: 1
       });
 
-      const embed = new MessageEmbed()
-        .setAuthor(
-          "Gatos Gatunos",
-          "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-        )
+      const embed = new EmbedBuilder()
+        .setAuthor({
+          name: message.member.nickname ?? message.author.username,
+          iconURL: message.author.displayAvatarURL({ dynamic: true }),
+        })
         .setTitle(`**El ganador se llevará 10$**`)
         .setDescription(`${puestos}`)
         .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
-        .setColor("#81d4fa")
-        .setFooter("Ranking del Clan del Evento")
+        .setColor(0x81d4fa)
+        .setFooter({ text: "Ranking del Clan del Evento" })
         .setTimestamp();
 
-      return message.channel.send(embed);
+      return message.channel.send({ embeds: [embed] });
     } else if (arg === "-add") {
       if (message.author.id !== "526597356091604994")
         return message.reply("No tienes permiso.");
+
       if (!userID) return message.reply("Ingresa el ID del usuario");
+
       if (!nuevosPuntos) return message.reply("Ingresa los puntos");
       const puntos = parseInt(nuevosPuntos);
+
       if (isNaN(puntos))
         return message.reply("Los puntos a ingresar deben ser enteros");
 
       if (keys.includes(userID)) {
         const user = rankt2[userID];
         user.puntos = user.puntos + puntos;
+
         setUserRankTabla2(userID, user).then((res) => {
           if (puntos > 0) {
             message.channel.send(
               `Se han añadido ${puntos} a **${user.nickname}**.`
             );
           } else {
-            message.channel.send(`Se han removido **${Math.abs(puntos)}** puntos a **${user.nickname}**`);
+            message.channel.send(
+              `Se han removido **${Math.abs(puntos)}** puntos a **${
+                user.nickname
+              }**`
+            );
           }
         });
       } else {
@@ -83,12 +91,18 @@ export const clanRankingClan = {
     } else if (arg === "-set") {
       if (message.author.id !== "526597356091604994")
         return message.reply("No tienes permiso.");
+
       if (!userID) return message.reply("Ingresa el ID del usuario");
+
       if (!nuevosPuntos) return message.reply("Ingresa los puntos");
+
       const puntos = parseInt(nuevosPuntos);
+
       if (isNaN(puntos))
         return message.reply("Los puntos a ingresar deben ser enteros");
+
       const member = getMemberByID(message, userID);
+
       if (!member) return message.reply(`El ID ${userID} no es válido.`);
 
       const user = {
@@ -103,6 +117,7 @@ export const clanRankingClan = {
       });
     } else if (arg === "-remove") {
       if (message.author.id !== "526597356091604994")
+      
         return message.reply("No tienes permiso.");
 
       if (keys.includes(userID)) {

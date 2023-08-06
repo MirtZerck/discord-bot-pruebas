@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { getMemberByID } from "../constants/get-user.js";
 import { db } from "../michi.js";
 import { getInteraccionesValue } from "../db_service/commands_service.js";
@@ -32,37 +32,37 @@ export const hornyUserCommand = {
       const messageDb = imgHorny[index];
 
       if (!user || message.author.id === user.user.id) {
-        const messageEmbed = new MessageEmbed()
-          .setAuthor(
-            "Gatos Gatunos",
-            "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-          )
+        const messageEmbed = new EmbedBuilder()
+          .setAuthor({
+            name: message.member.nickname ?? message.author.username,
+            iconURL: message.author.displayAvatarURL({ dynamic: true }),
+          })
           .setTitle(
             `${message.member.nickname ?? message.author.username} está horny.`
           )
           .setImage(messageDb)
-          .setColor("#81d4fa")
-          .setFooter(`Horny`)
+          .setColor("Random")
+          .setFooter({ text: `Horny` })
           .setTimestamp();
 
-        return message.channel.send(messageEmbed);
+        return message.channel.send({ embeds: [messageEmbed] });
       } else {
-        const messageEmbed = new MessageEmbed()
-          .setAuthor(
-            "Gatos Gatunos",
-            "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-          )
+        const messageEmbed = new EmbedBuilder()
+          .setAuthor({
+            name: message.member.nickname ?? message.author.username,
+            iconURL: message.author.displayAvatarURL({ dynamic: true }),
+          })
           .setTitle(
             `${
               message.member.nickname ?? message.author.username
             } se ha calentado con ${user.nickname ?? user.user.username}.`
           )
           .setImage(messageDb)
-          .setColor("#81d4fa")
-          .setFooter(`Horny`)
+          .setColor("Random")
+          .setFooter({ text: `Horny` })
           .setTimestamp();
 
-        message.channel.send(messageEmbed);
+        message.channel.send({ embeds: [messageEmbed] });
       }
     }
   },

@@ -10,10 +10,10 @@ export async function solicitarPostAPI(url, encodeParams) {
     method: "POST",
     url,
     headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-      'Accept-Encoding': 'application/gzip',
-      'X-RapidAPI-Key': 'cc3e8e6eecmsh4dbabbab214b3acp12d82bjsn92bd687901de',
-      'X-RapidAPI-Host': 'google-translate1.p.rapidapi.com'
+      "content-type": "application/x-www-form-urlencoded",
+      "Accept-Encoding": "application/gzip",
+      "X-RapidAPI-Key": "cc3e8e6eecmsh4dbabbab214b3acp12d82bjsn92bd687901de",
+      "X-RapidAPI-Host": "google-translate1.p.rapidapi.com",
     },
     data: encodeParams,
   };

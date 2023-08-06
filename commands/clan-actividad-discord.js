@@ -1,6 +1,6 @@
 import { db } from "../michi.js";
 import { getRankTabla1 } from "../constants/clanService.js";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import {
   rolGatosGatunosXpellit,
   rolIDClanPRuebas,
@@ -30,16 +30,16 @@ export const clanRankingServidor = {
       //1. Si: 3\n2. MirtZerck: 1
     });
 
-    const embed = new MessageEmbed()
-      .setAuthor(
-        "Gatos Gatunos",
-        "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-      )
+    const embed = new EmbedBuilder()
+      .setAuthor({
+        name: message.member.nickname ?? message.author.username,
+        iconURL: message.author.displayAvatarURL({ dynamic: true }),
+      })
       .setTitle(`Ranking miembros más activos en Discord`)
       .setDescription(`${puestos}`)
       .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
-      .setColor("#81d4fa")
-      .setFooter("Este es el ranking de actividad del clan")
+      .setColor(0x81d4fa)
+      .setFooter({ text: "Este es el ranking de actividad del clan" })
       .setTimestamp();
 
     message.channel.send(embed);

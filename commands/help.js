@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { getReplys } from "../constants/answers.js";
 import { getReplysDelete } from "../constants/answers_delete.js";
 import { linksImages } from "../constants/links_images.js";
@@ -39,23 +39,23 @@ export const helpCommand = {
         description += `\n > - ${keys}, [${objectReplys[keys]}] `;
       });
     } else {
-    replysKeys.forEach((keys) => {
-      description += `\n > - ${keys} `;
-    });
-  }
+      replysKeys.forEach((keys) => {
+        description += `\n > - ${keys} `;
+      });
+    }
 
-    const embedHelp = new MessageEmbed()
-      .setAuthor(
-        "Gatos Gatunos",
-        "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-      )
+    const embedHelp = new EmbedBuilder()
+      .setAuthor({
+        name: message.member.nickname ?? message.author.username,
+        iconURL: message.author.displayAvatarURL({ dynamic: true }),
+      })
       .setTitle(titulo)
       .setThumbnail(author.displayAvatarURL({ dynamic: true }))
       .setDescription(`**>> Estos son los comandos actuales** ${description}`)
-      .setColor("#81d4fa")
-      .setFooter(`${prefijo}help 1-4`)
+      .setColor(0x81d4fa)
+      .setFooter({ text: `${prefijo}help 1-4` })
       .setTimestamp();
 
-    message.channel.send(embedHelp);
+    message.channel.send({ embeds: [embedHelp] });
   },
 };

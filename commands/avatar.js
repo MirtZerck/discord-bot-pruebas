@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { getMemberByID } from "../constants/get-user.js";
 
 export const userAvatarCommand = {
@@ -22,17 +22,17 @@ export const userAvatarCommand = {
     if (!user) return message.reply("El usuario no existe");
 
     // Si sale null, se iguala a ??
-    const messageEmbed = new MessageEmbed()
-      .setAuthor(
-        message.member.nickname ?? message.author.username,
-        message.author.displayAvatarURL({ dynamic: true })
-      )
+    const messageEmbed = new EmbedBuilder()
+      .setAuthor({
+        name: message.member.nickname ?? message.author.username,
+        iconURL: message.author.displayAvatarURL({ dynamic: true }),
+      })
       .setTitle(`Avatar de ${user.user.username}`)
       .setImage(user.user.displayAvatarURL({ size: 1024, dynamic: true }))
-      .setColor("#81d4fa")
-      .setFooter(`ID ${user_id}`)
+      .setColor("Random")
+      .setFooter({text: `ID ${user_id}`})
       .setTimestamp();
 
-    message.channel.send(messageEmbed);
-    },
+    message.channel.send({embeds: [messageEmbed]});
+  },
 };

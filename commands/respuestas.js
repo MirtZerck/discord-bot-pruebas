@@ -1,8 +1,8 @@
 import { arrayCommands } from "./index.js";
 import {
   prefijo,
-  prefixPersonalPrefix,
-  prefixXpellitPrefix,
+  prefixBotPersonalPrefix,
+  prefixBotXpellitPrefix,
   specialPrefix,
 } from "../constants/prefix.js";
 import { linksImages } from "../constants/links_images.js";
@@ -18,7 +18,7 @@ import {
   setCommandBySubcategory,
 } from "../db_service/commands_service.js";
 import { getRandomNumber } from "../utils/utilsFunctions.js";
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder, Events } from "discord.js";
 import {
   rolGatosGatunosXpellit,
   rolIDClanPRuebas,
@@ -28,7 +28,7 @@ import { getRankTabla1, setUserRankTabla1 } from "../constants/clanService.js";
 export const onMessageCreate = async (client) => {
   const prefix = prefijo;
 
-  client.on("message", async (message) => {
+  client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;
 
     /*     const user = await getUser(message.author.id);
@@ -44,14 +44,15 @@ export const onMessageCreate = async (client) => {
     // Si son del clan
 
     if (
-      message.content.startsWith(prefixPersonalPrefix) ||
-      message.content.startsWith(prefixXpellitPrefix)
+      message.content.startsWith(prefixBotPersonalPrefix) ||
+      message.content.startsWith(prefixBotXpellitPrefix)
     ) {
-      const embedPrefix = new MessageEmbed()
-        .setAuthor(
-          "Gatos Gatunos",
-          "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-        )
+      const embedPrefix = new EmbedBuilder()
+        .setAuthor({
+          name: "Gatos Gatunos",
+          iconURL:
+            "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply",
+        })
         .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
         .setTitle(`Información del Bot`)
         .addFields(
@@ -62,10 +63,10 @@ export const onMessageCreate = async (client) => {
           },
           { name: "Información", value: `Escribe ${prefijo}help`, inline: true }
         )
-        .setColor("#81d4fa")
+        .setColor(0x81d4fa)
         .setTimestamp();
 
-      message.reply(embedPrefix);
+      message.reply({ embeds: [embedPrefix] });
     }
 
     if (message.member.roles.cache.get(rolGatosGatunosXpellit)) {
@@ -124,9 +125,9 @@ export const onMessageCreate = async (client) => {
           });
       }
 
-      setTimeout(() => {
-        /*  message.delete(); */
-      }, 5 * 1000);
+      /* setTimeout(() => {
+          message.delete(); 
+      }, 5 * 1000); */
     }
 
     if (!message.content.startsWith(prefix)) return;
@@ -179,17 +180,18 @@ export const onMessageCreate = async (client) => {
           const linkindex = "https";
 
           if (messageDb.startsWith(linkindex)) {
-            const randomEmbed = new MessageEmbed()
-              .setAuthor(
-                "Gatos Gatunos",
-                "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-              )
+            const randomEmbed = new EmbedBuilder()
+              .setAuthor({
+                name: "Gatos Gatunos",
+                iconURL:
+                  "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply",
+              })
               .setTitle(`${commandName}`)
               .setImage(messageDb)
-              .setColor("#81d4fa")
+              .setColor(0x81d4fa)
               .setTimestamp();
 
-            message.channel.send(randomEmbed);
+            message.channel.send({ embeds: [randomEmbed] });
             break;
           } else {
             message.channel.send(values[index]);
@@ -198,17 +200,18 @@ export const onMessageCreate = async (client) => {
         }
 
         case "linksImages": {
-          const imageEmbed = new MessageEmbed()
-            .setAuthor(
-              "Gatos Gatunos",
-              "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply"
-            )
+          const imageEmbed = new EmbedBuilder()
+            .setAuthor({
+              name: "Gatos Gatunos",
+              iconURL:
+                "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply",
+            })
             .setTitle(`${commandName}`)
             .setImage(reply)
-            .setColor("#81d4fa")
+            .setColor(0x81d4fa)
             .setTimestamp();
 
-          message.channel.send(imageEmbed);
+          message.channel.send({ embeds: [imageEmbed] });
           break;
         }
 
@@ -225,19 +228,19 @@ export const onMessageCreate = async (client) => {
           );
           const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
 
-          const imageEmbed = new MessageEmbed()
-            .setAuthor(
-              message.member.nickname ?? message.author.username,
-              message.author.displayAvatarURL({ dynamic: true })
-            )
+          const imageEmbed = new EmbedBuilder()
+            .setAuthor({
+              name: message.member.nickname ?? message.author.username,
+              iconURL: message.author.displayAvatarURL({ dynamic: true }),
+            })
             .setTitle(`Invitación al Clan`)
             .setDescription(respuestaFormateado)
             .setThumbnail()
             .setImage(img)
-            .setColor("#81d4fa")
+            .setColor(0x81d4fa)
             .setTimestamp();
 
-          message.channel.send(imageEmbed);
+          message.channel.send({ embeds: [imageEmbed] });
 
           break;
         }
