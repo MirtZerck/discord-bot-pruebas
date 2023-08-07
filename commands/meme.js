@@ -6,21 +6,19 @@ export const sendMemeCommand = {
   alias: ["me", "chistaco"],
 
   async execute(message, args) {
-    const momazo = await obtenerMeme();
+    const momazo = await obtenerMeme("Texto abajo", "Texto arriba");
 
     const embedMeme = new EmbedBuilder()
-      .setAuthor(
-        {
-          name: message.member.nickname ?? message.author.username,
-          iconURL: message.author.displayAvatarURL({ dynamic: true }),
-        }
-      )
-      .setTitle('Ríanse por favor :c')
-      .setImage(momazo.url)
-      .setDescription(momazo.name)
+      .setAuthor({
+        name: message.member.nickname ?? message.author.username,
+        iconURL: message.author.displayAvatarURL({ dynamic: true }),
+      })
+      .setTitle("Ríanse por favor :c")
+      /* .setImage(momazo.url)
+      .setDescription(momazo.name) */
       .setColor(0x81d4fa)
       .setTimestamp();
 
-    message.channel.send({embeds: [embedMeme]});
+    message.channel.send({ embeds: [embedMeme] });
   },
 };

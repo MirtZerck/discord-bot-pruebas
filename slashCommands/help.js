@@ -79,6 +79,7 @@ export const helpSlashCommands = {
     const response = await interaction.reply({
       embeds: [initialEmbed],
       components: [menuComponents, buttonComponents],
+      ephemeral: true,
     });
 
     const collector = await response.createMessageComponentCollector({
@@ -86,11 +87,10 @@ export const helpSlashCommands = {
     });
     collector.on("collect", async (componentInteraction) => {
       if (componentInteraction.user.id !== interaction.user.id) {
-        /*   await componentInteraction.fetchReply();
-        await componentInteraction.followUp({
+        await componentInteraction.reply({
           content: "No puedes interactuar con este menú.",
           ephemeral: true,
-        }); */
+        });
         return;
       }
       if (componentInteraction.isStringSelectMenu()) {
@@ -118,17 +118,25 @@ export const helpSlashCommands = {
             .setColor(Colors.DarkRed)
             .setTimestamp();
           await response.edit({ embeds: [embedCancelado], components: [] });
-          return collector.stop("Cancelado");
+          return collector.stop("cancelado");
         }
       }
     });
     collector.on("end", async (collected, reason) => {
-      if(reason === "cancelado") return;
+      setTimeout(() => {
+        response.delete();
+      }, 5 * 1000);
 
-      const embedTimeOut = new EmbedBuilder().setTitle("Ayuda").setDescription("Se ha terminado el tiempo").setColor(Colors.DarkRed).setTimestamp()
+      if (reason === "cancelado") return;
 
-      return await response.edit({embeds: [embedTimeOut], components: []})
-    })
+      const embedTimeOut = new EmbedBuilder()
+        .setTitle("Ayuda")
+        .setDescription("Se ha terminado el tiempo")
+        .setColor(Colors.DarkRed)
+        .setTimestamp();
+
+      return await response.edit({ embeds: [embedTimeOut], components: [] });
+    });
   },
 };
 

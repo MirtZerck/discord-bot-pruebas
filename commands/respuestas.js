@@ -24,6 +24,7 @@ import {
   rolIDClanPRuebas,
 } from "../constants/rolesID.js";
 import { getRankTabla1, setUserRankTabla1 } from "../constants/clanService.js";
+import { getPromptGTP } from "../utils/openai-api.js";
 
 export const onMessageCreate = async (client) => {
   const prefix = prefijo;
@@ -61,12 +62,24 @@ export const onMessageCreate = async (client) => {
             value: `El prefijo es ${prefijo}`,
             inline: true,
           },
-          { name: "Información", value: `Escribe ${prefijo}help`, inline: true }
+          {
+            name: "Información",
+            value: `Escribe ${prefijo}help`,
+            inline: true,
+          }
         )
         .setColor(0x81d4fa)
         .setTimestamp();
 
-      message.reply({ embeds: [embedPrefix] });
+      if (message.author.id !== "526597356091604994") {
+        message.reply({ embeds: [embedPrefix] });
+      } else {
+        const prompt = message.content.slice(prefixBotXpellitPrefix.length + 1);
+        if (!prompt) return message.reply({ embeds: [embedPrefix] });
+        await message.channel.sendTyping();
+        const response = await getPromptGTP(prompt);
+        message.reply({ content: response });
+      }
     }
 
     if (message.member.roles.cache.get(rolGatosGatunosXpellit)) {
@@ -125,9 +138,13 @@ export const onMessageCreate = async (client) => {
           });
       }
 
-      /* setTimeout(() => {
-          message.delete(); 
-      }, 5 * 1000); */
+      setTimeout(() => {
+        try {
+          message.delete();
+        } catch (error) {
+          console.log(error);
+        }
+      }, 5 * 1000);
     }
 
     if (!message.content.startsWith(prefix)) return;
@@ -170,7 +187,11 @@ export const onMessageCreate = async (client) => {
           );
 
           message.channel.send(deleteRespuestaFormateado);
-          /* message.delete(); */
+          try {
+            message.delete();
+          } catch (error) {
+            console.log(error);
+          }
           break;
         }
         case "random_replys": {
@@ -252,7 +273,11 @@ export const onMessageCreate = async (client) => {
           (cmd.alias && cmd.alias.includes(commandName))
       );
       if (command) {
-        command.execute(message, args, commandBody);
+        try {
+          command.execute(message, args, commandBody);
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
 
