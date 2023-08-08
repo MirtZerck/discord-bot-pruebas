@@ -13,8 +13,8 @@ export const sendMichiTextCommand = {
 
     const embedMichiHablador = new EmbedBuilder()
       .setAuthor({
-        name: message.member.nickname ?? message.author.username,
-        iconURL: message.author.displayAvatarURL({ dynamic: true }),
+        name: "Gatos Gatunos",
+        iconURL: "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply",
       })
       .setImage(michiHablador)
       .setColor(0x81d4fa)

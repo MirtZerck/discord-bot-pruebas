@@ -46,7 +46,7 @@ export const clanRankingClan = {
           name: message.member.nickname ?? message.author.username,
           iconURL: message.author.displayAvatarURL({ dynamic: true }),
         })
-        .setTitle(`**El ganador se llevará 10$**`)
+        .setTitle(`**Ranking por méritos**`)
         .setDescription(`${puestos}`)
         .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
         .setColor(0x81d4fa)

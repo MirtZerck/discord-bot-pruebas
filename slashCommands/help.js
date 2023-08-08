@@ -16,7 +16,7 @@ import { linksImages } from "../constants/links_images.js";
 
 export const helpSlashCommands = {
   data: new SlashCommandBuilder()
-    .setName("ayuda")
+    .setName("help")
     .setDescription("Revisa los comandos existentes"),
 
   async execute(interaction) {

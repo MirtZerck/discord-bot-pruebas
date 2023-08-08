@@ -11,7 +11,7 @@ export const clanRankingServidor = {
   alias: ["rankserver", "rs"],
 
   async execute(message, args) {
-    if (!message.member.roles.cache.get(rolIDClanPRuebas)) return;
+    if (!message.member.roles.cache.get(rolGatosGatunosXpellit)) return;
 
     const rankt1 = await getRankTabla1();
     if (!rankt1) return message.reply("No existe todavía");

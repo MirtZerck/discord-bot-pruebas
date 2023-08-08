@@ -74,11 +74,17 @@ export const onMessageCreate = async (client) => {
       if (message.author.id !== "526597356091604994") {
         message.reply({ embeds: [embedPrefix] });
       } else {
-        const prompt = message.content.slice(prefixBotXpellitPrefix.length + 1);
-        if (!prompt) return message.reply({ embeds: [embedPrefix] });
-        await message.channel.sendTyping();
-        const response = await getPromptGTP(prompt);
-        message.reply({ content: response });
+        try {
+          const prompt = message.content.slice(
+            prefixBotXpellitPrefix.length + 1
+          );
+          if (!prompt) return message.reply({ embeds: [embedPrefix] });
+          await message.channel.sendTyping();
+          const response = await getPromptGTP(prompt);
+          message.reply({ content: response });
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
 
