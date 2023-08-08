@@ -4,6 +4,7 @@ import { EmbedBuilder } from "discord.js";
 import {
   rolGatosGatunosXpellit,
   rolIDClanPRuebas,
+  rolXpellGames,
 } from "../constants/rolesID.js";
 
 export const clanRankingServidor = {
@@ -11,7 +12,7 @@ export const clanRankingServidor = {
   alias: ["rankserver", "rs"],
 
   async execute(message, args) {
-    if (!message.member.roles.cache.get(rolGatosGatunosXpellit)) return;
+    if (!message.member.roles.cache.get(rolXpellGames)) return;
 
     const rankt1 = await getRankTabla1();
     if (!rankt1) return message.reply("No existe todavía");
@@ -42,6 +43,6 @@ export const clanRankingServidor = {
       .setFooter({ text: "Este es el ranking de actividad del clan" })
       .setTimestamp();
 
-    message.channel.send({embeds: [embed]});
+    message.channel.send({ embeds: [embed] });
   },
 };
