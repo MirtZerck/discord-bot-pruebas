@@ -99,7 +99,8 @@ export const onMessageCreate = async (client) => {
         const user = rankt1[message.author.id];
         // Si ha pasado 1 minuto
         if (timestamp - user.last >= 60 * 1000) {
-          user.puntos = user.puntos + 1;
+          const puntosGanados = Math.floor(Math.random() * 3) + 3;
+          user.puntos += puntosGanados;
           user.last = timestamp;
           setUserRankTabla1(message.author.id, user);
         }
