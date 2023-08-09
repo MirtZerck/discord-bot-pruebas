@@ -62,3 +62,25 @@ export function replaceArgumentText(
   }
   return text.replace("respuesta", respuesta);
 }
+
+export function replaceBlockCommandsNames(
+  text,
+  message,
+  commandBody,
+  commandName,
+  args
+) {
+  if (!text.includes("command")) return text;
+
+  let command = "";
+  switch (commandName) {
+    case "bloquearinteracciones" || "blockinteractions": {
+      command = "all";
+      break;
+    }
+    case "bloquearabrazos" || "blockhugs": {
+      command = "abrazos";
+      break;
+    }
+  }
+}

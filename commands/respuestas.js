@@ -24,8 +24,13 @@ import {
   rolIDClanPRuebas,
   rolXpellGames,
 } from "../constants/rolesID.js";
-import { getRankXpellitDiscord, setUserRankXpellitDiscord } from "../constants/clanService.js";
+import {
+  getRankXpellitDiscord,
+  setUserRankXpellitDiscord,
+} from "../constants/clanService.js";
 import { getPromptGTP } from "../utils/openai-api.js";
+import { mirtZerckID } from "../constants/users_ID.js";
+import { gatosGatunosXpellit } from "../constants/canalesID.js";
 
 export const onMessageCreate = async (client) => {
   const prefix = prefijo;
@@ -49,6 +54,8 @@ export const onMessageCreate = async (client) => {
       message.content.startsWith(prefixBotPersonalPrefix) ||
       message.content.startsWith(prefixBotXpellitPrefix)
     ) {
+      const rolID = message.member.roles.cache.get(gatosGatunosXpellit);
+
       const embedPrefix = new EmbedBuilder()
         .setAuthor({
           name: "Gatos Gatunos",
@@ -72,7 +79,7 @@ export const onMessageCreate = async (client) => {
         .setColor(0x81d4fa)
         .setTimestamp();
 
-      if (message.author.id !== "526597356091604994") {
+      if (message.author.id !== mirtZerckID && !rolID) {
         message.reply({ embeds: [embedPrefix] });
       } else {
         try {
@@ -116,7 +123,7 @@ export const onMessageCreate = async (client) => {
     }
 
     if (message.content.startsWith(specialPrefix)) {
-      if (message.author.id !== "526597356091604994") return;
+      if (message.author.id !== mirtZerckID) return;
 
       const messageContent = message.content.trim();
       const content = messageContent.slice(specialPrefix.length, -3).trim();

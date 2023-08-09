@@ -1,3 +1,4 @@
+import { mirtZerckID } from "../constants/users_ID.js";
 import { obtenerMichiHablador } from "../utils/api_michi_hablando.js";
 import { EmbedBuilder } from "discord.js";
 
@@ -7,7 +8,7 @@ export const sendBossBait = {
 
   async execute(message, args, commandBody) {
     if (
-      message.author.id !== "526597356091604994" &&
+      message.author.id !== mirtZerckID &&
       message.author.id !== "591050519242342431" &&
       message.author.id !== "228709857249722369" &&
       message.author.id !== "651994704560521226" &&

@@ -10,6 +10,7 @@ import {
   rolIDClanPRuebas,
 } from "../constants/rolesID.js";
 import { getMemberByID } from "../constants/get-user.js";
+import { mirtZerckID } from "../constants/users_ID.js";
 
 export const clanRankingClan = {
   name: "rankingclan",
@@ -55,7 +56,7 @@ export const clanRankingClan = {
 
       return message.channel.send({ embeds: [embed] });
     } else if (arg === "-add") {
-      if (message.author.id !== "526597356091604994")
+      if (message.author.id !== mirtZerckID)
         return message.reply("No tienes permiso.");
 
       if (!userID) return message.reply("Ingresa el ID del usuario");
@@ -89,7 +90,7 @@ export const clanRankingClan = {
         );
       }
     } else if (arg === "-set") {
-      if (message.author.id !== "526597356091604994")
+      if (message.author.id !== mirtZerckID)
         return message.reply("No tienes permiso.");
 
       if (!userID) return message.reply("Ingresa el ID del usuario");

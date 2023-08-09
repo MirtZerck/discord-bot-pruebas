@@ -15,14 +15,17 @@ import { cookieUserCommand } from "./cookie.js";
 import { hornyUserCommand } from "./horny.js";
 import { pokeUserCommand } from "./poke.js";
 import { danceUserCommand } from "./dance.js";
-import { blockHugCommand } from "./bloquear-interacciones.js";
+import {
+  blockInteractionsCommands,
+  blockHugCommand,
+} from "./bloquear-interacciones.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 
 export const arrayCommands = [
   userInfoCommand,
   userAvatarCommand,
   curiosFactCommand,
- /*  sendMemeCommand, */
+  /*  sendMemeCommand, */
   sendMichiTextCommand,
   helpCommand,
   sendBossBait,
@@ -36,6 +39,7 @@ export const arrayCommands = [
   hornyUserCommand,
   pokeUserCommand,
   danceUserCommand,
-  blockHugCommand,
+  /* blockInteractionsCommands,
+  blockHugCommand, */
   /* SendTraduccion, */
 ];
