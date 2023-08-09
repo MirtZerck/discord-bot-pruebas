@@ -24,7 +24,7 @@ import {
   rolIDClanPRuebas,
   rolXpellGames,
 } from "../constants/rolesID.js";
-import { getRankTabla1, setUserRankTabla1 } from "../constants/clanService.js";
+import { getRankXpellitDiscord, setUserRankXpellitDiscord } from "../constants/clanService.js";
 import { getPromptGTP } from "../utils/openai-api.js";
 
 export const onMessageCreate = async (client) => {
@@ -91,18 +91,18 @@ export const onMessageCreate = async (client) => {
 
     if (message.member.roles.cache.get(rolXpellGames)) {
       const timestamp = new Date().getTime();
-      const rankt1 = await getRankTabla1();
-      const keys = Object.keys(rankt1);
+      const rankDiscord = await getRankXpellitDiscord();
+      const keys = Object.keys(rankDiscord);
 
       //Revisar si ya existe
       if (keys.includes(message.author.id)) {
-        const user = rankt1[message.author.id];
+        const user = rankDiscord[message.author.id];
         // Si ha pasado 1 minuto
         if (timestamp - user.last >= 60 * 1000) {
           const puntosGanados = getRandomNumber(3, 6 - 1);
           user.puntos = user.puntos + puntosGanados;
           user.last = timestamp;
-          setUserRankTabla1(message.author.id, user);
+          setUserRankXpellitDiscord(message.author.id, user);
         }
       } else {
         //Si no existe, se registra con puntos: 1
@@ -111,7 +111,7 @@ export const onMessageCreate = async (client) => {
           nickname: message.member.nickname ?? message.author.username,
           puntos: 1,
         };
-        setUserRankTabla1(message.author.id, user);
+        setUserRankXpellitDiscord(message.author.id, user);
       }
     }
 

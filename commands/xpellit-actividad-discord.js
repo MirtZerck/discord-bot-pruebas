@@ -1,5 +1,5 @@
 import { db } from "../michi.js";
-import { getRankTabla1 } from "../constants/clanService.js";
+import { getRankXpellitDiscord } from "../constants/clanService.js";
 import { EmbedBuilder } from "discord.js";
 import {
   rolGatosGatunosXpellit,
@@ -7,16 +7,16 @@ import {
   rolXpellGames,
 } from "../constants/rolesID.js";
 
-export const clanRankingServidor = {
+export const xpellitRankingServidor = {
   name: "rankingservidor",
   alias: ["rankserver", "rs"],
 
   async execute(message, args) {
     if (!message.member.roles.cache.get(rolXpellGames)) return;
 
-    const rankt1 = await getRankTabla1();
-    if (!rankt1) return message.reply("No existe todavía");
-    const rank = Object.entries(rankt1);
+    const rankingDiscord = await getRankXpellitDiscord();
+    if (!rankingDiscord) return message.reply("No existe todavía");
+    const rank = Object.entries(rankingDiscord);
 
     let puestos = "";
     //ordenar rank de mayor a menor
@@ -40,7 +40,7 @@ export const clanRankingServidor = {
       .setDescription(`${puestos}`)
       .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
       .setColor(0x81d4fa)
-      .setFooter({ text: "Este es el ranking de actividad del clan" })
+      .setFooter({ text: "Este es el ranking de actividad del servidor" })
       .setTimestamp();
 
     message.channel.send({ embeds: [embed] });

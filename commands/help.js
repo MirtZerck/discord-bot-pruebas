@@ -81,7 +81,7 @@ export const helpCommand = {
     });
 
     const collector = await response.createMessageComponentCollector({
-      time: 5 * 60 * 1000,
+      time: 3 * 60 * 1000,
     });
     collector.on("collect", async (componentmessage) => {
       if (componentmessage.user.id !== message.author.id) {
@@ -120,7 +120,7 @@ export const helpCommand = {
     collector.on("end", async (collected, reason) => {
       setTimeout(() => {
         response.delete();
-      }, 5 * 1000);
+      }, 3 * 1000);
 
       if (reason === "cancelado") return;
 

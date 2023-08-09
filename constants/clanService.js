@@ -1,9 +1,9 @@
 import { db } from "../michi.js";
 
-export async function getRankTabla1() {
-  const tabla1 = await db.child("clan").child("tabla1").once("value");
-  if (tabla1.exists()) {
-    return tabla1.val();
+export async function getRankXpellitDiscord() {
+  const rankingDiscord = await db.child("xpellitGlobal").child("rankingDiscord").once("value");
+  if (rankingDiscord.exists()) {
+    return rankingDiscord.val();
   } else {
     return undefined;
   }
@@ -18,8 +18,8 @@ export async function getRankTabla2() {
   }
 }
 
-export async function setUserRankTabla1(id, values) {
-  return await db.child("clan").child("tabla1").child(id).set(values);
+export async function setUserRankXpellitDiscord(id, values) {
+  return await db.child("xpellitGlobal").child("rankingDiscord").child(id).set(values);
 }
 
 export async function setUserRankTabla2(id, values) {
