@@ -53,7 +53,7 @@ export const onMessageCreate = async (client) => {
       message.content.startsWith(prefixBotPersonalPrefix) ||
       message.content.startsWith(prefixBotXpellitPrefix)
     ) {
-      const rolID = message.member.roles.cache.get(rolGatosGatunosXpellit);
+      const rolID = message.member.roles.cache.get(rolXpellGames);
 
       const embedPrefix = new EmbedBuilder()
         .setAuthor({
@@ -79,10 +79,10 @@ export const onMessageCreate = async (client) => {
         .setTimestamp();
 
       if (
-        message.author.id !== mirtZerckID &&
+        /* message.author.id !== mirtZerckID &&
         message.author.id !== inuYashaID &&
         message.author.id !== laffeysID &&
-        message.author.id !== shizuchID &&
+        message.author.id !== shizuchID && */
         !rolID
       ) {
         message.reply({ embeds: [embedPrefix] });
