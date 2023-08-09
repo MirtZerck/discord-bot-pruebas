@@ -1,4 +1,4 @@
-import { mirtZerckID } from "../constants/users_ID.js";
+import { inuYashaID, mirtZerckID } from "../constants/users_ID.js";
 import { obtenerMichiHablador } from "../utils/api_michi_hablando.js";
 import { EmbedBuilder } from "discord.js";
 
@@ -10,7 +10,7 @@ export const sendBossBait = {
     if (
       message.author.id !== mirtZerckID &&
       message.author.id !== "591050519242342431" &&
-      message.author.id !== "228709857249722369" &&
+      message.author.id !== inuYashaID &&
       message.author.id !== "651994704560521226" &&
       message.author.id !== "936864558960767019"
     )
