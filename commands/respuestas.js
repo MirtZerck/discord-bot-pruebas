@@ -22,6 +22,7 @@ import { EmbedBuilder, Events } from "discord.js";
 import {
   rolGatosGatunosXpellit,
   rolIDClanPRuebas,
+  rolInteraccionMirtZerck,
   rolXpellGames,
 } from "../constants/rolesID.js";
 import {
@@ -29,7 +30,12 @@ import {
   setUserRankXpellitDiscord,
 } from "../constants/clanService.js";
 import { getPromptGTP } from "../utils/openai-api.js";
-import { inuYashaID, laffeysID, mirtZerckID, shizuchID } from "../constants/users_ID.js";
+import {
+  inuYashaID,
+  laffeysID,
+  mirtZerckID,
+  shizuchID,
+} from "../constants/users_ID.js";
 
 export const onMessageCreate = async (client) => {
   const prefix = prefijo;
@@ -53,7 +59,8 @@ export const onMessageCreate = async (client) => {
       message.content.startsWith(prefixBotPersonalPrefix) ||
       message.content.startsWith(prefixBotXpellitPrefix)
     ) {
-      const rolID = message.member.roles.cache.get(rolXpellGames);
+      const rolID1 = message.member.roles.cache.get(rolXpellGames);
+      const rolID2 = message.member.roles.cache.get(rolInteraccionMirtZerck);
 
       const embedPrefix = new EmbedBuilder()
         .setAuthor({
@@ -83,7 +90,8 @@ export const onMessageCreate = async (client) => {
         message.author.id !== inuYashaID &&
         message.author.id !== laffeysID &&
         message.author.id !== shizuchID && */
-        !rolID
+        !rolID1 &&
+        !rolID2
       ) {
         message.reply({ embeds: [embedPrefix] });
       } else {
