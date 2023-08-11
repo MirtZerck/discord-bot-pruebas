@@ -114,7 +114,7 @@ export const onMessageCreate = async (client) => {
         if (!prompt) return message.reply({ embeds: [embedPrefix] });
         await message.channel.sendTyping();
         message.reply(
-          "Ay no 😾🙅‍♀️, no me hables con ese rango tan bajo, eres un pollo. 😾👎😣"
+          "¡Hola, amiguito! ¡Nya~! 💕 Lamento mucho decirte que solo puedo interactuar con los maravillosos miembros del top 20 en este momento. Pero no te preocupes, ¡sigue esforzándote y quizás puedas unirte a nosotros algún día! 🐾🌟 ¡Miau!"
         );
       } else {
         try {
