@@ -1,5 +1,7 @@
 export const mirtZerckID = "526597356091604994";
 
+export const abisitaID = "936864558960767019";
+
 export const inuYashaID = "228709857249722369";
 
 export const laffeysID = "743607035303690290";

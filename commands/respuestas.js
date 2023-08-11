@@ -20,6 +20,10 @@ import {
 import { getRandomNumber } from "../utils/utilsFunctions.js";
 import { EmbedBuilder, Events } from "discord.js";
 import {
+  rolCetroDiamanteXpellit,
+  rolDragonAzulXpellit,
+  rolDragonPlateadoXpellit,
+  rolDragonRojoXpellit,
   rolGatosGatunosXpellit,
   rolIDClanPRuebas,
   rolInteraccionMirtZerck,
@@ -31,6 +35,7 @@ import {
 } from "../constants/clanService.js";
 import { getPromptGTP } from "../utils/openai-api.js";
 import {
+  abisitaID,
   inuYashaID,
   laffeysID,
   mirtZerckID,
@@ -61,6 +66,10 @@ export const onMessageCreate = async (client) => {
     ) {
       const rolID1 = message.member.roles.cache.get(rolXpellGames);
       const rolID2 = message.member.roles.cache.get(rolInteraccionMirtZerck);
+      const rolID3 = message.member.roles.cache.get(rolDragonPlateadoXpellit);
+      const rolID4 = message.member.roles.cache.get(rolDragonRojoXpellit);
+      const rolID5 = message.member.roles.cache.get(rolDragonAzulXpellit);
+      const rolID6 = message.member.roles.cache.get(rolCetroDiamanteXpellit);
 
       const embedPrefix = new EmbedBuilder()
         .setAuthor({
@@ -86,14 +95,21 @@ export const onMessageCreate = async (client) => {
         .setTimestamp();
 
       if (
-        /* message.author.id !== mirtZerckID &&
+        message.author.id !== mirtZerckID &&
+        message.author.id !== abisitaID &&
         message.author.id !== inuYashaID &&
-        message.author.id !== laffeysID &&
-        message.author.id !== shizuchID && */
-        !rolID1 &&
-        !rolID2
+        !rolID2 &&
+        !rolID3 &&
+        !rolID4 &&
+        !rolID5 &&
+        !rolID6
       ) {
-        message.reply({ embeds: [embedPrefix] });
+        const prompt = message.content.slice(prefixBotXpellitPrefix.length + 1);
+        if (!prompt) return message.reply({ embeds: [embedPrefix] });
+        await message.channel.sendTyping();
+        message.reply(
+          "Ay no 😾🙅‍♀️, no me hables con ese rango tan bajo, eres un pollo. 😾👎😣"
+        );
       } else {
         try {
           const prompt = message.content.slice(
