@@ -17,3 +17,5 @@ export const rolCetroDiamanteXpellit = "1139165410667810826";
 export const rolCetroRubyXpellit = "1139165806417166366";
 
 export const rolCetroSafiroXpellit = "1139166722109231164";
+
+export const rolBoosterXpellit = "727740885529264201";
