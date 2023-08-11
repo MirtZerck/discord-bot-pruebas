@@ -21,6 +21,8 @@ import { getRandomNumber } from "../utils/utilsFunctions.js";
 import { EmbedBuilder, Events } from "discord.js";
 import {
   rolCetroDiamanteXpellit,
+  rolCetroRubyXpellit,
+  rolCetroSafiroXpellit,
   rolDragonAzulXpellit,
   rolDragonPlateadoXpellit,
   rolDragonRojoXpellit,
@@ -70,6 +72,8 @@ export const onMessageCreate = async (client) => {
       const rolID4 = message.member.roles.cache.get(rolDragonRojoXpellit);
       const rolID5 = message.member.roles.cache.get(rolDragonAzulXpellit);
       const rolID6 = message.member.roles.cache.get(rolCetroDiamanteXpellit);
+      const rolID7 = message.member.roles.cache.get(rolCetroRubyXpellit);
+      const rolID8 = message.member.roles.cache.get(rolCetroSafiroXpellit);
 
       const embedPrefix = new EmbedBuilder()
         .setAuthor({
@@ -102,7 +106,9 @@ export const onMessageCreate = async (client) => {
         !rolID3 &&
         !rolID4 &&
         !rolID5 &&
-        !rolID6
+        !rolID6 &&
+        !rolID7 &&
+        !rolID8
       ) {
         const prompt = message.content.slice(prefixBotXpellitPrefix.length + 1);
         if (!prompt) return message.reply({ embeds: [embedPrefix] });
