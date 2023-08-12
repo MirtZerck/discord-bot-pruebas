@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { convertDateToString } from "../utils/format-date.js";
-import { getMemberByID } from "../constants/get-user.js";
+import { getMemberByFilter } from "../constants/get-user.js";
 
 export const userInfoCommand = {
   name: "userinfo",
@@ -10,29 +10,33 @@ export const userInfoCommand = {
     // message.reply('Comando userinfo');
 
     const userMention = message.mentions.members.first();
-    let user_id;
+    let filtro;
 
     if (userMention) {
-      user_id = userMention.user.id;
+      filtro = userMention.user.id;
     } else if (args[0]) {
-      user_id = args[0];
+      filtro = args[0];
     } else {
-      user_id = message.author.id;
+      filtro = message.author.id;
     }
 
-    const user = getMemberByID(message, user_id);
+    if (filtro.length < 3)
+      return message.reply(
+        "El usuario a mencionar debe tener al menos 3 carácteres."
+      );
+    const member = getMemberByFilter(message, filtro);
 
-    if (!user) return message.reply("El usuario no existe");
+    if (!member) return message.reply("El usuario no existe");
 
-    const fechaRegistro = convertDateToString(user.user.createdAt);
+    const fechaRegistro = convertDateToString(member.user.createdAt);
     const fechaIngreso = convertDateToString(message.member.joinedAt);
     const messageEmbed = new EmbedBuilder()
       .setAuthor({
         name: message.member.nickname ?? message.author.username,
         iconURL: message.author.displayAvatarURL({ dynamic: true }),
       })
-      .setTitle(`Información de ${user.user.username}`)
-      .setThumbnail(user.user.displayAvatarURL({ dynamic: true }))
+      .setTitle(`Información de ${member.user.username}`)
+      .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
       .setDescription(`Información del usuario en el servidor`)
       .addFields(
         {
@@ -43,7 +47,7 @@ export const userInfoCommand = {
         { name: "Ingreso", value: fechaIngreso, inline: true }
       )
       .setColor(0x81d4fa)
-      .setFooter(`ID ${user_id}`)
+      .setFooter({ text: `ID ${member.user.id}` })
       .setTimestamp();
 
     message.channel.send({ embeds: [messageEmbed] });

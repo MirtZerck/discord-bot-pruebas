@@ -1,8 +1,8 @@
 import { arrayCommands } from "./index.js";
 import {
   prefijo,
-  prefixBotPersonalPrefix,
-  prefixBotXpellitPrefix,
+  botIDPersonal,
+  botIDXpellit,
   specialPrefix,
 } from "../constants/prefix.js";
 import { linksImages } from "../constants/links_images.js";
@@ -63,19 +63,30 @@ export const onMessageCreate = async (client) => {
 
     // Si son del clan
 
-    if (
+    /* if (
       message.content.startsWith(prefixBotPersonalPrefix) ||
       message.content.startsWith(prefixBotXpellitPrefix)
+    ) */
+    const mention = message.mentions.members.first();
+
+    if (
+      mention &&
+      (mention.user.id === botIDXpellit || mention.user.id === botIDPersonal)
     ) {
-      const rolID1 = message.member.roles.cache.get(rolXpellGames);
-      const rolID2 = message.member.roles.cache.get(rolInteraccionMirtZerck);
-      const rolID3 = message.member.roles.cache.get(rolDragonPlateadoXpellit);
-      const rolID4 = message.member.roles.cache.get(rolDragonRojoXpellit);
-      const rolID5 = message.member.roles.cache.get(rolDragonAzulXpellit);
-      const rolID6 = message.member.roles.cache.get(rolCetroDiamanteXpellit);
-      const rolID7 = message.member.roles.cache.get(rolCetroRubyXpellit);
-      const rolID8 = message.member.roles.cache.get(rolCetroSafiroXpellit);
-      const rolID9 = message.member.roles.cache.get(rolBoosterXpellit);
+      const allowID = [mirtZerckID, abisitaID, inuYashaID];
+
+      const allowsRols = [
+        rolXpellGames,
+        rolInteraccionMirtZerck,
+        rolDragonPlateadoXpellit,
+        rolDragonRojoXpellit,
+        rolDragonAzulXpellit,
+        rolCetroDiamanteXpellit,
+        rolCetroRubyXpellit,
+        rolCetroSafiroXpellit,
+        rolBoosterXpellit,
+        rolIDClanPRuebas,
+      ];
 
       const embedPrefix = new EmbedBuilder()
         .setAuthor({
@@ -101,30 +112,31 @@ export const onMessageCreate = async (client) => {
         .setTimestamp();
 
       if (
-        message.author.id !== mirtZerckID &&
-        message.author.id !== abisitaID &&
-        message.author.id !== inuYashaID &&
-        !rolID2 &&
-        !rolID3 &&
-        !rolID4 &&
-        !rolID5 &&
-        !rolID6 &&
-        !rolID7 &&
-        !rolID8 &&
-        !rolID9
+        message.content.trim() === `<@${botIDXpellit}>` ||
+        message.content.trim() === `<@${botIDPersonal}>`
+      )
+        return message.reply({ embeds: [embedPrefix] });
+
+      if (
+        !(
+          allowID.some((id) => message.author.id === id) ||
+          allowsRols.some(
+            (rol) => message.member.roles.cache.get(rol) !== undefined
+          )
+        )
       ) {
-        const prompt = message.content.slice(prefixBotXpellitPrefix.length + 1);
-        if (!prompt) return message.reply({ embeds: [embedPrefix] });
+        /* const prompt = message.content.slice(botIDXpellit.length + 1); 
+        if (!prompt) return message.reply({ embeds: [embedPrefix] }); */
+
         await message.channel.sendTyping();
+
         message.reply(
           "¡Hola, amiguito! ¡Nya~! 💕 Lamento mucho decirte que solo puedo interactuar con los maravillosos miembros del top 20 en este momento. Pero no te preocupes, ¡sigue esforzándote y quizás puedas unirte a nosotros algún día! 🐾🌟 ¡Miau!"
         );
       } else {
         try {
-          const prompt = message.content.slice(
-            prefixBotXpellitPrefix.length + 1
-          );
-          if (!prompt) return message.reply({ embeds: [embedPrefix] });
+          const user = message.member.nickname ?? message.author.globalName;
+          const prompt = `${user}: ${message.content}`;
           await message.channel.sendTyping();
           const response = await getPromptGTP(prompt);
           message.reply({ content: response });
