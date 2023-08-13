@@ -86,6 +86,7 @@ export const onMessageCreate = async (client) => {
         rolCetroSafiroXpellit,
         rolBoosterXpellit,
         rolIDClanPRuebas,
+        rolGatosGatunosXpellit,
       ];
 
       const embedPrefix = new EmbedBuilder()
