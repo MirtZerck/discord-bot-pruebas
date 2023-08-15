@@ -331,6 +331,35 @@ export const onMessageCreate = async (client) => {
 
           break;
         }
+        case "info": {
+          const values = Object.values(reply);
+          const img = values[0];
+          const text = values[1];
+          const respuesta = replaceArgumentText(
+            text,
+            message,
+            commandBody,
+            commandName,
+            args
+          );
+          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
+
+          const imageEmbed = new EmbedBuilder()
+            .setAuthor({
+              name: message.member.nickname ?? message.author.username,
+              iconURL: message.author.displayAvatarURL({ dynamic: true }),
+            })
+            .setTitle(`Información Importante`)
+            .setDescription(respuestaFormateado)
+            .setThumbnail()
+            .setImage(img)
+            .setColor(0x81d4fa)
+            .setTimestamp();
+
+          message.channel.send({ embeds: [imageEmbed] });
+
+          break;
+        }
       }
     } else {
       const command = arrayCommands.find(
