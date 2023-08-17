@@ -21,9 +21,9 @@ export async function getPromptGTP(prompt) {
   messages.push(promptUser);
 
   let newMessages = [];
-  if (messages.length > 10) {
+  if (messages.length > 14) {
     messages.forEach((msg, index) => {
-      if (index === 0 || index > messages.length - 10) {
+      if (index < 7 || index > messages.length - 10) {
         newMessages.push(msg);
       }
     });
