@@ -48,7 +48,7 @@ dotenv.config();
 export const token = process.env.TOKEN;
 export const APPLICATION_ID = process.env.APPLICATION_ID;
 
-const client = new Client({
+export const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,

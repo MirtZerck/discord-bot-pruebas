@@ -1,7 +1,8 @@
 // Importación de módulos y constantes desde otros archivos
-import { db } from "../michi.js"; // Importa la base de datos
+import { client, db } from "../michi.js"; // Importa la base de datos
 import { EmbedBuilder } from "discord.js"; // Importa una clase para construir mensajes embebidos
 import { rolEventsManagersXpellit } from "../constants/rolesID.js"; // Importa un rol específico
+import { recompensasChatXpellit } from "../constants/canalesID.js";
 
 // Definición de un objeto que contiene métodos relacionados con las monedas virtuales
 export const systemCoins = {
@@ -101,16 +102,29 @@ export const systemCoins = {
 
         // Actualizar la información del usuario en la base de datos y manejar la respuesta
         setUserCoins(filtro, user).then((res) => {
+          // Preparamos el Mensaje para los logs
+          let logMessage = "";
+
+          // Verificamos si las monedas añadidas son mayores a 0
           if (monedas > 0) {
+            logMessage = `${message.author.username} ha añadido ${monedas} coins a ${user.nickname}.`;
             message.channel.send(
               `Se han añadido ${monedas} coins a **${user.nickname}**.`
             );
           } else {
+            logMessage = `${message.author.username} ha restado ${Math.abs(
+              monedas
+            )} coins a ${user.nickname}.`;
             message.channel.send(
               `Se han removido **${Math.abs(monedas)}** coins a **${
                 user.nickname
               }**`
             );
+          }
+          //Enviar log al canal de logs
+          const logsChannel = client.channels.cache.get(recompensasChatXpellit);
+          if (logsChannel) {
+            logsChannel.send(logMessage);
           }
         });
       } else {
@@ -160,9 +174,16 @@ export const systemCoins = {
 
       // Actualizar la información del usuario en la base de datos y manejar la respuesta
       setUserCoins(filtro, user).then((res) => {
+        const logMessage = `${message.author.username} ha modificado las coins de ${user.nickname} a un total de ${coins}.`;
         message.channel.send(
           `Se ha ingresado el usuario **${user.nickname}** con **${coins}** coins.`
         );
+
+        // Enviar log al canal de logs
+        const logsChannel = client.channels.cache.get(recompensasChatXpellit);
+        if (logsChannel) {
+          logsChannel.send(logMessage);
+        }
       });
     } else if (arg === "-delete") {
       // Verificar si el autor del mensaje tiene el rol de Event Manager de Xpellit
@@ -173,7 +194,14 @@ export const systemCoins = {
       if (keys.includes(filtro)) {
         // Eliminar todas las monedas del usuario de la base de datos y manejar la respuesta
         deleteUserCoins(filtro).then((res) => {
+          const logMessage = `${message.author.username} ha eliminado las coins de ${filtro}.`;
           message.reply(`Se han eliminado todas las coins de ${filtro}.`);
+
+          // Enviar log al canal de logs
+          const logsChannel = client.channels.cache.get(recompensasChatXpellit);
+          if (logsChannel) {
+            logsChannel.send(logMessage);
+          }
         });
       } else {
         return message.reply(`El usuario **${filtro}** no está registrado.`);
