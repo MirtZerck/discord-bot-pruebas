@@ -19,3 +19,5 @@ export const rolCetroRubyXpellit = "1139165806417166366";
 export const rolCetroSafiroXpellit = "1139166722109231164";
 
 export const rolBoosterXpellit = "727740885529264201";
+
+export const rolEventsManagersXpellit = "1130558228523122708";

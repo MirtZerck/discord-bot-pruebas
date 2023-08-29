@@ -19,6 +19,7 @@ import {
   blockInteractionsCommands,
   blockHugCommand,
 } from "./bloquear-interacciones.js";
+import { systemCoins } from "./add_coins.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 
 export const arrayCommands = [
@@ -39,6 +40,7 @@ export const arrayCommands = [
   hornyUserCommand,
   pokeUserCommand,
   danceUserCommand,
+  systemCoins,
   /* blockInteractionsCommands,
   blockHugCommand, */
   /* SendTraduccion, */
