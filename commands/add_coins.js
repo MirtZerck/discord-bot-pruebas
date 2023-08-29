@@ -107,14 +107,14 @@ export const systemCoins = {
 
           // Verificamos si las monedas añadidas son mayores a 0
           if (monedas > 0) {
-            logMessage = `${message.author.username} ha añadido ${monedas} coins a ${user.nickname}.`;
+            logMessage = `${message.author.username} ha añadido **${monedas}** coins a **${user.nickname}.**`;
             message.channel.send(
               `Se han añadido ${monedas} coins a **${user.nickname}**.`
             );
           } else {
-            logMessage = `${message.author.username} ha restado ${Math.abs(
+            logMessage = `${message.author.username} ha restado **${Math.abs(
               monedas
-            )} coins a ${user.nickname}.`;
+            )}** coins a **${user.nickname}.**`;
             message.channel.send(
               `Se han removido **${Math.abs(monedas)}** coins a **${
                 user.nickname
@@ -174,7 +174,7 @@ export const systemCoins = {
 
       // Actualizar la información del usuario en la base de datos y manejar la respuesta
       setUserCoins(filtro, user).then((res) => {
-        const logMessage = `${message.author.username} ha modificado las coins de ${user.nickname} a un total de ${coins}.`;
+        const logMessage = `${message.author.username} ha modificado las coins de **${user.nickname}** a un total de **${coins}.**`;
         message.channel.send(
           `Se ha ingresado el usuario **${user.nickname}** con **${coins}** coins.`
         );
@@ -194,7 +194,7 @@ export const systemCoins = {
       if (keys.includes(filtro)) {
         // Eliminar todas las monedas del usuario de la base de datos y manejar la respuesta
         deleteUserCoins(filtro).then((res) => {
-          const logMessage = `${message.author.username} ha eliminado las coins de ${filtro}.`;
+          const logMessage = `${message.author.username} ha **eliminado todas** las coins de **${filtro}.**`;
           message.reply(`Se han eliminado todas las coins de ${filtro}.`);
 
           // Enviar log al canal de logs
