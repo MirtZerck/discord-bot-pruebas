@@ -65,11 +65,11 @@ export const systemCoins = {
           name: message.member.nickname ?? message.author.globalName,
           iconURL: message.author.displayAvatarURL({ dynamic: true }),
         })
-        .setTitle(`**Xpell Coins**`)
+        .setTitle(`**XPELL COINS**`)
         .setDescription(`${puestos}`)
         .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
         .setColor("Random")
-        .setFooter({ text: "Estas son las Xpell Coins de los usuarios." })
+        .setFooter({ text: "Estas son las XPELL COINS de los usuarios." })
         .setTimestamp();
 
       // Enviar el mensaje embed al canal
@@ -107,16 +107,16 @@ export const systemCoins = {
 
           // Verificamos si las monedas añadidas son mayores a 0
           if (monedas > 0) {
-            logMessage = `${message.author.username} ha añadido **${monedas}** coins a **${user.nickname}.**`;
+            logMessage = `${message.author.username} ha añadido **${monedas}** XPELL COINS a **${user.nickname}.**`;
             message.channel.send(
-              `Se han añadido ${monedas} coins a **${user.nickname}**.`
+              `Se han añadido ${monedas} XPELL COINS a **${user.nickname}**.`
             );
           } else {
             logMessage = `${message.author.username} ha restado **${Math.abs(
               monedas
-            )}** coins a **${user.nickname}.**`;
+            )}** XPELL COINS a **${user.nickname}.**`;
             message.channel.send(
-              `Se han removido **${Math.abs(monedas)}** coins a **${
+              `Se han removido **${Math.abs(monedas)}** XPELL COINS a **${
                 user.nickname
               }**`
             );
@@ -140,7 +140,7 @@ export const systemCoins = {
       if (!filtro) return message.reply("Ingresa el ID del usuario.");
 
       // Verificar si se proporcionó la cantidad de monedas a establecer
-      if (!newMoney) return message.reply("Ingresa las monedas.");
+      if (!newMoney) return message.reply("Ingresa la cantidad de monedas.");
       const coins = parseInt(newMoney);
 
       // Verificar si la cantidad de monedas es un número entero
@@ -174,9 +174,9 @@ export const systemCoins = {
 
       // Actualizar la información del usuario en la base de datos y manejar la respuesta
       setUserCoins(filtro, user).then((res) => {
-        const logMessage = `${message.author.username} ha modificado las coins de **${user.nickname}** a un total de **${coins}.**`;
+        const logMessage = `${message.author.username} ha modificado las XPELL COINS de **${user.nickname}** a un total de **${coins}.**`;
         message.channel.send(
-          `Se ha ingresado el usuario **${user.nickname}** con **${coins}** coins.`
+          `Se ha ingresado el usuario **${user.nickname}** con **${coins}** XPELL COINS.`
         );
 
         // Enviar log al canal de logs
@@ -194,8 +194,8 @@ export const systemCoins = {
       if (keys.includes(filtro)) {
         // Eliminar todas las monedas del usuario de la base de datos y manejar la respuesta
         deleteUserCoins(filtro).then((res) => {
-          const logMessage = `${message.author.username} ha **eliminado todas** las coins de **${filtro}.**`;
-          message.reply(`Se han eliminado todas las coins de ${filtro}.`);
+          const logMessage = `${message.author.username} ha **eliminado todas** las XPELL COINS de **${filtro}.**`;
+          message.reply(`Se han eliminado todas las XPELL COINS de ${filtro}.`);
 
           // Enviar log al canal de logs
           const logsChannel = client.channels.cache.get(recompensasChatXpellit);
@@ -209,7 +209,7 @@ export const systemCoins = {
     } else {
       // En caso de argumento inválido, proporcionar una guía de los argumentos disponibles
       return message.reply(
-        "Argumento no válido. \n\n**Disponibles:** -edit (para sumar o restar), -set (para definir una cantidad), -delete (para borrar todas las coins de un usuario)"
+        "Argumento no válido. \n\n**Disponibles:** -edit (para sumar o restar), -set (para definir una cantidad), -delete (para borrar todas las XPELL COINS de un usuario)"
       );
     }
   },
