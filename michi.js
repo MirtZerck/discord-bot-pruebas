@@ -69,7 +69,7 @@ client.once(Events.ClientReady, async () => {
   client.user.setPresence({
     activities: [
       {
-        name: "Xpellit",
+        name: "Minecraft",
         type: ActivityType.Competing,
       },
     ],
