@@ -21,3 +21,5 @@ export const rolCetroSafiroXpellit = "1139166722109231164";
 export const rolBoosterXpellit = "727740885529264201";
 
 export const rolEventsManagersXpellit = "1130558228523122708";
+
+export const rolDarkWish = "813252723234439188"

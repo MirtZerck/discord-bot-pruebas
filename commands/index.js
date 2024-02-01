@@ -22,6 +22,7 @@ import {
 import { systemCoins } from "./add_coins.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 
+
 export const arrayCommands = [
   userInfoCommand,
   userAvatarCommand,
@@ -41,7 +42,7 @@ export const arrayCommands = [
   pokeUserCommand,
   danceUserCommand,
   systemCoins,
-  /* blockInteractionsCommands,
+    /* blockInteractionsCommands,
   blockHugCommand, */
   /* SendTraduccion, */
 ];

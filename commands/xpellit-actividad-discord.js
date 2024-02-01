@@ -1,15 +1,11 @@
 import { db } from "../michi.js";
 import { getRankXpellitDiscord } from "../constants/clanService.js";
-import { EmbedBuilder } from "discord.js";
-import {
-  rolGatosGatunosXpellit,
-  rolIDClanPRuebas,
-  rolXpellGames,
-} from "../constants/rolesID.js";
+import { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } from "discord.js";
+import { rolDarkWish, rolXpellGames } from "../constants/rolesID.js";
 
 export const xpellitRankingServidor = {
-  name: "rankingservidor",
-  alias: ["rankserver", "rs"],
+  name: "rankingservidor2",
+  alias: ["rankserver2", "rs2"],
 
   async execute(message, args) {
     if (!message.member.roles.cache.get(rolXpellGames)) return;
@@ -18,31 +14,72 @@ export const xpellitRankingServidor = {
     if (!rankingDiscord) return message.reply("No existe todavía");
     const rank = Object.entries(rankingDiscord);
 
-    let puestos = "";
-    //ordenar rank de mayor a menor
+    // Sort rank from highest to lowest points
     rank.sort((a, b) => {
       return b[1].puntos - a[1].puntos;
     });
 
-    rank.forEach((val, i) => {
-      //val[0]: key (ID)
-      //val[1]: value({nickname, puntos})
-      puestos += `**${i + 1}.** ${val[1].nickname}: ${val[1].puntos}\n`;
-      //1. Si: 3\n2. MirtZerck: 1
+    const itemsPerPage = 50;
+    const totalPages = Math.ceil(rank.length / itemsPerPage);
+    let currentPage = 1;
+
+    const displayRank = () => {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const currentRank = rank.slice(startIndex, endIndex);
+
+      let puestos = "";
+      currentRank.forEach((val, i) => {
+        puestos += `**${startIndex + i + 1}.** ${val[1].nickname}: ${val[1].puntos}\n`;
+      });
+
+      const embed = new EmbedBuilder()
+        .setAuthor({
+          name: message.member.nickname ?? message.author.username,
+          iconURL: message.author.displayAvatarURL({ dynamic: true }),
+        })
+        .setTitle(`Ranking miembros más activos en Discord - Página ${currentPage}/${totalPages}`)
+        .setDescription(`${puestos}`)
+        .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+        .setColor(0x81d4fa)
+        .setFooter({ text: "Este es el ranking de actividad del servidor" })
+        .setTimestamp();
+
+      return embed;
+    };
+
+    const buttonComponents = new ActionRowBuilder()
+      .addComponents(
+        new ButtonBuilder()
+          .setCustomId("prevPage")
+          .setLabel("Anterior")
+          .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+          .setCustomId("nextPage")
+          .setLabel("Siguiente")
+          .setStyle(ButtonStyle.Secondary)
+      );
+
+    const response = await message.channel.send({ embeds: [displayRank()], components: [buttonComponents] });
+
+    const collector = response.createMessageComponentCollector({
+      time: 60000, // 60 seconds
     });
 
-    const embed = new EmbedBuilder()
-      .setAuthor({
-        name: message.member.nickname ?? message.author.username,
-        iconURL: message.author.displayAvatarURL({ dynamic: true }),
-      })
-      .setTitle(`Ranking miembros más activos en Discord`)
-      .setDescription(`${puestos}`)
-      .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
-      .setColor(0x81d4fa)
-      .setFooter({ text: "Este es el ranking de actividad del servidor" })
-      .setTimestamp();
+    collector.on("collect", async (componentmessage) => {
+      if (componentmessage.isButton()) {
+        if (componentmessage.customId === "prevPage" && currentPage > 1) {
+          currentPage--;
+        } else if (componentmessage.customId === "nextPage" && currentPage < totalPages) {
+          currentPage++;
+        }
 
-    message.channel.send({ embeds: [embed] });
+        await componentmessage.update({ embeds: [displayRank()], components: [buttonComponents] });
+      }
+    });
+
+    collector.on("end", async () => {
+      await response.edit({ components: [] });
+    });
   },
 };
