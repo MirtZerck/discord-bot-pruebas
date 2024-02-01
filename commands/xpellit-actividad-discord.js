@@ -4,11 +4,11 @@ import { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } from "disc
 import { rolDarkWish, rolXpellGames } from "../constants/rolesID.js";
 
 export const xpellitRankingServidor = {
-  name: "rankingservidor2",
-  alias: ["rankserver2", "rs2"],
+  name: "rankingservidor",
+  alias: ["rankserver", "rs"],
 
   async execute(message, args) {
-    if (!message.member.roles.cache.get(rolXpellGames)) return;
+    if (!message.member.roles.cache.get(rolDarkWish)) return;
 
     const rankingDiscord = await getRankXpellitDiscord();
     if (!rankingDiscord) return message.reply("No existe todavía");
@@ -53,11 +53,11 @@ export const xpellitRankingServidor = {
         new ButtonBuilder()
           .setCustomId("prevPage")
           .setLabel("Anterior")
-          .setStyle(ButtonStyle.Secondary),
+          .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("nextPage")
           .setLabel("Siguiente")
-          .setStyle(ButtonStyle.Secondary)
+          .setStyle(ButtonStyle.Success)
       );
 
     const response = await message.channel.send({ embeds: [displayRank()], components: [buttonComponents] });
