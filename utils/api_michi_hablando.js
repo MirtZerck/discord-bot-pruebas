@@ -4,8 +4,12 @@ import { obtenerDataApi } from "./apiserver.js";
 export async function obtenerMichiHablador(commandBody) {
   let commandBodyCodificado = encodeURIComponent(commandBody);
   const requestURL = `${commandBodyCodificado}?json=true`;
-  const respuesta = await obtenerDataApi(API_MICHI_HABLANDO_URL+requestURL)
-  
-  return `https://cataas.com${respuesta.url}`; 
-}
+  const respuesta = await obtenerDataApi(API_MICHI_HABLANDO_URL + requestURL);
 
+  // Solicitar información
+  /* const data = Object.entries(respuesta) */
+
+  console.log(`solo respuesta ${data}`);
+
+  return `https://cataas.com${respuesta.url}`;
+}
