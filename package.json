@@ -21,6 +21,9 @@
     "moment-timezone": "^0.5.43",
     "openai": "^4.28.4"
   },
+  "devdependencies": {
+    "undici": "^6.7.0"
+  },
   "engines": {
     "node": ">=18.16.1"
   }
