@@ -2,6 +2,8 @@
 import { EmbedBuilder } from "discord.js";
 import { convertDateToString } from "../utils/format-date.js";
 import { getMemberByFilter } from "../constants/get-user.js";
+import { getDynamicColor } from "../utils/getDynamicColor.js";
+import { formatUserRoles } from "../constants/formatUserRoles.js";
 
 // Definimos el comando userInfoCommand con su nombre y alias
 export const userInfoCommand = {
@@ -44,6 +46,12 @@ export const userInfoCommand = {
     const fechaRegistro = convertDateToString(member.user.createdAt); // Fecha de creación de la cuenta de Discord
     const fechaIngreso = convertDateToString(member.joinedAt); // Fecha de ingreso del miembro al servidor
 
+    // Llamamos a la función para definir un color al Embed según el Rol.
+    const dynamicColor = getDynamicColor(message.member);
+
+    //Llamamos la función para solicitar los roles
+    const rolesDescription = formatUserRoles(member);
+
     // Creamos el embed con la información del usuario
     const messageEmbed = new EmbedBuilder()
       .setAuthor({
@@ -55,9 +63,10 @@ export const userInfoCommand = {
       .setDescription(`Información del usuario en el servidor`) // Descripción del embed
       .addFields(
         { name: "Registro", value: fechaRegistro, inline: true }, // Campo con la fecha de registro del usuario
-        { name: "Ingreso", value: fechaIngreso, inline: true } // Campo con la fecha de ingreso del usuario al servidor
+        { name: "Ingreso", value: fechaIngreso, inline: true }, // Campo con la fecha de ingreso del usuario al servidor
+        { name: "Roles", value: rolesDescription }
       )
-      .setColor(0x81d4fa) // Color del embed
+      .setColor(dynamicColor) // Color del embed
       .setFooter({ text: `ID ${id}` }) // Pie de página del embed con el ID del usuario
       .setTimestamp(); // Timestamp del embed
 

@@ -44,7 +44,7 @@ export const danceUserCommand = {
           )
           .setImage(messageDb)
           .setColor("Random")
-          .setFooter(`Baila Baila`)
+          .setFooter({ text: "Baila Baila" })
           .setTimestamp();
 
         return message.channel.send({ embeds: [messageEmbed] });

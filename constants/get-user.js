@@ -15,6 +15,9 @@ export const getMemberByFilter = (message, filter) => {
     const displayName = member.displayName.toLowerCase();
 
     // Comprueba si el displayName del miembro incluye el filtro o si el ID del usuario coincide con el filtro
-    return displayName.includes(filtro) || member.user.id === filter;
+    return (
+      displayName.includes(filtro) || 
+      member.user.id === filter
+    );
   });
 };

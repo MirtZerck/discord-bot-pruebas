@@ -1,217 +1,30 @@
+// Importa comandos desde el archivo principal
 import { arrayCommands } from "./index.js";
-import {
-  prefijo,
-  botIDPersonal,
-  botIDXpellit,
-  specialPrefix,
-} from "../constants/prefix.js";
-import { linksImages } from "../constants/links_images.js";
-import { getReplys } from "../constants/answers.js";
-import { getReplysDelete } from "../constants/answers_delete.js";
-/* import { imageEmbed } from "../utils/images.js"; */
-import { db } from "../michi.js";
-import { getUser, setUser } from "../db_service/user_service.js";
+
+// Importa constantes de prefijos desde la carpeta de constantes
+import { prefijo } from "../constants/prefix.js";
+
+// Importa funciones de servicio de comandos desde el servicio de base de datos
 import {
   getCommandsValue,
   replaceArgumentText,
-  setCommandByCategory,
-  setCommandBySubcategory,
 } from "../db_service/commands_service.js";
-import { getRandomNumber } from "../utils/utilsFunctions.js";
-import { EmbedBuilder, Events } from "discord.js";
-import {
-  rolBoosterXpellit,
-  rolCetroDiamanteXpellit,
-  rolCetroRubyXpellit,
-  rolCetroSafiroXpellit,
-  rolDragonAzulXpellit,
-  rolDragonPlateadoXpellit,
-  rolDragonRojoXpellit,
-  rolGatosGatunosXpellit,
-  rolIDClanPRuebas,
-  rolInteraccionMirtZerck,
-  rolXpellGames,
-} from "../constants/rolesID.js";
-import {
-  getRankXpellitDiscord,
-  setUserRankXpellitDiscord,
-} from "../constants/clanService.js";
-import { getPromptGTP } from "../utils/openai-api.js";
-import {
-  abisitaID,
-  inuYashaID,
-  laffeysID,
-  mirtZerckID,
-  shizuchID,
-} from "../constants/users_ID.js";
 
+// Importa funciones de utilidades generales
+import { getRandomNumber } from "../utils/utilsFunctions.js";
+
+// Importa constructores de Discord.js para crear mensajes incrustados y manejar eventos
+import { EmbedBuilder, Events } from "discord.js";
+
+// Define la función principal que se ejecuta cuando se crea un mensaje
 export const onMessageCreate = async (client) => {
+  // Define el prefijo del bot
   const prefix = prefijo;
 
+  // Escucha eventos de creación de mensajes
   client.on(Events.MessageCreate, async (message) => {
+    // Ignora mensajes de bots
     if (message.author.bot) return;
-
-    /*     const user = await getUser(message.author.id);
-    if (!user){
-      setUser(message).then(res => {
-        console.log('Se ha ingresado');
-      });
-    }
-    */
-
-    //Sumarle puntos
-
-    // Si son del clan
-
-    /* if (
-      message.content.startsWith(prefixBotPersonalPrefix) ||
-      message.content.startsWith(prefixBotXpellitPrefix)
-    ) */
-    const mention = message.mentions.members.first();
-
-    if (
-      mention &&
-      (mention.user.id === botIDXpellit || mention.user.id === botIDPersonal)
-    ) {
-      const allowID = [mirtZerckID, abisitaID, inuYashaID];
-
-      const allowsRols = [
-        rolXpellGames,
-        rolInteraccionMirtZerck,
-        rolDragonPlateadoXpellit,
-        rolDragonRojoXpellit,
-        rolDragonAzulXpellit,
-        rolCetroDiamanteXpellit,
-        rolCetroRubyXpellit,
-        rolCetroSafiroXpellit,
-        rolBoosterXpellit,
-        rolIDClanPRuebas,
-        rolGatosGatunosXpellit,
-      ];
-
-      const embedPrefix = new EmbedBuilder()
-        .setAuthor({
-          name: "Gatos Gatunos",
-          iconURL:
-            "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply",
-        })
-        .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
-        .setTitle(`Información del Bot`)
-        .addFields(
-          {
-            name: "Prefijo",
-            value: `El prefijo es ${prefijo}`,
-            inline: true,
-          },
-          {
-            name: "Información",
-            value: `Escribe ${prefijo}help`,
-            inline: true,
-          }
-        )
-        .setColor(0x81d4fa)
-        .setTimestamp();
-
-      if (
-        message.content.trim() === `<@${botIDXpellit}>` ||
-        message.content.trim() === `<@${botIDPersonal}>`
-      )
-        return message.reply({ embeds: [embedPrefix] });
-
-      if (
-        !(
-          allowID.some((id) => message.author.id === id) ||
-          allowsRols.some(
-            (rol) => message.member.roles.cache.get(rol) !== undefined
-          )
-        )
-      ) {
-        /* const prompt = message.content.slice(botIDXpellit.length + 1); 
-        if (!prompt) return message.reply({ embeds: [embedPrefix] }); */
-
-        await message.channel.sendTyping();
-
-        message.reply(
-          "¡Hola, amiguito! ¡Nya~! 💕 Lamento mucho decirte que solo puedo interactuar con los maravillosos miembros del top 20 en este momento. Pero no te preocupes, ¡sigue esforzándote y quizás puedas unirte a nosotros algún día! 🐾🌟 ¡Miau!"
-        );
-      } else {
-        try {
-          const user = message.member.nickname ?? message.author.globalName;
-          const prompt = `${user}: ${message.content}`;
-          await message.channel.sendTyping();
-          const response = await getPromptGTP(prompt);
-          message.reply({ content: response });
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    }
-
-    if (message.member.roles.cache.get(rolXpellGames)) {
-      const timestamp = new Date().getTime();
-      const rankDiscord = await getRankXpellitDiscord();
-      const keys = Object.keys(rankDiscord);
-
-      //Revisar si ya existe
-      if (keys.includes(message.author.id)) {
-        const user = rankDiscord[message.author.id];
-        // Si ha pasado 1 minuto
-        if (timestamp - user.last >= 60 * 1000) {
-          const puntosGanados = getRandomNumber(3, 6 - 1);
-          user.puntos = user.puntos + puntosGanados;
-          user.last = timestamp;
-          setUserRankXpellitDiscord(message.author.id, user);
-        }
-      } else {
-        //Si no existe, se registra con puntos: 1
-        const user = {
-          last: timestamp,
-          nickname: message.member.nickname ?? message.author.username,
-          puntos: 1,
-        };
-        setUserRankXpellitDiscord(message.author.id, user);
-      }
-    }
-
-    if (message.content.startsWith(specialPrefix)) {
-      if (message.author.id !== mirtZerckID) return;
-
-      const messageContent = message.content.trim();
-      const content = messageContent.slice(specialPrefix.length, -3).trim();
-      const categoria = content.split(" ")[1];
-      let subcategoria;
-      if (categoria.includes("/")) {
-        subcategoria = categoria.split("/")[1];
-      }
-      const key = content.split("{")[1].split(":")[0];
-      const value = content.split('"')[1];
-
-      if (!subcategoria) {
-        await setCommandByCategory(categoria, key, value)
-          .then((res) => {
-            message.channel.send("Actualizado.");
-          })
-          .catch((err) => {
-            message.channel.send("Inválido");
-          });
-      } else {
-        await setCommandBySubcategory(categoria, subcategoria, key, value)
-          .then((res) => {
-            message.channel.send("Actualizado.");
-          })
-          .catch((err) => {
-            message.channel.send("Inválido");
-          });
-      }
-
-      setTimeout(() => {
-        try {
-          message.delete();
-        } catch (error) {
-          console.log(error);
-        }
-      }, 5 * 1000);
-    }
 
     if (!message.content.startsWith(prefix)) return;
 
@@ -375,25 +188,5 @@ export const onMessageCreate = async (client) => {
         }
       }
     }
-
-    /*     const replys = getReplys(message, commandBody, commandName, args);
-    const replysDelete = getReplysDelete(
-      message,
-      commandBody,
-      commandName,
-      args
-    );
-    const arrayReplys = Object.keys(replys);
-    const arrayLinksImages = Object.keys(linksImages);
-    const arrayDeleteReplys = Object.keys(replysDelete);
-    
-    if (arrayReplys.includes(commandName)) {
-      message.channel.send(replys[commandName]);
-    } else if (arrayLinksImages.includes(commandName)) {
-      message.channel.send(imageEmbed(commandName, linksImages));
-    } else if (arrayDeleteReplys.includes(commandName)) {
-      message.delete();
-      message.channel.send(replysDelete[commandName]);
-    }  */
   });
 };

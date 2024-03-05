@@ -6,29 +6,27 @@ import {
   PresenceUpdateStatus,
   EmbedBuilder,
   Colors,
+  messageLink,
 } from "discord.js";
 import dotenv from "dotenv";
-import { onMessageCreate } from "./commands/respuestas.js";
+/* import { onMessageCreate } from "./commands/respuestas.js"; */
+import { openAiChat } from "./commands/openAiChat.js";
 import { arrayCommands } from "./commands/index.js";
-import {
-  enviarGatoALas,
-  obtenerEmbedMichiDiario,
-} from "./utils/api_michi_diario.js";
+import { enviarGatoALas } from "./utils/api_michi_diario.js";
 import {
   gatosGatunosXpellit,
   generalMirtZerck,
-  generalNekoPalace,
   generalPruebasBot,
-  generalVale,
   generalXpellit,
-  simularGatosBot,
 } from "./constants/canalesID.js";
 import firebase from "firebase-admin";
 import { createRequire } from "module";
-import { obtenerTraduccionEnEs } from "./utils/api_traductor.js";
-
 import { prefijo } from "./constants/prefix.js";
 import { onInteractionCreate } from "./slashCommands/slashRespuestas.js";
+import { rankXpellitControl } from "./commands/rankXpellitControl.js";
+import { handleSpecialCommands } from "./commands/specialCommand.js";
+import { mirtZerckID } from "./constants/users_ID.js";
+import { onMessageCreate } from "./commands/respuestas.js";
 
 const require = createRequire(import.meta.url);
 
@@ -45,8 +43,8 @@ export const db = firebase.database().ref("/");
 
 dotenv.config();
 
-export const token = process.env.TOKEN2;
-export const APPLICATION_ID = process.env.APPLICATION_ID;
+export const token = process.env.TOKENPRUEBAS;
+export const APPLICATION_ID = process.env.APPLICATION_ID_PRUEBAS;
 
 export const client = new Client({
   intents: [
@@ -75,14 +73,6 @@ client.once(Events.ClientReady, async () => {
     ],
     status: PresenceUpdateStatus.DoNotDisturb,
   });
-
-  /*   await db.child('users').set('Mirt').then(res => {
-    console.log('Se ha guardado el dato');
-  }) */
-
-  /*   await db.child('users').set('Mirt').then(res => {
-      console.log('Se ha guardado el dato');
-    }) */
 
   const canal_general_uno = client.channels.cache.get("");
 
@@ -122,5 +112,8 @@ client.once(Events.ClientReady, async () => {
   }
 });
 
-await onMessageCreate(client);
+await openAiChat(client);
 await onInteractionCreate(client);
+await rankXpellitControl(client);
+await handleSpecialCommands(client, mirtZerckID);
+await onMessageCreate(client);
