@@ -1,5 +1,5 @@
 // Importa constantes de prefijos desde la carpeta de constantes
-import { prefijo, botIDPersonal, botIDXpellit } from "../constants/prefix.js";
+import { prefijo } from "../constants/prefix.js";
 
 // Importa constructores de Discord.js para crear mensajes incrustados y manejar eventos
 import { EmbedBuilder, Events } from "discord.js";
@@ -12,17 +12,13 @@ export const openAiChat = async (client) => {
   // Escucha eventos de creación de mensajes
   client.on(Events.MessageCreate, async (message) => {
     // Ignora mensajes de bots
-    if (message.author.bot) return;
+    if (message.author.bot || !message.mentions.members.size) return;
 
     // Obtiene la primera mención en el mensaje, si la hay
     const mention = message.mentions.members.first();
 
     // Procesa mensajes que mencionan al bot
-    if (
-      mention &&
-      (mention.user.id === "1125170418853097542" ||
-        mention.user.id === botIDPersonal)
-    ) {
+    if (mention && mention.user.id === client.user.id) {
       const embedPrefix = new EmbedBuilder()
         .setAuthor({
           name: "Gatos Gatunos",
@@ -46,12 +42,9 @@ export const openAiChat = async (client) => {
         .setColor(0x81d4fa)
         .setTimestamp();
 
-      if (
-        message.content.trim() === `<@${"1125170418853097542"}>` ||
-        message.content.trim() === `<@${botIDPersonal}>`
-      )
+      if (message.content.trim() === `<@${client.user.id}>`) {
         return message.reply({ embeds: [embedPrefix] });
-      else {
+      } else {
         try {
           const user = message.member.nickname ?? message.author.globalName;
           const prompt = `${user}: ${message.content}`;
