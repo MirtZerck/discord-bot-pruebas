@@ -1,6 +1,6 @@
-export const prefijo = "-";
+export const prefijo = "+";
 
-export const specialPrefix = "```typescript";
+export const specialPrefix = "```javascript";
 
 export const botIDPersonal = "1125170246291034223"
 
