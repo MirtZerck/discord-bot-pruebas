@@ -7,6 +7,7 @@ import {
 import { getRandomNumber } from "../utils/utilsFunctions.js";
 import { getDynamicColor } from "../utils/getDynamicColor.js";
 import { createInteractionEmbed } from "../utils/embedInteractions.js";
+import { interactionRequests } from "../utils/interactionRequests.js";
 
 export const hugUserCommand = {
   name: "abrazo",
@@ -95,6 +96,13 @@ export const hugUserCommand = {
         if (reaction.emoji.name === "✅") {
           request.delete();
 
+          const userReactId = user.user.id;
+          const requestDetails = interactionRequests.get(userReactId);
+          if (requestDetails) {
+            clearTimeout(requestDetails.timerId);
+            interactionRequests.delete(userReactId);
+          }
+
           const newCount = await updateInteractionsCount(
             message.author.id,
             user.user.id,
@@ -127,6 +135,13 @@ export const hugUserCommand = {
               embedRequest.setDescription("Solicitud de abrazo rechazada."),
             ],
           });
+
+          const userReactId = user.user.id;
+          const requestDetails = interactionRequests.get(userReactId);
+          if (requestDetails) {
+            clearTimeout(requestDetails.timerId);
+            interactionRequests.delete(userReactId);
+          }
           /* setTimeout(() => request.delete(), 30000); */
         }
       })

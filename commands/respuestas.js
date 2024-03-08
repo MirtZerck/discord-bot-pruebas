@@ -15,6 +15,10 @@ import { getRandomNumber } from "../utils/utilsFunctions.js";
 
 // Importa constructores de Discord.js para crear mensajes incrustados y manejar eventos
 import { EmbedBuilder, Events } from "discord.js";
+import {
+  interactionRequests,
+  addInteractionRequest,
+} from "../utils/interactionRequests.js";
 
 // Define la función principal que se ejecuta cuando se crea un mensaje
 export const onMessageCreate = async (client) => {
@@ -182,7 +186,21 @@ export const onMessageCreate = async (client) => {
       );
       if (command) {
         try {
-          command.execute(message, args, commandBody);
+          const userMention = message.mentions.members.first();
+          if (userMention && interactionRequests.has(userMention.id)) {
+            message.reply(
+              "Ya existe una solicitud de interacción pendiente para este usuario."
+            );
+          } else {
+            command.execute(message, args, commandBody);
+
+            if (userMention) {
+              addInteractionRequest(userMention.id, {
+                timestamp: Date.now(),
+                type: command.name,
+              });
+            }
+          }
         } catch (error) {
           console.log(error);
         }
