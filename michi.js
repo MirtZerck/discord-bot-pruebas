@@ -55,6 +55,7 @@ export const client = new Client({
     GatewayIntentBits.GuildScheduledEvents,
     GatewayIntentBits.GuildWebhooks,
     GatewayIntentBits.GuildIntegrations,
+    GatewayIntentBits.GuildMessageReactions,
   ],
 });
 

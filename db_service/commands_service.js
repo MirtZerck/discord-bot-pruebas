@@ -16,6 +16,35 @@ export async function getInteraccionesValue() {
   return comandos;
 }
 
+export async function updateInteractionsCount(userID1, userID2, interactionType) {
+  try {
+    // Ordenar los IDs de usuario para evitar duplicados en la base de datos
+    const [minorID, majorID] = [userID1, userID2].sort();
+
+    // Referencia al contador de abrazos en la base de datos
+    const countRef = db.child(
+      `interacciones/conteos/${interactionType}/${minorID}/${majorID}`
+    );
+
+    // Obtener el valor actual del contador
+    const snapshot = await countRef.once("value");
+    const currentCount = snapshot.val() || 0;
+
+    // Incrementar el contador
+    const newCount = currentCount + 1;
+
+    // Actualizar el contador en la base de datos
+    await countRef.set(newCount);
+
+    // Devolver el nuevo valor del contador
+    return newCount;
+  } catch (error) {
+    // Manejar errores
+    console.log(`Error al actualizar el conteo de ${interactionType} en Firebase`, error);
+    throw error;
+  }
+}
+
 export async function setCommandByCategory(categoria, key, value) {
   return await db.child("commands").child(categoria).child(key).set(value);
 }
