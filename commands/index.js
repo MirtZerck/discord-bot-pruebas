@@ -7,7 +7,7 @@ import { helpCommand } from "./help.js";
 import { sendBossBait } from "./boos_bait.js";
 import { horaServer } from "./hora.js";
 import { mostrarPing } from "./ping.js";
-import { hugUserCommand } from "./abrazo.js";
+import { hugUserCommand } from "./interactionCommands.js";
 import { xpellitRankingServidor } from "./xpellit-actividad-discord.js";
 import { clanRankingClan } from "./clan-puntos-merito.js";
 import { patUserCommand } from "./caricia.js";
@@ -21,7 +21,6 @@ import {
 } from "./bloquear-interacciones.js";
 import { systemCoins } from "./add_coins.js";
 /* import { SendTraduccion } from "./traducir.js"; */
-
 
 export const arrayCommands = [
   userInfoCommand,
@@ -42,7 +41,7 @@ export const arrayCommands = [
   pokeUserCommand,
   danceUserCommand,
   systemCoins,
-    /* blockInteractionsCommands,
+  /* blockInteractionsCommands,
   blockHugCommand, */
   /* SendTraduccion, */
 ];

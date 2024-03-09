@@ -9,7 +9,7 @@ import { getDynamicColor } from "../utils/getDynamicColor.js";
 import { createInteractionEmbed } from "../utils/embedInteractions.js";
 import { interactionRequests } from "../utils/interactionRequests.js";
 
-export const hugUserCommand = {
+/* export */ const hugUserCommand = {
   name: "abrazo",
   alias: ["hug"],
 
