@@ -1,4 +1,4 @@
-import { EmbedBuilder, messageLink } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { getMemberByFilter } from "../constants/get-user.js";
 import {
   getInteraccionesValue,
@@ -14,13 +14,33 @@ const interactionCommands = {
   abrazos: {
     name: "abrazo",
     type: "abrazos",
-    action: "compartir abrazo",
+    action: "abrazar",
+    footer: "¡Un gesto amable hace el día mejor!",
     successResponce: (requester, receiver) =>
       `¡Hola ${receiver}! ${requester} está deseando compartir un abrazo contigo. ¿Qué dices, lo aceptas?`,
     rejectResponse: "Solicitud de abrazo rechazada.",
-    noResponse: "Solicitud de abrazo no respondida.",
+    noResponse: `Solicitud de abrazo no respondida.`,
   },
-  //Añadir nuevas configuraciones para comandos.
+  caricias: {
+    name: "caricia",
+    type: "caricias",
+    action: "acariciar",
+    footer: "Una caricia suave puede iluminar el corazón.",
+    successResponce: (requester, receiver) =>
+      `¡Hola ${receiver}! ${requester} te quiere dar caricias. ¿Lo aceptarás? owo`,
+    rejectResponse: "Solicitud de caricia rechazada.",
+    noResponse: "Solicitud de caricia no respondida.",
+  },
+  besos: {
+    name: "beso",
+    type: "besos",
+    action: "besar",
+    footer: "Un beso tierno, un momento eterno.",
+    successResponce: (requester, receiver) =>
+      `¡Hola ${receiver}! ${requester} te quiere besar. ¿Vas a recibirlo? OwO`,
+    rejectResponse: "Solicitud de beso rechazada.",
+    noResponse: "Solicitud de beso no respondida.",
+  },
 };
 
 // Función principal para ejecutar comandos de interacción. Gestiona la lógica de selección de usuario, respuestas y actualizaciones de conteo.
@@ -52,7 +72,13 @@ async function executeinteractionCommands(message, args, config) {
 
   // Procesar interacciones con bots diferentemente, si es necesario.
   if (user.user.bot) {
-    // Lógica específica para interacciones con bots, como actualizar el conteo de interacciones.
+    const userReactID = user.user.id;
+    const requestDetails = interactionRequests.get(userReactID);
+    if (requestDetails) {
+      clearTimeout(requestDetails.timerId);
+      interactionRequests.delete(userReactID);
+    }
+
     const newCount = await updateInteractionsCount(
       message.author.id,
       user.user.id,
@@ -75,12 +101,15 @@ async function executeinteractionCommands(message, args, config) {
       const messageEmbed = createInteractionEmbed(
         message.member, // El autor del mensaje que inició la interacción.
         user, // El miembro objetivo de la interacción.
-        config.name, // El tipo de interacción configurado.
+        config.type, // El tipo de interacción configurado.
         newCount, // El nuevo recuento de interacciones después de la acción.
-        imgDb // La URL de la imagen asociada con la interacción.
+        imgDb, // La URL de la imagen asociada con la interacción.
+        config.footer
       );
 
       await message.channel.send({ embeds: [messageEmbed] }); // Enviar el mensaje con el embed de la interacción.
+
+      interactionRequests.delete(userReactID);
     }
     return; // Salir de la función después de procesar la interacción con el bot.
   }
@@ -154,7 +183,7 @@ async function executeinteractionCommands(message, args, config) {
           const messageEmbed = createInteractionEmbed(
             message.member,
             user,
-            config.name,
+            config.type,
             newCount,
             imgDb
           );
@@ -190,7 +219,7 @@ async function executeinteractionCommands(message, args, config) {
 }
 
 // Exportar el comando de abrazo como un objeto con propiedades name, alias y una función execute.
-export const hugUserCommand = {
+const hugUserCommand = {
   name: "abrazo", // Nombre del comando principal para abrazar.
   alias: ["hug", "abrazar"], // Alias adicionales que pueden ser usados para invocar el comando de abrazo.
   // Función execute que será llamada cuando se ejecute el comando.
@@ -203,3 +232,31 @@ export const hugUserCommand = {
     );
   },
 };
+
+const patUserCommand = {
+  name: "caricia",
+  alias: ["pat", "acariciar"],
+
+  async execute(message, args) {
+    await executeinteractionCommands(
+      message,
+      args,
+      interactionCommands.caricias
+    );
+  },
+};
+
+const kissUserCommand = {
+  name: "beso",
+  alias: ["kiss", "besar"],
+
+  async execute(message, args) {
+    await executeinteractionCommands(message, args, interactionCommands.besos);
+  },
+};
+
+export const arrayInteractions = [
+  hugUserCommand,
+  patUserCommand,
+  kissUserCommand,
+];

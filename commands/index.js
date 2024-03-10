@@ -7,10 +7,8 @@ import { helpCommand } from "./help.js";
 import { sendBossBait } from "./boos_bait.js";
 import { horaServer } from "./hora.js";
 import { mostrarPing } from "./ping.js";
-import { hugUserCommand } from "./interactionCommands.js";
 import { xpellitRankingServidor } from "./xpellit-actividad-discord.js";
 import { clanRankingClan } from "./clan-puntos-merito.js";
-import { patUserCommand } from "./caricia.js";
 import { cookieUserCommand } from "./cookie.js";
 import { hornyUserCommand } from "./horny.js";
 import { pokeUserCommand } from "./poke.js";
@@ -21,6 +19,7 @@ import {
 } from "./bloquear-interacciones.js";
 import { systemCoins } from "./add_coins.js";
 /* import { SendTraduccion } from "./traducir.js"; */
+import { arrayInteractions } from "./interactionCommands.js";
 
 export const arrayCommands = [
   userInfoCommand,
@@ -32,15 +31,14 @@ export const arrayCommands = [
   sendBossBait,
   horaServer,
   mostrarPing,
-  hugUserCommand,
   xpellitRankingServidor,
   clanRankingClan,
-  patUserCommand,
   cookieUserCommand,
   hornyUserCommand,
   pokeUserCommand,
   danceUserCommand,
   systemCoins,
+  ...arrayInteractions,
   /* blockInteractionsCommands,
   blockHugCommand, */
   /* SendTraduccion, */

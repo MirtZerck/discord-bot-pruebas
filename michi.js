@@ -43,7 +43,7 @@ export const db = firebase.database().ref("/");
 
 dotenv.config();
 
-export const token = process.env.TOKENPRUEBAS;
+export const token = process.env.TOKEN;
 export const APPLICATION_ID = process.env.APPLICATION_ID;
 
 export const client = new Client({
