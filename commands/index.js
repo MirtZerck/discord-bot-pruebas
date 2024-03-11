@@ -20,6 +20,7 @@ import {
 import { systemCoins } from "./add_coins.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 import { arrayInteractions } from "./interactionCommands.js";
+import { proposalCommand } from "./proposals.js";
 
 export const arrayCommands = [
   userInfoCommand,
@@ -39,6 +40,7 @@ export const arrayCommands = [
   danceUserCommand,
   systemCoins,
   ...arrayInteractions,
+  proposalCommand,
   /* blockInteractionsCommands,
   blockHugCommand, */
   /* SendTraduccion, */
