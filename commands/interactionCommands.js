@@ -185,7 +185,8 @@ async function executeinteractionCommands(message, args, config) {
             user,
             config.type,
             newCount,
-            imgDb
+            imgDb,
+            config.footer
           );
 
           await message.channel.send({ embeds: [messageEmbed] }); // Envía el mensaje embed al canal de mensajes.
