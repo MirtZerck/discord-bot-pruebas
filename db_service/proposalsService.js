@@ -16,7 +16,7 @@ export class ProposalService {
   async getProposals() {
     const proposals = await this.proposalsDB.once("value");
     if (proposals.exists()) {
-      return proposals.val();
+      return Object.entries(proposals.val());
     } else {
       return undefined;
     }

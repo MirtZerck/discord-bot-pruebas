@@ -3,6 +3,7 @@ export function getRandomNumber(min, max) {
 }
 
 export async function isImage(url) {
+  if (!url || url == "") return false;
   const res = await fetch(url);
   const buff = await res.blob();
 

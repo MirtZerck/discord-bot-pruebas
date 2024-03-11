@@ -7,36 +7,26 @@ import {
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
 } from "discord.js";
-import { getReplys } from "../constants/answers.js";
-import { getReplysDelete } from "../constants/answers_delete.js";
-import { linksImages } from "../constants/links_images.js";
-import { getArrayCommandsObject } from "../constants/lista_comandosxd.js";
-import { prefijo } from "../constants/prefix.js";
 import { ProposalService } from "../db_service/proposalsService.js";
 import { mirtZerckID } from "../constants/users_ID.js";
 import { isImage } from "../utils/utilsFunctions.js";
 import { getDynamicColor } from "../utils/getDynamicColor.js";
+import { getUser } from "../db_service/user_service.js";
+import { getMemberByID } from "../constants/get-user.js";
 
 export const proposalCommand = {
   name: "proposals",
   alias: ["prop", "props", "propuesta"],
 
   async execute(message, args) {
-    /**
-     * 5 propuestas por página
-     * Menú para seleccionar una
-     * Al ser seleccionada una saldrán botones: Aceptar - Rechazar - Cancelar
-     * Al ser aceptada o rechazada se eliminará de la lista
-     * Al ser cancelada se cerrará el menú
-     */
     const proposalsDB = new ProposalService(message.guild.id);
 
-    const proposals = await proposalsDB.getProposals();
-
     const loxID = "591050519242342431";
-    const modsID = [mirtZerckID];
+    const modsID = [mirtZerckID, loxID];
 
     if (modsID.includes(message.author.id)) {
+      /* Para mods */
+      const proposals = await proposalsDB.getProposals();
       if (!proposals) {
         const embedEmptyProposals = new EmbedBuilder()
           .setTitle("Propuestas")
@@ -46,6 +36,11 @@ export const proposalCommand = {
         return message.reply({ embeds: [embedEmptyProposals] });
       }
 
+      const propsPerPage = 5;
+      const propsLength = proposals.length;
+      const pages = Math.ceil(propsLength / propsPerPage);
+      let currentPage = 1;
+
       const closeButton = new ButtonBuilder()
         .setCustomId("cerrar")
         .setLabel("Cerrar")
@@ -54,14 +49,14 @@ export const proposalCommand = {
       const previousButton = new ButtonBuilder()
         .setCustomId("anterior")
         .setLabel("Anterior")
-        .setStyle(ButtonStyle.Secondary)
+        .setStyle(ButtonStyle.Primary)
         .setDisabled(true);
 
       const nextButton = new ButtonBuilder()
         .setCustomId("siguiente")
         .setLabel("Siguiente")
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true);
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(propsLength <= propsPerPage);
 
       const buttonComponents = new ActionRowBuilder().addComponents(
         closeButton,
@@ -69,24 +64,235 @@ export const proposalCommand = {
         nextButton
       );
 
-      const menuOptions = new StringSelectMenuBuilder()
-        .setCustomId("select")
-        .setPlaceholder("Selecciona una propuesta")
-        .setDisabled(true);
+      const setTextAndMenuOptionsProps = (proposals) => {
+        const menuOptions = new StringSelectMenuBuilder()
+          .setCustomId("select")
+          .setPlaceholder("Selecciona una propuesta");
 
-      let propuestas = "";
-
-      categories.forEach((category) => {
-        menuOptions.addOptions(
-          new StringSelectMenuOptionBuilder()
-            .setLabel(category.name)
-            .setValue(category.name)
-            .setDescription(category.description)
-            .setEmoji(category.emoji)
+        let propText = "";
+        const props = proposals.slice(
+          (currentPage - 1) * propsPerPage,
+          currentPage * propsPerPage
         );
-        propuestas += `${category.name}\n`;
+        props.forEach((p, index) => {
+          const prop = p[1];
+          const id = p[0];
+          const i = propsPerPage * (currentPage - 1) + index + 1;
+          const user =
+            getMemberByID(message, prop.user)?.displayName ?? "Unknown";
+          propText += `**${i}.** ${prop.category} - Propuesto por: ${user}\n`;
+
+          const option = new StringSelectMenuOptionBuilder()
+            .setLabel(`${i}. ${prop.category} - Por: ${user}`)
+            .setValue(id.toString())
+            .setDescription(prop.date);
+          menuOptions.addOptions(option);
+        });
+        return [propText, menuOptions];
+      };
+
+      const [propText, menuOptions] = setTextAndMenuOptionsProps(proposals);
+      const embedProps = new EmbedBuilder()
+        .setAuthor({
+          name: "Gatos Gatunos Bot",
+          iconURL:
+            "https://w0.peakpx.com/wallpaper/961/897/HD-wallpaper-bunny-cute-rabbit-animal.jpg",
+        })
+        .setTitle("Propuestas de comandos")
+        .setDescription(propText)
+        .setColor("Random")
+        .setTimestamp();
+
+      const menuComponents = new ActionRowBuilder().addComponents(menuOptions);
+
+      const response = await message.reply({
+        embeds: [embedProps],
+        components: [buttonComponents, menuComponents],
+        content: "Selecciona una propuesta para ver sus detalles.",
+      });
+
+      const collector = await response.createMessageComponentCollector({
+        time: 5 * 60 * 1000,
+      });
+
+      collector.on("collect", async (componentmessage) => {
+        if (componentmessage.user.id !== message.author.id) {
+          await componentmessage.reply({
+            content: "No puedes interactuar con esta propuesta",
+            ephemeral: true,
+          });
+          return;
+        }
+        if (componentmessage.customId === "cerrar")
+          return collector.stop("cerrado");
+        if (componentmessage.customId === "anterior") {
+          currentPage--;
+          if (currentPage === 1) previousButton.setDisabled(true);
+          nextButton.setDisabled(false);
+          buttonComponents.setComponents([
+            closeButton,
+            previousButton,
+            nextButton,
+          ]);
+          const [newProps, menuOptions] = setTextAndMenuOptionsProps(proposals);
+          const menuComponents = new ActionRowBuilder().addComponents(
+            menuOptions
+          );
+          embedProps.setDescription(newProps);
+          await response.edit({
+            embeds: [embedProps],
+            components: [buttonComponents, menuComponents],
+          });
+          return;
+        }
+        if (componentmessage.customId === "siguiente") {
+          currentPage++;
+          const [newProps, menuOptions] = setTextAndMenuOptionsProps(proposals);
+          const menuComponents = new ActionRowBuilder().addComponents(
+            menuOptions
+          );
+          embedProps.setDescription(newProps);
+          if (currentPage === pages) nextButton.setDisabled(true);
+          previousButton.setDisabled(false);
+          buttonComponents.setComponents([
+            closeButton,
+            previousButton,
+            nextButton,
+          ]);
+          await response.edit({
+            embeds: [embedProps],
+            components: [buttonComponents, menuComponents],
+          });
+          return;
+        }
+        if (componentmessage.isStringSelectMenu()) {
+          const index = Number(componentmessage.values[0]);
+          const prop = proposals[index][1];
+          const member = getMemberByID(message, prop.user);
+          const embedProp = new EmbedBuilder()
+            .setAuthor({
+              name: `Propuesta de ${member?.displayName ?? "Unknown"}`,
+              iconURL: member?.user.displayAvatarURL({ dynamic: true }),
+            })
+            .setTitle("Propuesta")
+            .setImage(prop.image)
+            .setDescription(
+              `**Categoría:** ${prop.category}\n**Imagen:** ${prop.image}`
+            )
+            .setColor("Random")
+            .setTimestamp();
+
+          const backButton = new ButtonBuilder()
+            .setCustomId("volver")
+            .setLabel("Volver")
+            .setStyle(ButtonStyle.Secondary);
+
+          const checkButton = new ButtonBuilder()
+            .setCustomId("aceptar")
+            .setLabel("Aceptar")
+            .setStyle(ButtonStyle.Success);
+
+          const rejectButton = new ButtonBuilder()
+            .setCustomId("rechazar")
+            .setLabel("Rechazar")
+            .setStyle(ButtonStyle.Danger);
+
+          const buttonComponents = new ActionRowBuilder().addComponents(
+            backButton,
+            rejectButton,
+            checkButton
+          );
+
+          await response.edit({
+            embeds: [embedProp],
+            components: [buttonComponents],
+            content: "¿Qué deseas hacer con esta propuesta?",
+          });
+
+          const collector2 = await response.createMessageComponentCollector({
+            time: 3 * 60 * 1000,
+          });
+
+          collector2.on("collect", async (componentmessage2) => {
+            if (componentmessage2.user.id !== message.author.id) {
+              await componentmessage2.reply({
+                content: "No puedes interactuar con esta propuesta",
+                ephemeral: true,
+              });
+              return;
+            }
+            if (componentmessage2.customId === "volver") {
+              /* REVISAR BOTONES */
+              await response.edit({
+                embeds: [embedProps],
+                components: [buttonComponents, menuComponents],
+                content: "Selecciona una propuesta para ver sus detalles.",
+              });
+              return collector2.stop("volver");
+            }
+            if (componentmessage2.customId === "aceptar") {
+              await proposalsDB.deleteProposal(index);
+              await componentmessage2.reply({
+                content: "La propuesta ha sido aceptada.",
+                ephemeral: true,
+              });
+              return collector2.stop("aceptada");
+            }
+            if (componentmessage2.customId === "rechazar") {
+              await proposalsDB.deleteProposal(index);
+              await componentmessage2.reply({
+                content: "La propuesta ha sido rechazada.",
+                ephemeral: true,
+              });
+              return collector2.stop("rechazada");
+            }
+          });
+
+          collector2.on("end", async (collected, reason) => {
+            if (reason === "volver") return;
+            if (reason === "aceptada" || reason === "rechazada") {
+              await response.edit({ components: [], content: "" });
+              return collector.stop("cerrado");
+            }
+            const description = "Propuesta cancelada por falta de tiempo.";
+            const embedOver = new EmbedBuilder()
+              .setAuthor({
+                name: message.member.displayName,
+                iconURL: message.author.displayAvatarURL({ dynamic: true }),
+              })
+              .setDescription(description)
+              .setColor(Colors.DarkRed)
+              .setTimestamp();
+
+            return await response.edit({
+              embeds: [embedOver],
+              components: [],
+              content: "",
+            });
+          });
+        }
+      });
+
+      collector.on("end", async (collected, reason) => {
+        if (reason === "cerrado") {
+          const embedOver = new EmbedBuilder()
+            .setAuthor({
+              name: message.member.displayName,
+              iconURL: message.author.displayAvatarURL({ dynamic: true }),
+            })
+            .setDescription("Menú de propuestas cerrado.")
+            .setColor(Colors.DarkRed)
+            .setTimestamp();
+
+          return await response.edit({
+            embeds: [embedOver],
+            components: [],
+            content: "",
+          });
+        }
       });
     } else {
+      /* Para usuarios */
       const [category, imgUrl] = args;
       const example = "Ejemplo: `+prop some https://example.com/image.png`";
 
