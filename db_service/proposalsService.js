@@ -1,12 +1,14 @@
 import { db } from "../michi.js";
-/* 
-La estructura de la propuesta:
-category: string,
-image: string (url),
-user: string (id),
-date: string (date)
-*/
-
+/**
+ * @constructor {string} serverId - Id del servidor
+ * @object Estructura del objeto propuesta
+ * {
+ * category: string,
+ * image: string,
+ * description: string,
+ * date: string,
+ * }
+ */
 export class ProposalService {
   constructor(serverId) {
     this.serverId = serverId;
