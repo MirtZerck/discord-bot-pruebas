@@ -6,18 +6,18 @@ export const getMemberByID = (message, id) => {
 
 // Función para buscar un miembro en el servidor basándose en un filtro
 export const getMemberByFilter = (message, filter) => {
-  // Convierte el filtro a minúsculas y elimina espacios adicionales para una búsqueda consistente
   const filtro = filter.toLowerCase().trim();
 
-  // Busca en el caché de miembros del servidor y retorna el primer miembro que cumpla con las condiciones
-  return message.guild.members.cache.find((member) => {
-    // Obtiene el nombre para mostrar (displayName) del miembro en minúsculas
-    const displayName = member.displayName.toLowerCase();
+  // Verifica primero si el filtro es un ID numérico válido
+  if (!isNaN(filtro) && filtro.length > 16) {
+    // Los ID de Discord tienen 17 o 18 dígitos
+    return message.guild.members.cache.get(filtro);
+  }
 
-    // Comprueba si el displayName del miembro incluye el filtro o si el ID del usuario coincide con el filtro
-    return (
-      displayName.includes(filtro) || 
-      member.user.id === filter
-    );
+  // Si no es un ID, busca por nombre de usuario o apodo
+  return message.guild.members.cache.find((member) => {
+    const displayName = member.displayName.toLowerCase();
+    const username = member.user.username.toLowerCase();
+    return displayName.includes(filtro) || username.includes(filtro);
   });
 };

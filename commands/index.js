@@ -9,10 +9,10 @@ import { horaServer } from "./hora.js";
 import { mostrarPing } from "./ping.js";
 import { xpellitRankingServidor } from "./xpellit-actividad-discord.js";
 import { clanRankingClan } from "./clan-puntos-merito.js";
-import { cookieUserCommand } from "./cookie.js";
-import { hornyUserCommand } from "./horny.js";
-import { pokeUserCommand } from "./poke.js";
-import { danceUserCommand } from "./dance.js";
+/* import { cookieUserCommand } from "./cookie.js"; */
+/* import { hornyUserCommand } from "./horny.js"; */
+/* import { pokeUserCommand } from "./poke.js"; */
+/* import { danceUserCommand } from "./dance.js"; */
 import {
   blockInteractionsCommands,
   blockHugCommand,
@@ -34,10 +34,10 @@ export const arrayCommands = [
   mostrarPing,
   xpellitRankingServidor,
   clanRankingClan,
-  cookieUserCommand,
-  hornyUserCommand,
-  pokeUserCommand,
-  danceUserCommand,
+ /*  cookieUserCommand, */
+ /*  hornyUserCommand, */
+ /*  pokeUserCommand, */
+ /*  danceUserCommand, */
   systemCoins,
   ...arrayInteractions,
   proposalCommand,
