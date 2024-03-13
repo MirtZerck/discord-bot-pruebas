@@ -37,6 +37,12 @@ export const onMessageCreate = async (client) => {
     const commandName = args.shift();
     const commandBody = content.slice(commandName.length).trim();
 
+    /*
+    para la nueva estructura de la db 
+    const commandDB = new CommandsService(message.guild.id);
+
+    const commandFound = await commandDB.getCommandsValue(commandName);
+     */
     const commandFound = await getCommandsValue(commandName);
     if (commandFound) {
       const categoria = commandFound[0];
