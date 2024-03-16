@@ -1,5 +1,5 @@
 import { Events } from "discord.js";
-import { arraySlashCommands } from "./index.js";
+import { arraySlashCommands } from "./slashIndex.js";
 
 export const onInteractionCreate = async (client) => {
   client.on(Events.InteractionCreate, async (interaction) => {

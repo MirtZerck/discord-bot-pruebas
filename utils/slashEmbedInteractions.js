@@ -1,5 +1,5 @@
-import { EmbedBuilder } from "discord.js"; 
-import { getDynamicColor } from "./getDynamicColor.js"; 
+import { EmbedBuilder } from "discord.js";
+import { getDynamicColor } from "./getDynamicColor.js";
 import {
   getInteraccionesValue,
   updateInteractionsCount,
@@ -11,12 +11,12 @@ import {
 } from "./interactionRequests.js";
 
 export const createInteractionEmbed = (
-  authorMember, 
-  targetMember, 
-  interactionType, 
-  count, 
-  imageUrl, 
-  footer 
+  authorMember,
+  targetMember,
+  interactionType,
+  count,
+  imageUrl,
+  footer
 ) => {
   const dynamicColor = getDynamicColor(authorMember);
 
@@ -31,20 +31,21 @@ export const createInteractionEmbed = (
       interactionDescription += `\nSe han dado **${count}** ${interactionType} 🤗`;
     }
   }
+
   return new EmbedBuilder()
-    .setDescription(interactionDescription) 
-    .setImage(imageUrl) 
-    .setColor(dynamicColor) 
-    .setFooter({ text: footer }) 
-    .setTimestamp(); 
+    .setDescription(interactionDescription)
+    .setImage(imageUrl)
+    .setColor(dynamicColor)
+    .setFooter({ text: footer })
+    .setTimestamp();
 };
 
-export async function handleDirectInteraction(message, user, config) {
+export async function handleDirectInteraction(interaction, user, config) {
   let newCount = null;
 
   if (config.requiresCount) {
     newCount = await updateInteractionsCount(
-      message.author.id,
+      interaction.user.id,
       user.user.id,
       config.type
     );
@@ -59,7 +60,7 @@ export async function handleDirectInteraction(message, user, config) {
     const imgDb = imgArray[index];
 
     const messageEmbed = createInteractionEmbed(
-      message.member,
+      interaction.member,
       user,
       config.type,
       newCount,
@@ -67,31 +68,31 @@ export async function handleDirectInteraction(message, user, config) {
       config.footer
     );
 
-    await message.channel.send({ embeds: [messageEmbed] });
+    await interaction.followUp({ embeds: [messageEmbed] });
   }
 }
 
-export async function sendInteractionRequest(message, user, config) {
-  const dynamicColor = getDynamicColor(message.member);
+export async function sendInteractionRequest(interaction, user, config) {
+  const dynamicColor = getDynamicColor(interaction.member);
   const embedRequest = new EmbedBuilder()
     .setAuthor({
-      name: message.member.displayName,
-      iconURL: message.author.displayAvatarURL({ dynamic: true }),
+      name: interaction.member.displayName,
+      iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
     })
     .setTitle(`Solicitud de ${config.name}`)
     .setThumbnail(user.displayAvatarURL({ dynamic: true }))
-    .setDescription(config.successResponce(message.member, user))
+    .setDescription(config.successResponce(interaction.member, user))
     .setColor(dynamicColor)
     .setFooter({ text: "Reacciona para responder." })
     .setTimestamp();
 
-  const request = await message.channel.send({ embeds: [embedRequest] });
+  const request = await interaction.followUp({ embeds: [embedRequest] });
   await request.react("✅");
   await request.react("❌");
 
   addInteractionRequest(user.user.id, {
     requestMessage: request,
-    requester: message.author.id,
+    requester: interaction.user.id,
     type: config.name,
   });
 
@@ -105,12 +106,15 @@ export async function sendInteractionRequest(message, user, config) {
 
       if (reaction.emoji.name === "✅") {
         console.log("Solicitud aceptada.");
-        removeInteractionRequest(user.user.id);
-        request.delete();
 
-        await handleDirectInteraction(message, user, config);
+        removeInteractionRequest(user.user.id);
+
+        await handleDirectInteraction(interaction, user, config);
+
+        await request.delete().catch(console.error);
       } else if (reaction.emoji.name === "❌") {
         console.log("Solicitud rechazada.");
+
         removeInteractionRequest(user.user.id);
         request.edit({
           embeds: [embedRequest.setDescription(config.rejectResponse)],

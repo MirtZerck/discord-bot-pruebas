@@ -1,9 +1,9 @@
-import { getMemberByFilter } from "../constants/get-user.js";
 import {
   handleDirectInteraction,
   sendInteractionRequest,
-} from "../utils/embedInteractions.js";
+} from "../utils/slashEmbedInteractions.js";
 import { removeInteractionRequest } from "../utils/interactionRequests.js";
+import { SlashCommandBuilder } from "discord.js";
 
 const interactionCommands = {
   abrazos: {
@@ -91,22 +91,17 @@ const interactionCommands = {
   },
 };
 
-async function executeinteractionCommands(message, args, config) {
-  console.log(
-    `Iniciando comando: ${config.action} con args: ${args.join(" ")}`
-  );
-  let userMention = message.mentions.members.first();
+async function executeinteractionCommands(interaction, config) {
+  let userMention = interaction.options.getMember("target");
 
   let user;
 
-  if (!userMention && args[0]) {
-    user = getMemberByFilter(message, args[0]);
-    console.log(
-      "Usuario encontrado por argumento:",
-      user ? user.displayName : "No encontrado"
-    );
-  } else if (!config.requiresUser && !args[0]) {
-    user = message.member;
+  console.log(
+    `Iniciando comando: ${config.action} con usuario: ${userMention}`
+  );
+
+  if (!config.requiresUser && !userMention) {
+    user = interaction.member;
     console.log("Acción solitaria asumida para el usuario:", user.displayName);
   } else {
     user = userMention;
@@ -122,136 +117,125 @@ async function executeinteractionCommands(message, args, config) {
 
   if (!user && config.requiresUser) {
     console.log("Usuario requerido pero no proporcionado.");
-    return message.reply(
+    return interaction.reply(
       `Debes mencionar a alguien o proporcionar un nombre válido para ${config.action}.`
     );
   }
 
   if (!user) {
     console.log("Usuario no existe o no se pudo encontrar.");
-    return message.reply("El usuario no existe o no se pudo encontrar.");
+    return interaction.reply("El usuario no existe o no se pudo encontrar.");
   }
 
-  if (config.requiresUser && message.author.id === user.user.id) {
+  if (config.requiresUser && interaction.user.id === user.user.id) {
     console.log("Intento de auto-interacción detectado.");
-    return message.reply(`No te puedes ${config.action} a ti mismo.`);
+    return interaction.reply(`No te puedes ${config.action} a ti mismo.`);
   }
 
   const userReactID = user.user.id;
 
   removeInteractionRequest(userReactID);
 
-  if (user.user.bot || (!config.requiresUser && !userMention && !args[0])) {
-    await handleDirectInteraction(message, user, config);
-
-    removeInteractionRequest(userReactID);
-
-    return;
-  }
-
-  const shouldSendRequest =
-    config.requiresRequest &&
-    user &&
-    message.author.id !== user.user.id &&
-    !user.user.bot;
-
-  if (shouldSendRequest) {
-    await sendInteractionRequest(message, user, config);
+  if (user.user.bot || (!config.requiresUser && !userMention)) {
+    await handleDirectInteraction(interaction, user, config);
   } else {
-    await handleDirectInteraction(message, user, config);
+    const shouldSendRequest =
+      config.requiresRequest &&
+      user &&
+      interaction.user.id !== user.user.id &&
+      !user.user.bot;
 
-    removeInteractionRequest(userReactID);
+    if (shouldSendRequest) {
+      await sendInteractionRequest(interaction, user, config);
+    } else {
+      await handleDirectInteraction(interaction, user, config);
+    }
   }
+  removeInteractionRequest(userReactID);
 }
 
-const hugUserCommand = {
-  name: "abrazo",
-  alias: ["hug", "abrazar"],
-  async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.abrazos
-    );
+/////////////////////////////////////////////////////////////////////////////////
+
+const interactCommand = new SlashCommandBuilder()
+  .setName("interact")
+  .setDescription("Interactúa con un usuario.");
+
+const subcommands = [
+  {
+    name: "hug",
+    description: "Abraza a alguien. (つ≧▽≦)つ",
+    commandHandler: interactionCommands.abrazos,
+    isTargetRequired: true,
   },
-};
-
-const patUserCommand = {
-  name: "caricia",
-  alias: ["pat", "acariciar"],
-
-  async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.caricias
-    );
+  {
+    name: "pat",
+    description: "Acaricia a alguien.",
+    commandHandler: interactionCommands.caricias,
+    isTargetRequired: true,
   },
-};
-
-const kissUserCommand = {
-  name: "beso",
-  alias: ["kiss", "besar"],
-
-  async execute(message, args) {
-    await executeinteractionCommands(message, args, interactionCommands.besos);
+  {
+    name: "kiss",
+    description: "Besa a alguien.",
+    commandHandler: interactionCommands.besos,
+    isTargetRequired: true,
   },
-};
-
-const danceUserCommand = {
-  name: "baile",
-  alias: ["dance", "bailar"],
-
-  async execute(message, args) {
-    await executeinteractionCommands(message, args, interactionCommands.bailes);
+  {
+    name: "dance",
+    description: "Baila solo o con alguien.",
+    commandHandler: interactionCommands.bailes,
+    isTargetRequired: false,
   },
-};
-
-const cookieUserCommand = {
-  name: "galleta",
-  alias: ["cookie"],
-
-  async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.galletas
-    );
+  {
+    name: "cookie",
+    description: "Come una galleta o dale una a alguien.",
+    commandHandler: interactionCommands.galletas,
+    isTargetRequired: false,
   },
-};
-
-const hornyUserCommand = {
-  name: "caliente",
-  alias: ["horny", "excitar"],
-
-  async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.caliente
-    );
+  {
+    name: "horny",
+    description: "OwO",
+    commandHandler: interactionCommands.caliente,
+    isTargetRequired: false,
   },
-};
-
-const pokeUserCommand = {
-  name: "molestia",
-  alias: ["poke", "molestar"],
-
-  async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.molestar
-    );
+  {
+    name: "poke",
+    description: "Molesta a alguien.",
+    commandHandler: interactionCommands.molestar,
+    isTargetRequired: true,
   },
-};
-
-export const arrayInteractions = [
-  hugUserCommand,
-  patUserCommand,
-  kissUserCommand,
-  danceUserCommand,
-  cookieUserCommand,
-  hornyUserCommand,
-  pokeUserCommand,
 ];
+
+subcommands.forEach((sub) => {
+  interactCommand.addSubcommand((subcommand) =>
+    subcommand
+      .setName(sub.name)
+      .setDescription(sub.description)
+      .addUserOption((option) =>
+        option
+          .setName("target")
+          .setDescription(`El usuario al que quieres ${sub.name}.`)
+          .setRequired(sub.isTargetRequired)
+      )
+  );
+});
+
+const executeSubcommand = async (interaction, commandHandler) => {
+  await interaction.deferReply();
+  await executeinteractionCommands(interaction, commandHandler);
+};
+
+export const slashInteractCommand = {
+  data: interactCommand,
+  async execute(interaction) {
+    const subcommandName = interaction.options.getSubcommand();
+    const subcommand = subcommands.find((sub) => sub.name === subcommandName);
+    if (subcommand) {
+      await executeSubcommand(interaction, subcommand.commandHandler);
+    } else {
+      await interaction.reply({
+        content: "Subcomando no encontrado.",
+        ephemeral: true,
+      });
+    }
+  },
+};

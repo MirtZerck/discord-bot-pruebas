@@ -1,5 +1,5 @@
 import { REST, Routes } from "discord.js";
-import { arraySlashCommands } from "./index.js";
+import { arraySlashCommands } from "./slashIndex.js";
 import { APPLICATION_ID, token } from "../michi.js";
 
 export async function registerSlashCommands() {
