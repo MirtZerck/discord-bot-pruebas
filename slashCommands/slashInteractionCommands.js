@@ -2,7 +2,10 @@ import {
   handleDirectInteraction,
   sendInteractionRequest,
 } from "../utils/slashEmbedInteractions.js";
-import { removeInteractionRequest } from "../utils/interactionRequests.js";
+import {
+  interactionRequests,
+  removeInteractionRequest,
+} from "../utils/interactionRequests.js";
 import { SlashCommandBuilder } from "discord.js";
 
 const interactionCommands = {
@@ -10,11 +13,14 @@ const interactionCommands = {
     name: "abrazo",
     requiresUser: true,
     requiresCount: true,
+    descriptionCount: (count) => `\nSe han dado **${count}** abrazos. 🤗`,
     type: "abrazos",
     action: "abrazar",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** le ha dado un abrazo cariñoso a **${receiver.displayName}.** ^^`,
     footer: "¡Un gesto amable hace el día mejor!",
     requiresRequest: true,
-    successResponce: (requester, receiver) =>
+    requestMessage: (requester, receiver) =>
       `¡Hola ${receiver}! ${requester} está deseando compartir un abrazo contigo. ¿Qué dices, lo aceptas?`,
     rejectResponse: "Solicitud de abrazo rechazada.",
     noResponse: `Solicitud de abrazo no respondida.`,
@@ -23,11 +29,14 @@ const interactionCommands = {
     name: "caricia",
     requiresUser: true,
     requiresCount: true,
+    descriptionCount: (count) => `\nSe han dado **${count}** caricias. 🐱`,
     type: "caricias",
     action: "acariciar",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** le ha dado una tierna caricia a **${receiver.displayName}.** :3`,
     footer: "Una caricia suave puede iluminar el corazón.",
     requiresRequest: true,
-    successResponce: (requester, receiver) =>
+    requestMessage: (requester, receiver) =>
       `¡Hola ${receiver}! ${requester} te quiere dar caricias. ¿Lo aceptarás? owo`,
     rejectResponse: "Solicitud de caricia rechazada.",
     noResponse: "Solicitud de caricia no respondida.",
@@ -36,11 +45,14 @@ const interactionCommands = {
     name: "beso",
     requiresUser: true,
     requiresCount: true,
+    descriptionCount: (count) => `\nSe han besado **${count}** veces. 💋`,
     type: "besos",
     action: "besar",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** ha besado a **${receiver.displayName}.** o:`,
     footer: "Un beso tierno, un momento eterno.",
     requiresRequest: true,
-    successResponce: (requester, receiver) =>
+    requestMessage: (requester, receiver) =>
       `¡Hola ${receiver}! ${requester} te quiere besar. ¿Vas a recibirlo? OwO`,
     rejectResponse: "Solicitud de beso rechazada.",
     noResponse: "Solicitud de beso no respondida.",
@@ -49,11 +61,16 @@ const interactionCommands = {
     name: "baile",
     requiresUser: false,
     requiresCount: true,
+    descriptionCount: (count) => `\nHan bailado juntos **${count}** veces. 💃`,
     type: "bailar",
     action: "bailar",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** está bailando con **${receiver.displayName}.**`,
+    soloDescription: (requester) =>
+      `**${requester.displayName}** se puso a bailar.`,
     footer: "Bailar alegra el corazón.",
     requiresRequest: true,
-    successResponce: (requester, receiver) =>
+    requestMessage: (requester, receiver) =>
       `¡Hey ${receiver},! ${requester} quiere bailar contigo. ¿Te animas?`,
     rejectResponse: "Solicitud de baile rechazada.",
     noResponse: "Solicitud de baile no respondida.",
@@ -64,9 +81,13 @@ const interactionCommands = {
     requiresCount: false,
     type: "cookie",
     action: "comer una galleta",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** le dió una galleta **${receiver.displayName}.** 🍪`,
+    soloDescription: (requester) =>
+      `**${requester.displayName}** está comiendo una galleta. 🍪`,
     footer: "Las galletas son muy ricas. uwu",
     requiresRequest: true,
-    successResponce: (requester, receiver) =>
+    requestMessage: (requester, receiver) =>
       `¡Oye ${receiver}!, ¿Te gustaría recibir una galleta de ${requester}?`,
     rejectResponse: (receiver) => `${receiver} no quiso aceptar tu galleta.`,
     noResponse: "Solicitud de galleta no respondida.",
@@ -77,6 +98,10 @@ const interactionCommands = {
     requiresCount: false,
     type: "horny",
     action: "se ha puesto horny",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** se calentó con **${receiver.displayName}.** 🔥`,
+    soloDescription: (requester) =>
+      `**${requester.displayName}** se puso horny. 🔥`,
     footer: "Hace mucho calor por aquí.",
     requiresRequest: false,
   },
@@ -86,6 +111,8 @@ const interactionCommands = {
     requiresCount: false,
     type: "poke",
     action: "molestar",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** está fastidiando a **${receiver.displayName}.**`,
     footer: "Molestar",
     requiresRequest: false,
   },
@@ -132,10 +159,6 @@ async function executeinteractionCommands(interaction, config) {
     return interaction.reply(`No te puedes ${config.action} a ti mismo.`);
   }
 
-  const userReactID = user.user.id;
-
-  removeInteractionRequest(userReactID);
-
   if (user.user.bot || (!config.requiresUser && !userMention)) {
     await handleDirectInteraction(interaction, user, config);
   } else {
@@ -146,12 +169,16 @@ async function executeinteractionCommands(interaction, config) {
       !user.user.bot;
 
     if (shouldSendRequest) {
+      if (interactionRequests.has(user.user.id)) {
+        return interaction.editReply(
+          "Ya existe una solicitud de interacción pendiente para este usuario."
+        );
+      }
       await sendInteractionRequest(interaction, user, config);
     } else {
       await handleDirectInteraction(interaction, user, config);
     }
   }
-  removeInteractionRequest(userReactID);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

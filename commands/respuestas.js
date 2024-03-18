@@ -192,21 +192,7 @@ export const onMessageCreate = async (client) => {
       );
       if (command) {
         try {
-          const userMention = message.mentions.members.first();
-          if (userMention && interactionRequests.has(userMention.id)) {
-            message.reply(
-              "Ya existe una solicitud de interacción pendiente para este usuario."
-            );
-          } else {
-            command.execute(message, args, commandBody);
-
-            if (userMention) {
-              addInteractionRequest(userMention.id, {
-                timestamp: Date.now(),
-                type: command.name,
-              });
-            }
-          }
+          command.execute(message, args, commandBody);
         } catch (error) {
           console.log(error);
         }

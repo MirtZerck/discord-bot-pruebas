@@ -10,11 +10,15 @@ import {
   removeInteractionRequest,
 } from "./interactionRequests.js";
 
+/*                                                                            */
+
 export const createInteractionEmbed = (
   authorMember,
   targetMember,
-  interactionType,
+  description,
+  soloDescription,
   count,
+  descriptionCount,
   imageUrl,
   footer
 ) => {
@@ -23,12 +27,12 @@ export const createInteractionEmbed = (
   let interactionDescription;
 
   if (authorMember.id === targetMember.id) {
-    interactionDescription = `¡**${authorMember.displayName}** se puso a ${interactionType}!`;
+    interactionDescription = soloDescription(authorMember);
   } else {
-    interactionDescription = `¡**${authorMember.displayName}** ha dado un ${interactionType} a **${targetMember.displayName}**!`;
+    interactionDescription = description(authorMember, targetMember);
 
     if (count != null) {
-      interactionDescription += `\nSe han dado **${count}** ${interactionType} 🤗`;
+      interactionDescription += descriptionCount(count);
     }
   }
 
@@ -40,6 +44,8 @@ export const createInteractionEmbed = (
     .setTimestamp();
 };
 
+/*                                                                            */
+
 export async function handleDirectInteraction(interaction, user, config) {
   let newCount = null;
 
@@ -49,6 +55,14 @@ export async function handleDirectInteraction(interaction, user, config) {
       user.user.id,
       config.type
     );
+  }
+
+  if (!config.descriptionCount) {
+    config.descriptionCount = null;
+  }
+
+  if (!config.soloDescription) {
+    config.soloDescription = null;
   }
 
   const callArray = await getInteraccionesValue();
@@ -62,8 +76,10 @@ export async function handleDirectInteraction(interaction, user, config) {
     const messageEmbed = createInteractionEmbed(
       interaction.member,
       user,
-      config.type,
+      config.description,
+      config.soloDescription,
       newCount,
+      config.descriptionCount,
       imgDb,
       config.footer
     );
@@ -72,8 +88,12 @@ export async function handleDirectInteraction(interaction, user, config) {
   }
 }
 
+/*                                                                            */
+
 export async function sendInteractionRequest(interaction, user, config) {
   const dynamicColor = getDynamicColor(interaction.member);
+  const expirationTimestamp = Math.floor(Date.now() / 1000) + 3 * 60;
+
   const embedRequest = new EmbedBuilder()
     .setAuthor({
       name: interaction.member.displayName,
@@ -81,7 +101,12 @@ export async function sendInteractionRequest(interaction, user, config) {
     })
     .setTitle(`Solicitud de ${config.name}`)
     .setThumbnail(user.displayAvatarURL({ dynamic: true }))
-    .setDescription(config.successResponce(interaction.member, user))
+    .setDescription(
+      `${config.requestMessage(
+        interaction.member,
+        user
+      )}\n\nEsta solicitud caduca <t:${expirationTimestamp}:R>.`
+    )
     .setColor(dynamicColor)
     .setFooter({ text: "Reacciona para responder." })
     .setTimestamp();
@@ -121,11 +146,16 @@ export async function sendInteractionRequest(interaction, user, config) {
         });
       }
     })
-    .catch((error) => {
+    .catch(async (error) => {
       console.error("Error al esperar reacciones: ", error);
       removeInteractionRequest(user.user.id);
       request.edit({
         embeds: [embedRequest.setDescription(config.noResponse)],
       });
+      try {
+        await request.reactions.removeAll();
+      } catch (removeError) {
+        console.error("Error al eliminar reacciones: ", removeError);
+      }
     });
 }

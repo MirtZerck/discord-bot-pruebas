@@ -1,5 +1,5 @@
-import { EmbedBuilder } from "discord.js"; 
-import { getDynamicColor } from "./getDynamicColor.js"; 
+import { EmbedBuilder } from "discord.js";
+import { getDynamicColor } from "./getDynamicColor.js";
 import {
   getInteraccionesValue,
   updateInteractionsCount,
@@ -10,34 +10,40 @@ import {
   removeInteractionRequest,
 } from "./interactionRequests.js";
 
+/*                                                                            */
+
 export const createInteractionEmbed = (
-  authorMember, 
-  targetMember, 
-  interactionType, 
-  count, 
-  imageUrl, 
-  footer 
+  authorMember,
+  targetMember,
+  description,
+  soloDescription,
+  count,
+  descriptionCount,
+  imageUrl,
+  footer
 ) => {
   const dynamicColor = getDynamicColor(authorMember);
 
   let interactionDescription;
 
   if (authorMember.id === targetMember.id) {
-    interactionDescription = `¡**${authorMember.displayName}** se puso a ${interactionType}!`;
+    interactionDescription = soloDescription(authorMember);
   } else {
-    interactionDescription = `¡**${authorMember.displayName}** ha dado un ${interactionType} a **${targetMember.displayName}**!`;
+    interactionDescription = description(authorMember, targetMember);
 
     if (count != null) {
-      interactionDescription += `\nSe han dado **${count}** ${interactionType} 🤗`;
+      interactionDescription += descriptionCount(count);
     }
   }
   return new EmbedBuilder()
-    .setDescription(interactionDescription) 
-    .setImage(imageUrl) 
-    .setColor(dynamicColor) 
-    .setFooter({ text: footer }) 
-    .setTimestamp(); 
+    .setDescription(interactionDescription)
+    .setImage(imageUrl)
+    .setColor(dynamicColor)
+    .setFooter({ text: footer })
+    .setTimestamp();
 };
+
+/*                                                                            */
 
 export async function handleDirectInteraction(message, user, config) {
   let newCount = null;
@@ -48,6 +54,14 @@ export async function handleDirectInteraction(message, user, config) {
       user.user.id,
       config.type
     );
+  }
+
+  if (!config.descriptionCount) {
+    config.descriptionCount = null;
+  }
+
+  if (!config.soloDescription) {
+    config.soloDescription = null;
   }
 
   const callArray = await getInteraccionesValue();
@@ -61,8 +75,10 @@ export async function handleDirectInteraction(message, user, config) {
     const messageEmbed = createInteractionEmbed(
       message.member,
       user,
-      config.type,
+      config.description,
+      config.soloDescription,
       newCount,
+      config.descriptionCount,
       imgDb,
       config.footer
     );
@@ -71,8 +87,12 @@ export async function handleDirectInteraction(message, user, config) {
   }
 }
 
+/*                                                                            */
+
 export async function sendInteractionRequest(message, user, config) {
   const dynamicColor = getDynamicColor(message.member);
+  const expirationTimestamp = Math.floor(Date.now() / 1000) + 3 * 60;
+
   const embedRequest = new EmbedBuilder()
     .setAuthor({
       name: message.member.displayName,
@@ -80,7 +100,12 @@ export async function sendInteractionRequest(message, user, config) {
     })
     .setTitle(`Solicitud de ${config.name}`)
     .setThumbnail(user.displayAvatarURL({ dynamic: true }))
-    .setDescription(config.successResponce(message.member, user))
+    .setDescription(
+      `${config.requestMessage(
+        message.member,
+        user
+      )}\n\nEsta solicitud caduca <t:${expirationTimestamp}:R>.`
+    )
     .setColor(dynamicColor)
     .setFooter({ text: "Reacciona para responder." })
     .setTimestamp();
@@ -117,11 +142,17 @@ export async function sendInteractionRequest(message, user, config) {
         });
       }
     })
-    .catch((error) => {
+    .catch(async (error) => {
       console.error("Error al esperar reacciones: ", error);
       removeInteractionRequest(user.user.id);
       request.edit({
         embeds: [embedRequest.setDescription(config.noResponse)],
       });
+
+      try {
+        await request.reactions.removeAll();
+      } catch (removeError) {
+        console.error("Error al eliminar reacciones: ", removeError);
+      }
     });
 }
