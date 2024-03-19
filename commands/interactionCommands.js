@@ -3,10 +3,7 @@ import {
   handleDirectInteraction,
   sendInteractionRequest,
 } from "../utils/embedInteractions.js";
-import {
-  interactionRequests,
-  removeInteractionRequest,
-} from "../utils/interactionRequests.js";
+import { interactionRequests } from "../utils/interactionRequests.js";
 
 const interactionCommands = {
   abrazos: {
@@ -119,48 +116,29 @@ const interactionCommands = {
 };
 
 async function executeinteractionCommands(message, args, config) {
-  console.log(
-    `Iniciando comando: ${config.action} con args: ${args.join(" ")}`
-  );
   let userMention = message.mentions.members.first();
 
   let user;
 
   if (!userMention && args[0]) {
     user = getMemberByFilter(message, args[0]);
-    console.log(
-      "Usuario encontrado por argumento:",
-      user ? user.displayName : "No encontrado"
-    );
   } else if (!config.requiresUser && !args[0]) {
     user = message.member;
-    console.log("Acción solitaria asumida para el usuario:", user.displayName);
   } else {
     user = userMention;
-    console.log(
-      "Usuario mencionado:",
-      user ? user.displayName : "No mencionado"
-    );
   }
 
-  console.log(
-    `Usuario objetivo determinado: ${user ? user.displayName : "N/A"}`
-  );
-
   if (!user && config.requiresUser) {
-    console.log("Usuario requerido pero no proporcionado.");
     return message.reply(
       `Debes mencionar a alguien o proporcionar un nombre válido para ${config.action}.`
     );
   }
 
   if (!user) {
-    console.log("Usuario no existe o no se pudo encontrar.");
     return message.reply("El usuario no existe o no se pudo encontrar.");
   }
 
   if (config.requiresUser && message.author.id === user.user.id) {
-    console.log("Intento de auto-interacción detectado.");
     return message.reply(`No te puedes ${config.action} a ti mismo.`);
   }
 

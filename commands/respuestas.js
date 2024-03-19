@@ -15,10 +15,6 @@ import { getRandomNumber } from "../utils/utilsFunctions.js";
 
 // Importa constructores de Discord.js para crear mensajes incrustados y manejar eventos
 import { EmbedBuilder, Events } from "discord.js";
-import {
-  interactionRequests,
-  addInteractionRequest,
-} from "../utils/interactionRequests.js";
 
 // Define la función principal que se ejecuta cuando se crea un mensaje
 export const onMessageCreate = async (client) => {
@@ -79,7 +75,7 @@ export const onMessageCreate = async (client) => {
           try {
             message.delete();
           } catch (error) {
-            console.log(error);
+            console.error(error);
           }
           break;
         }
@@ -190,11 +186,12 @@ export const onMessageCreate = async (client) => {
           cmd.name === commandName ||
           (cmd.alias && cmd.alias.includes(commandName))
       );
+
       if (command) {
         try {
-          command.execute(message, args, commandBody);
+          await command.execute(message, args, commandBody);
         } catch (error) {
-          console.log(error);
+          console.error("Error al ejecutar el comando:", error);
         }
       }
     }

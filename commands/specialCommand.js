@@ -46,7 +46,7 @@ export const handleSpecialCommands = async (client, mirtZerckID) => {
         try {
           message.delete();
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }, 5 * 1000);
     }

@@ -123,39 +123,32 @@ async function executeinteractionCommands(interaction, config) {
 
   let user;
 
-  console.log(
-    `Iniciando comando: ${config.action} con usuario: ${userMention}`
-  );
+  
 
   if (!config.requiresUser && !userMention) {
     user = interaction.member;
-    console.log("Acción solitaria asumida para el usuario:", user.displayName);
+    
   } else {
     user = userMention;
-    console.log(
-      "Usuario mencionado:",
-      user ? user.displayName : "No mencionado"
-    );
+   
   }
 
-  console.log(
-    `Usuario objetivo determinado: ${user ? user.displayName : "N/A"}`
-  );
+ 
 
   if (!user && config.requiresUser) {
-    console.log("Usuario requerido pero no proporcionado.");
+  
     return interaction.reply(
       `Debes mencionar a alguien o proporcionar un nombre válido para ${config.action}.`
     );
   }
 
   if (!user) {
-    console.log("Usuario no existe o no se pudo encontrar.");
+
     return interaction.reply("El usuario no existe o no se pudo encontrar.");
   }
 
   if (config.requiresUser && interaction.user.id === user.user.id) {
-    console.log("Intento de auto-interacción detectado.");
+ 
     return interaction.reply(`No te puedes ${config.action} a ti mismo.`);
   }
 

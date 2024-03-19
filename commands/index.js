@@ -9,18 +9,15 @@ import { horaServer } from "./hora.js";
 import { mostrarPing } from "./ping.js";
 import { xpellitRankingServidor } from "./xpellit-actividad-discord.js";
 import { clanRankingClan } from "./clan-puntos-merito.js";
-/* import { cookieUserCommand } from "./cookie.js"; */
-/* import { hornyUserCommand } from "./horny.js"; */
-/* import { pokeUserCommand } from "./poke.js"; */
-/* import { danceUserCommand } from "./dance.js"; */
-import {
+/* import {
   blockInteractionsCommands,
   blockHugCommand,
-} from "./bloquear-interacciones.js";
+} from "./bloquear-interacciones.js"; */
 import { systemCoins } from "./add_coins.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 import { arrayInteractions } from "./interactionCommands.js";
 import { proposalCommand } from "./proposals.js";
+import { timeoutUser, removeTimeoutUser } from "./automod/timeoutFunction.js";
 
 export const arrayCommands = [
   userInfoCommand,
@@ -34,13 +31,15 @@ export const arrayCommands = [
   mostrarPing,
   xpellitRankingServidor,
   clanRankingClan,
- /*  cookieUserCommand, */
- /*  hornyUserCommand, */
- /*  pokeUserCommand, */
- /*  danceUserCommand, */
+  /*  cookieUserCommand, */
+  /*  hornyUserCommand, */
+  /*  pokeUserCommand, */
+  /*  danceUserCommand, */
   systemCoins,
   ...arrayInteractions,
   proposalCommand,
+  timeoutUser,
+  removeTimeoutUser,
   /* blockInteractionsCommands,
   blockHugCommand, */
   /* SendTraduccion, */

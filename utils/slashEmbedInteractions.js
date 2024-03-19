@@ -130,16 +130,12 @@ export async function sendInteractionRequest(interaction, user, config) {
       const reaction = collected.first();
 
       if (reaction.emoji.name === "✅") {
-        console.log("Solicitud aceptada.");
-
         removeInteractionRequest(user.user.id);
 
         await handleDirectInteraction(interaction, user, config);
 
         await request.delete().catch(console.error);
       } else if (reaction.emoji.name === "❌") {
-        console.log("Solicitud rechazada.");
-
         removeInteractionRequest(user.user.id);
         request.edit({
           embeds: [embedRequest.setDescription(config.rejectResponse)],
