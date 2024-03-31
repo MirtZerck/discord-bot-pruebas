@@ -16,31 +16,31 @@ export async function getInteraccionesValue() {
   return comandos;
 }
 
-export async function updateInteractionsCount(userID1, userID2, interactionType) {
+export async function updateInteractionsCount(
+  userID1,
+  userID2,
+  interactionType
+) {
   try {
-    // Ordenar los IDs de usuario para evitar duplicados en la base de datos
     const [minorID, majorID] = [userID1, userID2].sort();
 
-    // Referencia al contador de abrazos en la base de datos
     const countRef = db.child(
       `interacciones/conteos/${interactionType}/${minorID}/${majorID}`
     );
 
-    // Obtener el valor actual del contador
     const snapshot = await countRef.once("value");
     const currentCount = snapshot.val() || 0;
 
-    // Incrementar el contador
     const newCount = currentCount + 1;
 
-    // Actualizar el contador en la base de datos
     await countRef.set(newCount);
 
-    // Devolver el nuevo valor del contador
     return newCount;
   } catch (error) {
-    // Manejar errores
-    console.log(`Error al actualizar el conteo de ${interactionType} en Firebase`, error);
+    console.log(
+      `Error al actualizar el conteo de ${interactionType} en Firebase`,
+      error
+    );
     throw error;
   }
 }
@@ -111,5 +111,86 @@ export function replaceBlockCommandsNames(
       command = "abrazos";
       break;
     }
+  }
+}
+
+export async function updateWarnsCount(userId, serverId, serverName, reason) {
+  try {
+    const serverRef = db.child(`servers/${serverId}`);
+    const warnsRef = serverRef.child(`warns/${userId}`);
+
+    const snapshot = await warnsRef.once("value");
+    let data = snapshot.val();
+
+    if (data) {
+      data.count = (data.count || 0) + 1;
+      if (data.reasons) {
+        data.reasons.push(reason);
+      } else {
+        data.reasons = [reason];
+      }
+    } else {
+      data = { count: 1, reasons: [reason] };
+    }
+
+    const serverSnapshot = await serverRef.child("name").once("value");
+    if (!serverSnapshot.exists() || serverSnapshot.val() !== serverName) {
+      await serverRef.child("name").set(serverName);
+    }
+
+    await warnsRef.set(data);
+
+    return data.count;
+  } catch (error) {
+    console.log(
+      `Error al actualizar el conteo de advertencias en Firebase`,
+      error
+    );
+    throw error;
+  }
+}
+
+export async function checkWarns(userId, serverId) {
+  try {
+    const warnsRef = db.child(`servers/${serverId}/warns/${userId}`);
+    const snapshot = await warnsRef.once("value");
+    const data = snapshot.val();
+
+    if (!data) {
+      return { count: 0, reasons: [] };
+    }
+
+    return { count: data.count || 0, reasons: data.reasons || [] };
+  } catch (error) {
+    console.error(`Error al revisar las advertencias en Firebase`, error);
+    throw error;
+  }
+}
+
+export async function editWarns(userId, serverId, warnIndexToRemove) {
+  try {
+    if (warnIndexToRemove < 0) {
+      console.error("El índice de advertencias no puede ser negativo.");
+      return;
+    }
+
+    const warnsRef = db.child(`servers/${serverId}/warns/${userId}`);
+    const snapshot = await warnsRef.once("value");
+    const data = snapshot.val();
+
+    if (!data || !data.reasons || data.reasons.length <= warnIndexToRemove) {
+      console.error("Advertencia no encontrada o índice fuera de rango.");
+      return;
+    }
+
+    data.reasons.splice(warnIndexToRemove, 1);
+    data.count = data.reasons.length;
+
+    await warnsRef.set(data);
+
+    return data.count;
+  } catch (error) {
+    console.error(`Error al editar las advertencias en Firebase`, error);
+    throw error;
   }
 }

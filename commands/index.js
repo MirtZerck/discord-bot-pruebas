@@ -23,6 +23,7 @@ import {
 } from "./moderation/timeoutFunction.js";
 import { kickUser } from "./moderation/kickUserFunction.js";
 import { banUser, unbanUser } from "./moderation/banUserFunction.js";
+import { warnCommands } from "./moderation/warnUserFunction.js";
 import { leaveAllServersCommand } from "./moderation/leaveServers.js";
 
 export const arrayCommands = [
@@ -45,6 +46,7 @@ export const arrayCommands = [
   kickUser,
   banUser,
   unbanUser,
+  ...warnCommands,
   /* leaveAllServersCommand, */
   /* blockInteractionsCommands,
   blockHugCommand, */
