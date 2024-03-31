@@ -194,3 +194,22 @@ export async function editWarns(userId, serverId, warnIndexToRemove) {
     throw error;
   }
 }
+
+export async function moveCommands(serverId) {
+  const globalClanCommandsRef = db.child(`commands`);
+  const serverCommandsRef = db.child(`servers/${serverId}/commands`);
+
+  try {
+    const snapshot = await globalClanCommandsRef.once("value");
+    const commands = snapshot.val();
+    if (commands) {
+      await serverCommandsRef.set(commands);
+      console.log("Todos los comandos han sido movidos exitosamente.");
+    } else {
+      console.log("No se encontraron comandos globales para mover.");
+    }
+  } catch (error) {
+    console.error("Error al mover todos los comandos:", error);
+    throw error;
+  }
+}

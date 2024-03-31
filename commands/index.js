@@ -25,6 +25,7 @@ import { kickUser } from "./moderation/kickUserFunction.js";
 import { banUser, unbanUser } from "./moderation/banUserFunction.js";
 import { warnCommands } from "./moderation/warnUserFunction.js";
 import { leaveAllServersCommand } from "./moderation/leaveServers.js";
+import { moveCommandsCmd } from "./moveData.js";
 
 export const arrayCommands = [
   userInfoCommand,
@@ -47,6 +48,7 @@ export const arrayCommands = [
   banUser,
   unbanUser,
   ...warnCommands,
+  /* moveCommandsCmd, */
   /* leaveAllServersCommand, */
   /* blockInteractionsCommands,
   blockHugCommand, */
