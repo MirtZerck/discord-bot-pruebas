@@ -17,7 +17,13 @@ import { systemCoins } from "./add_coins.js";
 /* import { SendTraduccion } from "./traducir.js"; */
 import { arrayInteractions } from "./interactionCommands.js";
 import { proposalCommand } from "./proposals.js";
-import { timeoutUser, removeTimeoutUser } from "./automod/timeoutFunction.js";
+import {
+  timeoutUser,
+  removeTimeoutUser,
+} from "./moderation/timeoutFunction.js";
+import { kickUser } from "./moderation/kickUserFunction.js";
+import { banUser, unbanUser } from "./moderation/banUserFunction.js";
+import { leaveAllServersCommand } from "./moderation/leaveServers.js";
 
 export const arrayCommands = [
   userInfoCommand,
@@ -31,15 +37,15 @@ export const arrayCommands = [
   mostrarPing,
   xpellitRankingServidor,
   clanRankingClan,
-  /*  cookieUserCommand, */
-  /*  hornyUserCommand, */
-  /*  pokeUserCommand, */
-  /*  danceUserCommand, */
   systemCoins,
   ...arrayInteractions,
   proposalCommand,
   timeoutUser,
   removeTimeoutUser,
+  kickUser,
+  banUser,
+  unbanUser,
+  /* leaveAllServersCommand, */
   /* blockInteractionsCommands,
   blockHugCommand, */
   /* SendTraduccion, */

@@ -29,7 +29,7 @@ export const timeoutUser = {
 
     const member = getMemberByFilter(message, filtro);
 
-    if (!member) return message.reply("El usuario no existe");
+    if (!member) return message.reply("Menciona a un usuario válido.");
 
     if (message.author.id === member.user.id) {
       return message.reply(`No puedes aislarte a ti mismo.`);

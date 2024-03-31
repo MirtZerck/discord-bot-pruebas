@@ -77,7 +77,7 @@ const interactionCommands = {
     requiresUser: false,
     requiresCount: false,
     type: "cookie",
-    action: "comer una galleta",
+    action: "dar una galleta",
     description: (requester, receiver) =>
       `**${requester.displayName}** le dió una galleta **${receiver.displayName}.** 🍪`,
     soloDescription: (requester) =>
@@ -94,7 +94,6 @@ const interactionCommands = {
     requiresUser: false,
     requiresCount: false,
     type: "horny",
-    action: "se ha puesto horny",
     description: (requester, receiver) =>
       `**${requester.displayName}** se calentó con **${receiver.displayName}.** 🔥`,
     soloDescription: (requester) =>

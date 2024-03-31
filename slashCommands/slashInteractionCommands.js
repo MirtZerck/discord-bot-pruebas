@@ -2,10 +2,7 @@ import {
   handleDirectInteraction,
   sendInteractionRequest,
 } from "../utils/slashEmbedInteractions.js";
-import {
-  interactionRequests,
-  removeInteractionRequest,
-} from "../utils/interactionRequests.js";
+import { interactionRequests } from "../utils/interactionRequests.js";
 import { SlashCommandBuilder } from "discord.js";
 
 const interactionCommands = {
@@ -14,7 +11,7 @@ const interactionCommands = {
     requiresUser: true,
     requiresCount: true,
     descriptionCount: (count) => `\nSe han dado **${count}** abrazos. 🤗`,
-    type: "abrazos",
+    type: "abrazos", //Nombre en base de datos.
     action: "abrazar",
     description: (requester, receiver) =>
       `**${requester.displayName}** le ha dado un abrazo cariñoso a **${receiver.displayName}.** ^^`,
@@ -63,7 +60,6 @@ const interactionCommands = {
     requiresCount: true,
     descriptionCount: (count) => `\nHan bailado juntos **${count}** veces. 💃`,
     type: "bailar",
-    action: "bailar",
     description: (requester, receiver) =>
       `**${requester.displayName}** está bailando con **${receiver.displayName}.**`,
     soloDescription: (requester) =>
@@ -80,7 +76,7 @@ const interactionCommands = {
     requiresUser: false,
     requiresCount: false,
     type: "cookie",
-    action: "comer una galleta",
+    action: "dar una galleta",
     description: (requester, receiver) =>
       `**${requester.displayName}** le dió una galleta **${receiver.displayName}.** 🍪`,
     soloDescription: (requester) =>
@@ -97,7 +93,6 @@ const interactionCommands = {
     requiresUser: false,
     requiresCount: false,
     type: "horny",
-    action: "se ha puesto horny",
     description: (requester, receiver) =>
       `**${requester.displayName}** se calentó con **${receiver.displayName}.** 🔥`,
     soloDescription: (requester) =>
@@ -123,32 +118,23 @@ async function executeinteractionCommands(interaction, config) {
 
   let user;
 
-  
-
   if (!config.requiresUser && !userMention) {
     user = interaction.member;
-    
   } else {
     user = userMention;
-   
   }
 
- 
-
   if (!user && config.requiresUser) {
-  
     return interaction.reply(
       `Debes mencionar a alguien o proporcionar un nombre válido para ${config.action}.`
     );
   }
 
   if (!user) {
-
     return interaction.reply("El usuario no existe o no se pudo encontrar.");
   }
 
   if (config.requiresUser && interaction.user.id === user.user.id) {
- 
     return interaction.reply(`No te puedes ${config.action} a ti mismo.`);
   }
 
