@@ -27,6 +27,25 @@ import { rankXpellitControl } from "./commands/rankXpellitControl.js";
 import { handleSpecialCommands } from "./commands/specialCommand.js";
 import { mirtZerckID } from "./constants/users_ID.js";
 import { onMessageCreate } from "./commands/respuestas.js";
+/* import {SpotifyWebApi} from ("spotify-web-api-node") */
+import { log } from "console";
+/* import { generateDependencyReport } from "@discordjs/voice";
+
+console.log(generateDependencyReport()); */ // <------- Verificar las dependencias.
+
+/* export const spotifyApi = new SpotifyWebApi({
+  cientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+});
+
+spotifyApi.clientCredentialsGrant().then(
+function(data){
+  spotifyApi.setAccessToken(data.body["access_token"])
+},
+function(err) {
+  console.log("Algo salió mal al recuperar un token de acceso", err);
+}
+); */
 
 const require = createRequire(import.meta.url);
 
@@ -56,6 +75,7 @@ export const client = new Client({
     GatewayIntentBits.GuildWebhooks,
     GatewayIntentBits.GuildIntegrations,
     GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildVoiceStates,
   ],
 });
 
