@@ -26,6 +26,8 @@ import { banUser, unbanUser } from "./moderation/banUserFunction.js";
 import { warnCommands } from "./moderation/warnUserFunction.js";
 import { leaveAllServersCommand } from "./moderation/leaveServers.js";
 import { moveCommandsCmd } from "./moveData.js";
+import { playMusicCommand } from "./voice/playMusic.js";
+import { arrayMusicControls } from "./voice/musicControls.js";
 
 export const arrayCommands = [
   userInfoCommand,
@@ -48,6 +50,8 @@ export const arrayCommands = [
   banUser,
   unbanUser,
   ...warnCommands,
+  playMusicCommand,
+  ...arrayMusicControls,
   /* moveCommandsCmd, */
   /* leaveAllServersCommand, */
   /* blockInteractionsCommands,

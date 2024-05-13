@@ -112,6 +112,19 @@ const interactionCommands = {
     footer: "Molestar",
     requiresRequest: false,
   },
+  sonrojar: {
+    name: "sonrojo",
+    requiresUser: false,
+    requiresCount: false,
+    type: "sonrojar",
+    action: "sonrojar",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** se ha sonrojado debido a **${receiver.displayName}.**`,
+    soloDescription: (requester) =>
+      `**${requester.displayName}** se sonrojó. owo`,
+    footer: "Sintiendo mucha penita.",
+    requiresRequest: false,
+  },
 };
 
 async function executeinteractionCommands(message, args, config) {
@@ -245,6 +258,19 @@ const pokeUserCommand = {
   },
 };
 
+const blushUserCommand = {
+  name: "sonrojo",
+  alias: ["blush", "sonrojar"],
+
+  async execute(message, args) {
+    await executeinteractionCommands(
+      message,
+      args,
+      interactionCommands.sonrojar
+    );
+  },
+};
+
 export const arrayInteractions = [
   hugUserCommand,
   patUserCommand,
@@ -253,4 +279,5 @@ export const arrayInteractions = [
   cookieUserCommand,
   hornyUserCommand,
   pokeUserCommand,
+  blushUserCommand,
 ];

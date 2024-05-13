@@ -102,13 +102,25 @@ const interactionCommands = {
   },
   molestar: {
     name: "molestia",
-    requiresUser: true,
+    requiresUser: false,
     requiresCount: false,
     type: "poke",
     action: "molestar",
     description: (requester, receiver) =>
       `**${requester.displayName}** está fastidiando a **${receiver.displayName}.**`,
     footer: "Molestar",
+    requiresRequest: false,
+  },
+  sonrojar: {
+    name: "sonrojo",
+    requiresUser: false,
+    requiresCount: false,
+    type: "sonrojar",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** se ha sonrojado debido a **${receiver.displayName}.**`,
+    soloDescription: (requester) =>
+      `**${requester.displayName}** se sonrojó. owo`,
+    footer: "Sintiendo mucha penita.",
     requiresRequest: false,
   },
 };
@@ -208,6 +220,12 @@ const subcommands = [
     description: "Molesta a alguien.",
     commandHandler: interactionCommands.molestar,
     isTargetRequired: true,
+  },
+  {
+    name: "blush",
+    description: "¿Algo te ha hecho sonrojar?",
+    commandHandler: interactionCommands.sonrojar,
+    isTargetRequired: false,
   },
 ];
 
