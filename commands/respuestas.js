@@ -44,141 +44,141 @@ export const onMessageCreate = async (client) => {
       const categoria = commandFound[0];
       const reply = commandFound[1][commandName];
 
-      switch (categoria) {
-        case "replys": {
-          const respuesta = replaceArgumentText(
-            reply,
-            message,
-            commandBody,
-            commandName,
-            args
-          );
-          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
+      try {
+        switch (categoria) {
+          case "replys": {
+            const respuesta = replaceArgumentText(
+              reply,
+              message,
+              commandBody,
+              commandName,
+              args
+            );
+            const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
 
-          message.channel.send(respuestaFormateado);
-          break;
-        }
-        case "delete_replys": {
-          const delete_respuesta = replaceArgumentText(
-            reply,
-            message,
-            commandBody,
-            commandName,
-            args
-          );
-          const deleteRespuestaFormateado = delete_respuesta.replace(
-            /\\n/g,
-            "\n"
-          );
-
-          message.channel.send(deleteRespuestaFormateado);
-          try {
-            message.delete();
-          } catch (error) {
-            console.error(error);
+            await message.channel.send(respuestaFormateado);
+            break;
           }
-          break;
-        }
-        case "random_replys": {
-          const values = Object.values(reply);
-          const index = getRandomNumber(0, values.length - 1);
-          const messageDb = values[index];
-          const linkindex = "https";
+          case "delete_replys": {
+            const delete_respuesta = replaceArgumentText(
+              reply,
+              message,
+              commandBody,
+              commandName,
+              args
+            );
+            const deleteRespuestaFormateado = delete_respuesta.replace(
+              /\\n/g,
+              "\n"
+            );
 
-          if (messageDb.startsWith(linkindex)) {
-            const randomEmbed = new EmbedBuilder()
+            await message.channel.send(deleteRespuestaFormateado);
+            await message.delete();
+            break;
+          }
+          case "random_replys": {
+            const values = Object.values(reply);
+            const index = getRandomNumber(0, values.length - 1);
+            const messageDb = values[index];
+            const linkindex = "https";
+
+            if (messageDb.startsWith(linkindex)) {
+              const randomEmbed = new EmbedBuilder()
+                .setAuthor({
+                  name: "Gatos Gatunos",
+                  iconURL:
+                    "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply",
+                })
+                .setTitle(`${commandName}`)
+                .setImage(messageDb)
+                .setColor(0x81d4fa)
+                .setTimestamp();
+
+              await message.channel.send({ embeds: [randomEmbed] });
+              break;
+            } else {
+              await message.channel.send(values[index]);
+              break;
+            }
+          }
+
+          case "linksImages": {
+            const imageEmbed = new EmbedBuilder()
               .setAuthor({
                 name: "Gatos Gatunos",
                 iconURL:
                   "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply",
               })
               .setTitle(`${commandName}`)
-              .setImage(messageDb)
+              .setImage(reply)
               .setColor(0x81d4fa)
               .setTimestamp();
 
-            message.channel.send({ embeds: [randomEmbed] });
+            await message.channel.send({ embeds: [imageEmbed] });
             break;
-          } else {
-            message.channel.send(values[index]);
+          }
+
+          case "clanes": {
+            const values = Object.values(reply);
+            const img = values[0];
+            const text = values[1];
+            const respuesta = replaceArgumentText(
+              text,
+              message,
+              commandBody,
+              commandName,
+              args
+            );
+            const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
+
+            const imageEmbed = new EmbedBuilder()
+              .setAuthor({
+                name: message.member.nickname ?? message.author.username,
+                iconURL: message.author.displayAvatarURL({ dynamic: true }),
+              })
+              .setTitle(`Invitación al Clan`)
+              .setDescription(respuestaFormateado)
+              .setThumbnail()
+              .setImage(img)
+              .setColor(0x81d4fa)
+              .setTimestamp();
+
+            await message.channel.send({ embeds: [imageEmbed] });
+
+            break;
+          }
+          case "info": {
+            const values = Object.values(reply);
+            const img = values[0];
+            const text = values[1];
+            const respuesta = replaceArgumentText(
+              text,
+              message,
+              commandBody,
+              commandName,
+              args
+            );
+            const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
+
+            const imageEmbed = new EmbedBuilder()
+              .setAuthor({
+                name: message.member.nickname ?? message.author.username,
+                iconURL: message.author.displayAvatarURL({ dynamic: true }),
+              })
+              .setTitle(`Información Importante`)
+              .setDescription(respuestaFormateado)
+              .setThumbnail()
+              .setImage(img)
+              .setColor(0x81d4fa)
+              .setTimestamp();
+
+            await message.channel.send({ embeds: [imageEmbed] });
+
             break;
           }
         }
-
-        case "linksImages": {
-          const imageEmbed = new EmbedBuilder()
-            .setAuthor({
-              name: "Gatos Gatunos",
-              iconURL:
-                "https://fotografias.lasexta.com/clipping/cmsimages02/2019/01/25/DB41B993-B4C4-4E95-8B01-C445B8544E8E/98.jpg?crop=4156,2338,x0,y219&width=1900&height=1069&optimize=high&format=webply",
-            })
-            .setTitle(`${commandName}`)
-            .setImage(reply)
-            .setColor(0x81d4fa)
-            .setTimestamp();
-
-          message.channel.send({ embeds: [imageEmbed] });
-          break;
-        }
-
-        case "clanes": {
-          const values = Object.values(reply);
-          const img = values[0];
-          const text = values[1];
-          const respuesta = replaceArgumentText(
-            text,
-            message,
-            commandBody,
-            commandName,
-            args
-          );
-          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
-
-          const imageEmbed = new EmbedBuilder()
-            .setAuthor({
-              name: message.member.nickname ?? message.author.username,
-              iconURL: message.author.displayAvatarURL({ dynamic: true }),
-            })
-            .setTitle(`Invitación al Clan`)
-            .setDescription(respuestaFormateado)
-            .setThumbnail()
-            .setImage(img)
-            .setColor(0x81d4fa)
-            .setTimestamp();
-
-          message.channel.send({ embeds: [imageEmbed] });
-
-          break;
-        }
-        case "info": {
-          const values = Object.values(reply);
-          const img = values[0];
-          const text = values[1];
-          const respuesta = replaceArgumentText(
-            text,
-            message,
-            commandBody,
-            commandName,
-            args
-          );
-          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
-
-          const imageEmbed = new EmbedBuilder()
-            .setAuthor({
-              name: message.member.nickname ?? message.author.username,
-              iconURL: message.author.displayAvatarURL({ dynamic: true }),
-            })
-            .setTitle(`Información Importante`)
-            .setDescription(respuestaFormateado)
-            .setThumbnail()
-            .setImage(img)
-            .setColor(0x81d4fa)
-            .setTimestamp();
-
-          message.channel.send({ embeds: [imageEmbed] });
-
-          break;
-        }
+      } catch (error) {
+        console.error("Error al procesar el comando:", error);
       }
     } else {
       const command = arrayCommands.find(

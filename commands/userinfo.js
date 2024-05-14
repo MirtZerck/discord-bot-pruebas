@@ -9,52 +9,65 @@ export const userInfoCommand = {
   alias: ["ui", "useri"],
 
   execute: async (message, args) => {
-    const { author, member: messageMember, channel } = message;
+    try {
+      const { author, member: messageMember, channel } = message;
 
-    const userMention = message.mentions.members.first();
-    let filtro;
+      const userMention = message.mentions.members.first();
+      let filtro;
 
-    if (userMention) {
-      filtro = userMention.user.id;
-    } else if (args[0]) {
-      filtro = args[0];
-    } else {
-      filtro = author.id;
-    }
-    if (typeof filtro.length < 3)
-      return message.reply(
-        "El usuario a mencionar debe tener al menos 3 carácteres."
+      if (userMention) {
+        filtro = userMention.user.id;
+      } else if (args[0]) {
+        filtro = args[0];
+      } else {
+        filtro = author.id;
+      }
+      if (typeof filtro.length < 3)
+        return message.reply(
+          "El usuario a mencionar debe tener al menos 3 caracteres."
+        );
+
+      const member = getMemberByFilter(message, filtro);
+      if (!member) return message.reply("El usuario no existe");
+
+      const { user } = member;
+      const { username, id } = user;
+      const avatarURL = user.displayAvatarURL({ dynamic: true });
+      const fechaRegistro = convertDateToString(member.user.createdAt);
+      const fechaIngreso = convertDateToString(member.joinedAt);
+
+      const dynamicColor = getDynamicColor(message.member);
+
+      const rolesDescription = formatUserRoles(member);
+
+      const messageEmbed = new EmbedBuilder()
+        .setAuthor({
+          name: messageMember.displayName,
+          iconURL: message.author.displayAvatarURL({ dynamic: true }),
+        })
+        .setTitle(`Información de ${member.displayName}`)
+        .setThumbnail(avatarURL)
+        .setDescription(`Información del usuario en el servidor`)
+        .addFields(
+          { name: "Registro", value: fechaRegistro, inline: true },
+          { name: "Ingreso", value: fechaIngreso, inline: true },
+          { name: "Roles", value: rolesDescription }
+        )
+        .setColor(dynamicColor)
+        .setFooter({ text: `ID ${id}` })
+        .setTimestamp();
+
+      channel.send({ embeds: [messageEmbed] }).catch((error) => {
+        console.error("Error al enviar el mensaje embed:", error);
+        message.reply(
+          "No se pudo enviar el mensaje embed. Por favor, verifica mis permisos."
+        );
+      });
+    } catch (error) {
+      console.error("Error al ejecutar el comando userInfoCommand:", error);
+      message.reply(
+        "Ocurrió un error al ejecutar el comando. Por favor, intenta nuevamente más tarde."
       );
-
-    const member = getMemberByFilter(message, filtro);
-    if (!member) return message.reply("El usuario no existe");
-
-    const { user } = member;
-    const { username, id } = user;
-    const avatarURL = user.displayAvatarURL({ dynamic: true });
-    const fechaRegistro = convertDateToString(member.user.createdAt);
-    const fechaIngreso = convertDateToString(member.joinedAt);
-
-    const dynamicColor = getDynamicColor(message.member);
-
-    const rolesDescription = formatUserRoles(member);
-
-    const messageEmbed = new EmbedBuilder()
-      .setAuthor({
-        name: messageMember.displayName,
-        iconURL: message.author.displayAvatarURL({ dynamic: true }),
-      })
-      .setTitle(`Información de ${member.displayName}`)
-      .setThumbnail(avatarURL)
-      .setDescription(`Información del usuario en el servidor`)
-      .addFields(
-        { name: "Registro", value: fechaRegistro, inline: true },
-        { name: "Ingreso", value: fechaIngreso, inline: true },
-        { name: "Roles", value: rolesDescription }
-      )
-      .setColor(dynamicColor)
-      .setFooter({ text: `ID ${id}` })
-      .setTimestamp();
-    channel.send({ embeds: [messageEmbed] });
+    }
   },
 };
