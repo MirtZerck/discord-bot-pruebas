@@ -128,51 +128,57 @@ const interactionCommands = {
 };
 
 async function executeinteractionCommands(message, args, config) {
-  let userMention = message.mentions.members.first();
+  try {
+    let userMention = message.mentions.members.first();
+    let user;
 
-  let user;
-
-  if (!userMention && args[0]) {
-    user = getMemberByFilter(message, args[0]);
-  } else if (!config.requiresUser && !args[0]) {
-    user = message.member;
-  } else {
-    user = userMention;
-  }
-
-  if (!user && config.requiresUser) {
-    return message.reply(
-      `Debes mencionar a alguien o proporcionar un nombre válido para ${config.action}.`
-    );
-  }
-
-  if (!user) {
-    return message.reply("El usuario no existe o no se pudo encontrar.");
-  }
-
-  if (config.requiresUser && message.author.id === user.user.id) {
-    return message.reply(`No te puedes ${config.action} a ti mismo.`);
-  }
-
-  if (user.user.bot || (!config.requiresUser && !userMention && !args[0])) {
-    await handleDirectInteraction(message, user, config);
-  } else {
-    const shouldSendRequest =
-      config.requiresRequest &&
-      user &&
-      message.author.id !== user.user.id &&
-      !user.user.bot;
-
-    if (shouldSendRequest) {
-      if (interactionRequests.has(user.user.id)) {
-        return message.reply(
-          "Ya existe una solicitud de interacción pendiente para este usuario."
-        );
-      }
-      await sendInteractionRequest(message, user, config);
+    if (!userMention && args[0]) {
+      user = getMemberByFilter(message, args[0]);
+    } else if (!config.requiresUser && !args[0]) {
+      user = message.member;
     } else {
-      await handleDirectInteraction(message, user, config);
+      user = userMention;
     }
+
+    if (!user && config.requiresUser) {
+      return message.reply(
+        `Debes mencionar a alguien o proporcionar un nombre válido para ${config.action}.`
+      );
+    }
+
+    if (!user) {
+      return message.reply("El usuario no existe o no se pudo encontrar.");
+    }
+
+    if (config.requiresUser && message.author.id === user.user.id) {
+      return message.reply(`No te puedes ${config.action} a ti mismo.`);
+    }
+
+    if (user.user.bot || (!config.requiresUser && !userMention && !args[0])) {
+      await handleDirectInteraction(message, user, config);
+    } else {
+      const shouldSendRequest =
+        config.requiresRequest &&
+        user &&
+        message.author.id !== user.user.id &&
+        !user.user.bot;
+
+      if (shouldSendRequest) {
+        if (interactionRequests.has(user.user.id)) {
+          return message.reply(
+            "Ya existe una solicitud de interacción pendiente para este usuario."
+          );
+        }
+        await sendInteractionRequest(message, user, config);
+      } else {
+        await handleDirectInteraction(message, user, config);
+      }
+    }
+  } catch (error) {
+    console.error("Error ejecutando el comando:", error);
+    message.reply(
+      "Ocurrió un error al ejecutar el comando. Por favor, intenta de nuevo."
+    );
   }
 }
 
@@ -180,94 +186,135 @@ const hugUserCommand = {
   name: "abrazo",
   alias: ["hug", "abrazar"],
   async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.abrazos
-    );
+    try {
+      await executeinteractionCommands(
+        message,
+        args,
+        interactionCommands.abrazos
+      );
+    } catch (error) {
+      console.error("Error en el comando abrazo:", error);
+      message.reply("Ocurrió un error al ejecutar el comando de abrazo.");
+    }
   },
 };
 
 const patUserCommand = {
   name: "caricia",
   alias: ["pat", "acariciar"],
-
   async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.caricias
-    );
+    try {
+      await executeinteractionCommands(
+        message,
+        args,
+        interactionCommands.caricias
+      );
+    } catch (error) {
+      console.error("Error en el comando caricia:", error);
+      message.reply("Ocurrió un error al ejecutar el comando de caricia.");
+    }
   },
 };
 
 const kissUserCommand = {
   name: "beso",
   alias: ["kiss", "besar"],
-
   async execute(message, args) {
-    await executeinteractionCommands(message, args, interactionCommands.besos);
+    try {
+      await executeinteractionCommands(
+        message,
+        args,
+        interactionCommands.besos
+      );
+    } catch (error) {
+      console.error("Error en el comando beso:", error);
+      message.reply("Ocurrió un error al ejecutar el comando de beso.");
+    }
   },
 };
 
 const danceUserCommand = {
   name: "baile",
   alias: ["dance", "bailar"],
-
   async execute(message, args) {
-    await executeinteractionCommands(message, args, interactionCommands.bailes);
+    try {
+      await executeinteractionCommands(
+        message,
+        args,
+        interactionCommands.bailes
+      );
+    } catch (error) {
+      console.error("Error en el comando baile:", error);
+      message.reply("Ocurrió un error al ejecutar el comando de baile.");
+    }
   },
 };
 
 const cookieUserCommand = {
   name: "galleta",
   alias: ["cookie"],
-
   async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.galletas
-    );
+    try {
+      await executeinteractionCommands(
+        message,
+        args,
+        interactionCommands.galletas
+      );
+    } catch (error) {
+      console.error("Error en el comando galleta:", error);
+      message.reply("Ocurrió un error al ejecutar el comando de galleta.");
+    }
   },
 };
 
 const hornyUserCommand = {
   name: "caliente",
   alias: ["horny", "excitar"],
-
   async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.caliente
-    );
+    try {
+      await executeinteractionCommands(
+        message,
+        args,
+        interactionCommands.caliente
+      );
+    } catch (error) {
+      console.error("Error en el comando caliente:", error);
+      message.reply("Ocurrió un error al ejecutar el comando de caliente.");
+    }
   },
 };
 
 const pokeUserCommand = {
   name: "molestia",
   alias: ["poke", "molestar"],
-
   async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.molestar
-    );
+    try {
+      await executeinteractionCommands(
+        message,
+        args,
+        interactionCommands.molestar
+      );
+    } catch (error) {
+      console.error("Error en el comando molestia:", error);
+      message.reply("Ocurrió un error al ejecutar el comando de molestia.");
+    }
   },
 };
 
 const blushUserCommand = {
   name: "sonrojo",
   alias: ["blush", "sonrojar"],
-
   async execute(message, args) {
-    await executeinteractionCommands(
-      message,
-      args,
-      interactionCommands.sonrojar
-    );
+    try {
+      await executeinteractionCommands(
+        message,
+        args,
+        interactionCommands.sonrojar
+      );
+    } catch (error) {
+      console.error("Error en el comando sonrojo:", error);
+      message.reply("Ocurrió un error al ejecutar el comando de sonrojo.");
+    }
   },
 };
 

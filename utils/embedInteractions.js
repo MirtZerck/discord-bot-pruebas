@@ -46,111 +46,122 @@ export const createInteractionEmbed = (
 /*                                                                            */
 
 export async function handleDirectInteraction(message, user, config) {
-  let newCount = null;
+  try {
+    let newCount = null;
 
-  if (config.requiresCount) {
-    newCount = await updateInteractionsCount(
-      message.author.id,
-      user.user.id,
-      config.type
-    );
-  }
+    if (config.requiresCount) {
+      newCount = await updateInteractionsCount(
+        message.author.id,
+        user.user.id,
+        config.type
+      );
+    }
 
-  if (!config.descriptionCount) {
-    config.descriptionCount = null;
-  }
+    if (!config.descriptionCount) {
+      config.descriptionCount = null;
+    }
 
-  if (!config.soloDescription) {
-    config.soloDescription = null;
-  }
+    if (!config.soloDescription) {
+      config.soloDescription = null;
+    }
 
-  const callArray = await getInteraccionesValue();
-  const interactionArray = callArray.find(([key]) => key === config.type);
+    const callArray = await getInteraccionesValue();
+    const interactionArray = callArray.find(([key]) => key === config.type);
 
-  if (interactionArray) {
-    const imgArray = interactionArray[1];
-    const index = getRandomNumber(0, imgArray.length - 1);
-    const imgDb = imgArray[index];
+    if (interactionArray) {
+      const imgArray = interactionArray[1];
+      const index = getRandomNumber(0, imgArray.length - 1);
+      const imgDb = imgArray[index];
 
-    const messageEmbed = createInteractionEmbed(
-      message.member,
-      user,
-      config.description,
-      config.soloDescription,
-      newCount,
-      config.descriptionCount,
-      imgDb,
-      config.footer
-    );
+      const messageEmbed = createInteractionEmbed(
+        message.member,
+        user,
+        config.description,
+        config.soloDescription,
+        newCount,
+        config.descriptionCount,
+        imgDb,
+        config.footer
+      );
 
-    await message.channel.send({ embeds: [messageEmbed] });
+      await message.channel.send({ embeds: [messageEmbed] });
+    }
+  } catch (error) {
+    console.error("Error en handleDirectInteraction:", error);
+    message.reply("Ocurrió un error al realizar la interacción directa.");
   }
 }
 
 /*                                                                            */
 
 export async function sendInteractionRequest(message, user, config) {
-  const dynamicColor = getDynamicColor(message.member);
-  const expirationTimestamp = Math.floor(Date.now() / 1000) + 3 * 60;
+  try {
+    const dynamicColor = getDynamicColor(message.member);
+    const expirationTimestamp = Math.floor(Date.now() / 1000) + 3 * 60;
 
-  const embedRequest = new EmbedBuilder()
-    .setAuthor({
-      name: message.member.displayName,
-      iconURL: message.author.displayAvatarURL({ dynamic: true }),
-    })
-    .setTitle(`Solicitud de ${config.name}`)
-    .setThumbnail(user.displayAvatarURL({ dynamic: true }))
-    .setDescription(
-      `${config.requestMessage(
-        message.member,
-        user
-      )}\n\nEsta solicitud caduca <t:${expirationTimestamp}:R>.`
-    )
-    .setColor(dynamicColor)
-    .setFooter({ text: "Reacciona para responder." })
-    .setTimestamp();
+    const embedRequest = new EmbedBuilder()
+      .setAuthor({
+        name: message.member.displayName,
+        iconURL: message.author.displayAvatarURL({ dynamic: true }),
+      })
+      .setTitle(`Solicitud de ${config.name}`)
+      .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+      .setDescription(
+        `${config.requestMessage(
+          message.member,
+          user
+        )}\n\nEsta solicitud caduca <t:${expirationTimestamp}:R>.`
+      )
+      .setColor(dynamicColor)
+      .setFooter({ text: "Reacciona para responder." })
+      .setTimestamp();
 
-  const request = await message.channel.send({ embeds: [embedRequest] });
-  await request.react("✅");
-  await request.react("❌");
+    const request = await message.channel.send({ embeds: [embedRequest] });
+    await request.react("✅");
+    await request.react("❌");
 
-  addInteractionRequest(user.user.id, {
-    requestMessage: request,
-    requester: message.author.id,
-    type: config.name,
-  });
+    addInteractionRequest(user.user.id, {
+      requestMessage: request,
+      requester: message.author.id,
+      type: config.name,
+    });
 
-  const filter = (reaction, userReact) =>
-    ["✅", "❌"].includes(reaction.emoji.name) && userReact.id === user.user.id;
+    const filter = (reaction, userReact) =>
+      ["✅", "❌"].includes(reaction.emoji.name) &&
+      userReact.id === user.user.id;
 
-  request
-    .awaitReactions({ filter, max: 1, time: 180000, errors: ["time"] })
-    .then(async (collected) => {
-      const reaction = collected.first();
+    request
+      .awaitReactions({ filter, max: 1, time: 180000, errors: ["time"] })
+      .then(async (collected) => {
+        const reaction = collected.first();
 
-      if (reaction.emoji.name === "✅") {
-        removeInteractionRequest(user.user.id);
-        request.delete();
+        if (reaction.emoji.name === "✅") {
+          removeInteractionRequest(user.user.id);
+          request.delete();
 
-        await handleDirectInteraction(message, user, config);
-      } else if (reaction.emoji.name === "❌") {
+          await handleDirectInteraction(message, user, config);
+        } else if (reaction.emoji.name === "❌") {
+          removeInteractionRequest(user.user.id);
+          request.edit({
+            embeds: [embedRequest.setDescription(config.rejectResponse)],
+          });
+        }
+      })
+      .catch(async (error) => {
+        console.error("Error al esperar reacciones: ", error);
         removeInteractionRequest(user.user.id);
         request.edit({
-          embeds: [embedRequest.setDescription(config.rejectResponse)],
+          embeds: [embedRequest.setDescription(config.noResponse)],
         });
-      }
-    })
-    .catch(async (error) => {
-      console.error("Error al esperar reacciones: ", error);
-      removeInteractionRequest(user.user.id);
-      request.edit({
-        embeds: [embedRequest.setDescription(config.noResponse)],
-      });
 
-      try {
-        await request.reactions.removeAll();
-      } catch (removeError) {
-        console.error("Error al eliminar reacciones: ", removeError);
-      }
-    });
+        try {
+          await request.reactions.removeAll();
+        } catch (removeError) {
+          console.error("Error al eliminar reacciones: ", removeError);
+        }
+      });
+  } catch (error) {
+    console.error("Error en sendInteractionRequest:", error);
+    message.reply("Ocurrió un error al enviar la solicitud de interacción.");
+  }
 }
