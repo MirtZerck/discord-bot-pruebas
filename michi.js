@@ -32,23 +32,21 @@ import { generateDependencyReport } from "@discordjs/voice";
 /* const report = generateDependencyReport();
 console.log(report); */
 
-const require = createRequire(import.meta.url);
+dotenv.config();
 
-const serviceAccount = require("./gatos-gatunos-firebase-adminsdk-23njm-da6890c263.json");
+export const token = process.env.TOKEN;
+export const APPLICATION_ID = process.env.APPLICATION_ID;
+
+const firebaseConfig = JSON.parse(process.env.FIREBASE_ADMIN_SDK);
 
 firebase.initializeApp({
-  credential: firebase.credential.cert(serviceAccount),
+  credential: firebase.credential.cert(firebaseConfig),
   databaseURL: "https://gatos-gatunos-default-rtdb.firebaseio.com",
 });
 
 firebase.auth();
 
 export const db = firebase.database().ref("/");
-
-dotenv.config();
-
-export const token = process.env.TOKEN;
-export const APPLICATION_ID = process.env.APPLICATION_ID;
 
 export const client = new Client({
   intents: [

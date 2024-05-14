@@ -2,7 +2,7 @@ import { EmbedBuilder } from "discord.js";
 
 export const mostrarPing = {
   name: "ping",
-  alias: ["p", "pi"],
+  alias: ["pi"],
 
   async execute(message, args) {
     try {
