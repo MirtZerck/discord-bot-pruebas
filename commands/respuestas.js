@@ -22,35 +22,36 @@ export const onMessageCreate = async (client) => {
     const commandFound = await commandDB.getCommandsValue(commandName);
 
     if (commandFound) {
-      const categoria = commandFound[0];
-      const reply = commandFound[1][commandName];
+      try {
+        const categoria = commandFound[0];
+        const reply = commandFound[1][commandName];
 
-      switch (categoria) {
-        case "replys": {
-          const respuesta = CommandsService.replaceArgumentText(
-            reply,
-            message,
-            commandBody,
-            commandName,
-            args
-          );
-          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
+        switch (categoria) {
+          case "replys": {
+            const respuesta = CommandsService.replaceArgumentText(
+              reply,
+              message,
+              commandBody,
+              commandName,
+              args
+            );
+            const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
 
-          message.channel.send(respuestaFormateado);
-          break;
-        }
-        case "delete_replys": {
-          const delete_respuesta = CommandsService.replaceArgumentText(
-            reply,
-            message,
-            commandBody,
-            commandName,
-            args
-          );
-          const deleteRespuestaFormateado = delete_respuesta.replace(
-            /\\n/g,
-            "\n"
-          );
+            message.channel.send(respuestaFormateado);
+            break;
+          }
+          case "delete_replys": {
+            const delete_respuesta = CommandsService.replaceArgumentText(
+              reply,
+              message,
+              commandBody,
+              commandName,
+              args
+            );
+            const deleteRespuestaFormateado = delete_respuesta.replace(
+              /\\n/g,
+              "\n"
+            );
 
             await message.channel.send(deleteRespuestaFormateado);
             await message.delete();
@@ -98,18 +99,18 @@ export const onMessageCreate = async (client) => {
             break;
           }
 
-        case "clanes": {
-          const values = Object.values(reply);
-          const img = values[0];
-          const text = values[1];
-          const respuesta = CommandsService.replaceArgumentText(
-            text,
-            message,
-            commandBody,
-            commandName,
-            args
-          );
-          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
+          case "clanes": {
+            const values = Object.values(reply);
+            const img = values[0];
+            const text = values[1];
+            const respuesta = CommandsService.replaceArgumentText(
+              text,
+              message,
+              commandBody,
+              commandName,
+              args
+            );
+            const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
 
             const imageEmbed = new EmbedBuilder()
               .setAuthor({
@@ -125,20 +126,20 @@ export const onMessageCreate = async (client) => {
 
             await message.channel.send({ embeds: [imageEmbed] });
 
-          break;
-        }
-        case "info": {
-          const values = Object.values(reply);
-          const img = values[0];
-          const text = values[1];
-          const respuesta = CommandsService.replaceArgumentText(
-            text,
-            message,
-            commandBody,
-            commandName,
-            args
-          );
-          const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
+            break;
+          }
+          case "info": {
+            const values = Object.values(reply);
+            const img = values[0];
+            const text = values[1];
+            const respuesta = replaceArgumentText(
+              text,
+              message,
+              commandBody,
+              commandName,
+              args
+            );
+            const respuestaFormateado = respuesta.replace(/\\n/g, "\n");
 
             const imageEmbed = new EmbedBuilder()
               .setAuthor({
