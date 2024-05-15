@@ -15,21 +15,17 @@ import { getAudioPlayer, setAudioPlayer } from "../../utils/audioPlayers.js";
 
 async function searchAndGetURL(query) {
   try {
-    console.log("search:", query);
     let url = query.match(
       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|soundcloud\.com)\/.+$/i
     )
       ? query
       : null;
 
-    console.log("resultado", url);
-
     if (!url) {
       console.log("Buscando tu canción...");
       const searchResults = await play.search(query, { limit: 1 });
       if (searchResults.length > 0) {
         url = searchResults[0].url;
-        console.log("búsqueda", url);
       }
     }
 
@@ -181,7 +177,6 @@ export const playMusicCommand = {
       }
 
       const url = await searchAndGetURL(query);
-      console.log("url final", url);
 
       if (!url) {
         message.channel.send(
