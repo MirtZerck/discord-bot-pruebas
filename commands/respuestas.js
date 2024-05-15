@@ -13,8 +13,8 @@ export const onMessageCreate = async (client) => {
     if (!message.content.startsWith(prefix)) return;
 
     const content = message.content.slice(prefix.length);
-    const args = content.toLowerCase().split(" ");
-    const commandName = args.shift();
+    const args = content.split(" ");
+    const commandName = args.shift().toLowerCase();
     const commandBody = content.slice(commandName.length).trim();
 
     const commandDB = new CommandsService(message.guild.id);

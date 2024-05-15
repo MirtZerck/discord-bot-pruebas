@@ -9,6 +9,7 @@ export class CommandsService {
 
   async getCommands() {
     const commands = await this.commandsDB.once("value");
+
     if (commands.exists()) {
       return Object.entries(commands.val());
     } else {
@@ -18,6 +19,8 @@ export class CommandsService {
 
   async getCommandsValue(commandName) {
     const commands = await this.getCommands();
+    if (!commands) return undefined;
+
     const command = commands.find((comando) => comando[1][commandName]);
     return command;
   }

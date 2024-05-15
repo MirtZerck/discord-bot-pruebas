@@ -92,7 +92,6 @@ client.once(Events.ClientReady, async () => {
     .setTitle(`Hola, he sido actualizado y ya desperté`)
     .setImage("https://media.tenor.com/n1d_M_lXA1kAAAAd/molestar-gatos.gif")
     .setDescription("Soy un michito grr :3")
-    // .setColor(Color.)
     .setColor(0x81d4fa)
     .setFooter({
       text: `Tengo hambre`,

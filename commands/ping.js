@@ -1,6 +1,9 @@
 import { EmbedBuilder } from "discord.js";
 
 export const mostrarPing = {
+
+  //Interfaz command.
+  
   name: "ping",
   alias: ["pi"],
 
