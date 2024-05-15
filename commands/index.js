@@ -26,6 +26,8 @@ import { banUser, unbanUser } from "./moderation/banUserFunction.js";
 import { warnCommands } from "./moderation/warnUserFunction.js";
 import { leaveAllServersCommand } from "./moderation/leaveServers.js";
 import { moveCommandsCmd } from "./moveData.js";
+import { acceptProposalCommand } from "./acceptProposals.js";
+import { commandListCommand } from "./commands.js";
 
 export const arrayCommands = [
   userInfoCommand,
@@ -48,6 +50,9 @@ export const arrayCommands = [
   banUser,
   unbanUser,
   ...warnCommands,
+  acceptProposalCommand,
+  commandListCommand,
+
   /* moveCommandsCmd, */
   /* leaveAllServersCommand, */
   /* blockInteractionsCommands,

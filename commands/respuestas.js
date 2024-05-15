@@ -1,29 +1,13 @@
-// Importa comandos desde el archivo principal
 import { arrayCommands } from "./index.js";
-
-// Importa constantes de prefijos desde la carpeta de constantes
 import { prefijo } from "../constants/prefix.js";
-
-// Importa funciones de servicio de comandos desde el servicio de base de datos
-import {
-  getCommandsValue,
-  replaceArgumentText,
-} from "../db_service/commands_service.js";
-
-// Importa funciones de utilidades generales
 import { getRandomNumber } from "../utils/utilsFunctions.js";
-
-// Importa constructores de Discord.js para crear mensajes incrustados y manejar eventos
 import { EmbedBuilder, Events } from "discord.js";
+import { CommandsService } from "../db_service/commandsService.js";
 
-// Define la función principal que se ejecuta cuando se crea un mensaje
 export const onMessageCreate = async (client) => {
-  // Define el prefijo del bot
   const prefix = prefijo;
 
-  // Escucha eventos de creación de mensajes
   client.on(Events.MessageCreate, async (message) => {
-    // Ignora mensajes de bots
     if (message.author.bot) return;
 
     if (!message.content.startsWith(prefix)) return;
@@ -33,20 +17,17 @@ export const onMessageCreate = async (client) => {
     const commandName = args.shift();
     const commandBody = content.slice(commandName.length).trim();
 
-    /*
-    para la nueva estructura de la db 
     const commandDB = new CommandsService(message.guild.id);
 
     const commandFound = await commandDB.getCommandsValue(commandName);
-     */
-    const commandFound = await getCommandsValue(commandName);
+
     if (commandFound) {
       const categoria = commandFound[0];
       const reply = commandFound[1][commandName];
 
       switch (categoria) {
         case "replys": {
-          const respuesta = replaceArgumentText(
+          const respuesta = CommandsService.replaceArgumentText(
             reply,
             message,
             commandBody,
@@ -59,7 +40,7 @@ export const onMessageCreate = async (client) => {
           break;
         }
         case "delete_replys": {
-          const delete_respuesta = replaceArgumentText(
+          const delete_respuesta = CommandsService.replaceArgumentText(
             reply,
             message,
             commandBody,
@@ -125,7 +106,7 @@ export const onMessageCreate = async (client) => {
           const values = Object.values(reply);
           const img = values[0];
           const text = values[1];
-          const respuesta = replaceArgumentText(
+          const respuesta = CommandsService.replaceArgumentText(
             text,
             message,
             commandBody,
@@ -154,7 +135,7 @@ export const onMessageCreate = async (client) => {
           const values = Object.values(reply);
           const img = values[0];
           const text = values[1];
-          const respuesta = replaceArgumentText(
+          const respuesta = CommandsService.replaceArgumentText(
             text,
             message,
             commandBody,

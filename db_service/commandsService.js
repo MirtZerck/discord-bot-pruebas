@@ -41,4 +41,27 @@ export class CommandsService {
       .child(id)
       .set(replyImg);
   }
+
+  static replaceArgumentText(text, message, commandBody, commandName, args) {
+    if (!text.includes("respuesta")) return text;
+
+    let respuesta = "";
+    if (commandName === "inu") {
+      respuesta = commandBody === "" ? "Michi" : commandBody;
+    }
+
+    if (commandName === "ban") {
+      respuesta = commandBody === "" ? message.author.username : commandBody;
+    }
+    if (commandName === "pd") {
+      respuesta = commandBody;
+    }
+    if (commandName === "say") {
+      respuesta = commandBody;
+    }
+    if (commandBody === "gg") {
+      respuesta = commandBody;
+    }
+    return text.replace("respuesta", respuesta);
+  }
 }
