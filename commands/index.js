@@ -26,6 +26,8 @@ import { banUser, unbanUser } from "./moderation/banUserFunction.js";
 import { warnCommands } from "./moderation/warnUserFunction.js";
 import { leaveAllServersCommand } from "./moderation/leaveServers.js";
 import { moveCommandsCmd } from "./moveData.js";
+import { playMusicCommand } from "./voice/playMusic.js";
+import { arrayMusicControls } from "./voice/musicControls.js";
 import { acceptProposalCommand } from "./acceptProposals.js";
 import { commandListCommand } from "./commands.js";
 
@@ -53,6 +55,8 @@ export const arrayCommands = [
   acceptProposalCommand,
   commandListCommand,
 
+  playMusicCommand,
+  ...arrayMusicControls,
   /* moveCommandsCmd, */
   /* leaveAllServersCommand, */
   /* blockInteractionsCommands,

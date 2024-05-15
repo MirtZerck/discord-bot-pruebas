@@ -27,24 +27,26 @@ import { rankXpellitControl } from "./commands/rankXpellitControl.js";
 import { handleSpecialCommands } from "./commands/specialCommand.js";
 import { mirtZerckID } from "./constants/users_ID.js";
 import { onMessageCreate } from "./commands/respuestas.js";
+import { generateDependencyReport } from "@discordjs/voice";
 
-const require = createRequire(import.meta.url);
+/* const report = generateDependencyReport();
+console.log(report); */
 
-const serviceAccount = require("./gatos-gatunos-firebase-adminsdk-23njm-da6890c263.json");
+dotenv.config();
+
+export const token = process.env.TOKEN;
+export const APPLICATION_ID = process.env.APPLICATION_ID;
+
+const firebaseConfig = JSON.parse(process.env.FIREBASE_ADMIN_SDK);
 
 firebase.initializeApp({
-  credential: firebase.credential.cert(serviceAccount),
+  credential: firebase.credential.cert(firebaseConfig),
   databaseURL: "https://gatos-gatunos-default-rtdb.firebaseio.com",
 });
 
 firebase.auth();
 
 export const db = firebase.database().ref("/");
-
-dotenv.config();
-
-export const token = process.env.TOKEN;
-export const APPLICATION_ID = process.env.APPLICATION_ID;
 
 export const client = new Client({
   intents: [
@@ -56,6 +58,8 @@ export const client = new Client({
     GatewayIntentBits.GuildWebhooks,
     GatewayIntentBits.GuildIntegrations,
     GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.DirectMessages,
   ],
 });
 
@@ -68,8 +72,8 @@ client.once(Events.ClientReady, async () => {
   client.user.setPresence({
     activities: [
       {
-        name: "Minecraft",
-        type: ActivityType.Competing,
+        name: `Mi prefijo es ${prefijo} `,
+        type: ActivityType.Custom,
       },
     ],
     status: PresenceUpdateStatus.DoNotDisturb,

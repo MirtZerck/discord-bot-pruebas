@@ -213,3 +213,16 @@ export async function moveCommands(serverId) {
     throw error;
   }
 }
+
+export async function updatePlayTimeMusic(serverId, playTime) {
+  const playTimeRef = db.child(`servers/${serverId}/music/playTime`);
+
+  try {
+    await playTimeRef.set(playTime);
+  } catch (error) {
+    console.error(
+      "Error al actualizar el tiempo de reproducción de la música:",
+      error
+    );
+  }
+}

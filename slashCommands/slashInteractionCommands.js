@@ -102,7 +102,7 @@ const interactionCommands = {
   },
   molestar: {
     name: "molestia",
-    requiresUser: true,
+    requiresUser: false,
     requiresCount: false,
     type: "poke",
     action: "molestar",
@@ -111,52 +111,73 @@ const interactionCommands = {
     footer: "Molestar",
     requiresRequest: false,
   },
+  sonrojar: {
+    name: "sonrojo",
+    requiresUser: false,
+    requiresCount: false,
+    type: "sonrojar",
+    description: (requester, receiver) =>
+      `**${requester.displayName}** se ha sonrojado debido a **${receiver.displayName}.**`,
+    soloDescription: (requester) =>
+      `**${requester.displayName}** se sonrojó. owo`,
+    footer: "Sintiendo mucha penita.",
+    requiresRequest: false,
+  },
 };
 
 async function executeinteractionCommands(interaction, config) {
-  let userMention = interaction.options.getMember("target");
+  try {
+    let userMention = interaction.options.getMember("target");
 
-  let user;
+    let user;
 
-  if (!config.requiresUser && !userMention) {
-    user = interaction.member;
-  } else {
-    user = userMention;
-  }
-
-  if (!user && config.requiresUser) {
-    return interaction.reply(
-      `Debes mencionar a alguien o proporcionar un nombre válido para ${config.action}.`
-    );
-  }
-
-  if (!user) {
-    return interaction.reply("El usuario no existe o no se pudo encontrar.");
-  }
-
-  if (config.requiresUser && interaction.user.id === user.user.id) {
-    return interaction.reply(`No te puedes ${config.action} a ti mismo.`);
-  }
-
-  if (user.user.bot || (!config.requiresUser && !userMention)) {
-    await handleDirectInteraction(interaction, user, config);
-  } else {
-    const shouldSendRequest =
-      config.requiresRequest &&
-      user &&
-      interaction.user.id !== user.user.id &&
-      !user.user.bot;
-
-    if (shouldSendRequest) {
-      if (interactionRequests.has(user.user.id)) {
-        return interaction.editReply(
-          "Ya existe una solicitud de interacción pendiente para este usuario."
-        );
-      }
-      await sendInteractionRequest(interaction, user, config);
+    if (!config.requiresUser && !userMention) {
+      user = interaction.member;
     } else {
-      await handleDirectInteraction(interaction, user, config);
+      user = userMention;
     }
+
+    if (!user && config.requiresUser) {
+      return interaction.reply(
+        `Debes mencionar a alguien o proporcionar un nombre válido para ${config.action}.`
+      );
+    }
+
+    if (!user) {
+      return interaction.reply("El usuario no existe o no se pudo encontrar.");
+    }
+
+    if (config.requiresUser && interaction.user.id === user.user.id) {
+      return interaction.reply(`No te puedes ${config.action} a ti mismo.`);
+    }
+
+    if (user.user.bot || (!config.requiresUser && !userMention)) {
+      await handleDirectInteraction(interaction, user, config);
+    } else {
+      const shouldSendRequest =
+        config.requiresRequest &&
+        user &&
+        interaction.user.id !== user.user.id &&
+        !user.user.bot;
+
+      if (shouldSendRequest) {
+        if (interactionRequests.has(user.user.id)) {
+          return interaction.editReply(
+            "Ya existe una solicitud de interacción pendiente para este usuario."
+          );
+        }
+        await sendInteractionRequest(interaction, user, config);
+      } else {
+        await handleDirectInteraction(interaction, user, config);
+      }
+    }
+  } catch (error) {
+    console.error("Error ejecutando el comando de interacción:", error);
+    await interaction.reply({
+      content:
+        "Ocurrió un error al ejecutar el comando. Por favor, inténtalo de nuevo más tarde.",
+      ephemeral: true,
+    });
   }
 }
 
@@ -209,6 +230,12 @@ const subcommands = [
     commandHandler: interactionCommands.molestar,
     isTargetRequired: true,
   },
+  {
+    name: "blush",
+    description: "¿Algo te ha hecho sonrojar?",
+    commandHandler: interactionCommands.sonrojar,
+    isTargetRequired: false,
+  },
 ];
 
 subcommands.forEach((sub) => {
@@ -226,22 +253,58 @@ subcommands.forEach((sub) => {
 });
 
 const executeSubcommand = async (interaction, commandHandler) => {
-  await interaction.deferReply();
-  await executeinteractionCommands(interaction, commandHandler);
+  try {
+    if (!interaction.deferred && !interaction.replied) {
+      await interaction.deferReply();
+    }
+    await executeinteractionCommands(interaction, commandHandler);
+  } catch (error) {
+    console.error("Error ejecutando el subcomando:", error);
+    if (!interaction.deferred && !interaction.replied) {
+      await interaction.reply({
+        content:
+          "Ocurrió un error al ejecutar el subcomando. Por favor, inténtalo de nuevo más tarde.",
+        ephemeral: true,
+      });
+    } else {
+      await interaction.followUp({
+        content:
+          "Ocurrió un error al ejecutar el subcomando. Por favor, inténtalo de nuevo más tarde.",
+        ephemeral: true,
+      });
+    }
+  }
 };
 
 export const slashInteractCommand = {
   data: interactCommand,
   async execute(interaction) {
-    const subcommandName = interaction.options.getSubcommand();
-    const subcommand = subcommands.find((sub) => sub.name === subcommandName);
-    if (subcommand) {
-      await executeSubcommand(interaction, subcommand.commandHandler);
-    } else {
-      await interaction.reply({
-        content: "Subcomando no encontrado.",
-        ephemeral: true,
-      });
+    try {
+      const subcommandName = interaction.options.getSubcommand();
+      const subcommand = subcommands.find((sub) => sub.name === subcommandName);
+      if (subcommand) {
+        await executeSubcommand(interaction, subcommand.commandHandler);
+      } else {
+        await interaction.reply({
+          content: "Subcomando no encontrado.",
+          ephemeral: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error ejecutando el comando principal:", error);
+      if (!interaction.deferred && !interaction.replied) {
+        await interaction.reply({
+          content:
+            "Ocurrió un error al ejecutar el comando. Por favor, inténtalo de nuevo más tarde.",
+          ephemeral: true,
+        });
+      } else {
+        await interaction.followUp({
+          content:
+            "Ocurrió un error al ejecutar el comando. Por favor, inténtalo de nuevo más tarde.",
+          ephemeral: true,
+        });
+      }
     }
   },
 };

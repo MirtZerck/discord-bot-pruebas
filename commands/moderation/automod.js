@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, PermissionsBitField } from "discord.js";
+ /*import { SlashCommandBuilder, PermissionsBitField } from "discord.js";
 import { REST } from "@discordjs/rest";
 import { Routes } from "@discord-api-types/v9";
 
@@ -131,3 +131,4 @@ export const slashAutomodCommand = {
     }
   },
 };
+*/
