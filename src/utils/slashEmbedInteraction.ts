@@ -1,24 +1,8 @@
-import {
-    EmbedBuilder,
-    GuildMember,
-    Message,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    ComponentType,
-    Interaction,
-} from "discord.js";
+import { EmbedBuilder, CommandInteraction, GuildMember, ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction } from "discord.js";
 import { getDynamicColor } from "./getDynamicColor.js";
-import {
-    getInteraccionesValue,
-    updateInteractionsCount,
-} from "../db_service/commands_service.js";
+import { getInteraccionesValue, updateInteractionsCount } from "../db_service/commands_service.js";
 import { getRandomNumber } from "./utilsFunctions.js";
-import {
-    addInteractionRequest,
-    removeInteractionRequest,
-    hasInteractionRequest,
-} from "./interactionRequest respald.js";
+import { addInteractionRequest, removeInteractionRequest, hasInteractionRequest } from "./interactionRequest.js";
 import { CustomImageURLOptions } from "../types/embeds.js";
 import { InteractionConfig } from "../types/interaction.js";
 
@@ -31,7 +15,7 @@ export const createInteractionEmbed = (
     descriptionCount: ((count: number) => string | null) | null,
     imageUrl: string,
     footer: string
-) => {
+): EmbedBuilder => {
     const dynamicColor = getDynamicColor(authorMember);
 
     let interactionDescription: string;
@@ -54,7 +38,7 @@ export const createInteractionEmbed = (
 };
 
 export async function handleDirectInteraction(
-    message: Message,
+    interaction: CommandInteraction,
     user: GuildMember,
     config: InteractionConfig
 ) {
@@ -63,7 +47,7 @@ export async function handleDirectInteraction(
 
         if (config.requiresCount) {
             newCount = await updateInteractionsCount(
-                message.author.id,
+                interaction.user.id,
                 user.user.id,
                 config.type
             );
@@ -73,12 +57,12 @@ export async function handleDirectInteraction(
         const interactionArray = callArray.find(([key]) => key === config.type);
 
         if (interactionArray) {
-            const imgArray = interactionArray[1] as string[];
+            const imgArray = interactionArray[1];
             const index = getRandomNumber(0, imgArray.length - 1);
             const imgDb = imgArray[index];
 
             const messageEmbed = createInteractionEmbed(
-                message.member!,
+                interaction.member as GuildMember,
                 user,
                 config.description,
                 config.soloDescription || null,
@@ -88,37 +72,61 @@ export async function handleDirectInteraction(
                 config.footer
             );
 
-            await message.channel.send({ embeds: [messageEmbed] });
+            await interaction.followUp({ embeds: [messageEmbed] });
         }
     } catch (error) {
         console.error("Error en handleDirectInteraction:", error);
-        message.reply("Ocurrió un error al realizar la interacción directa.");
+        try {
+            await interaction.followUp({
+                content: "Ocurrió un error al manejar la interacción. Por favor, inténtalo de nuevo más tarde.",
+                ephemeral: true,
+            });
+        } catch (followUpError) {
+            console.error("Error en followUp en handleDirectInteraction:", followUpError);
+        }
     }
 }
 
 export async function sendInteractionRequest(
-    message: Message,
+    interaction: CommandInteraction,
     user: GuildMember,
     config: InteractionConfig
 ) {
     try {
-        if (hasInteractionRequest(user.user.id, message.author.id)) {
-            return message.reply("Ya existe una solicitud de interacción pendiente para este usuario.");
+        if (config.requiresUser && interaction.user.id === user.user.id) {
+            return interaction.reply({
+                content: `No te puedes ${config.action} a ti mismo.`,
+                ephemeral: true,
+            });
         }
 
-        const dynamicColor = getDynamicColor(message.member!);
+        if (hasInteractionRequest(user.user.id, interaction.user.id)) {
+            return interaction.reply({
+                content: "Ya existe una solicitud de interacción pendiente para este usuario.",
+                ephemeral: true,
+            });
+        }
+
+        if (!(interaction.member instanceof GuildMember)) {
+            return interaction.reply({
+                content: "No se puede obtener el miembro del gremio.",
+                ephemeral: true,
+            });
+        }
+
+        const dynamicColor = getDynamicColor(interaction.member);
         const expirationTimestamp = Math.floor(Date.now() / 1000) + 3 * 60;
 
         const embedRequest = new EmbedBuilder()
             .setAuthor({
-                name: message.member!.displayName,
-                iconURL: message.author.displayAvatarURL({ dynamic: true } as CustomImageURLOptions),
+                name: interaction.member.displayName,
+                iconURL: interaction.user.displayAvatarURL({ dynamic: true } as CustomImageURLOptions),
             })
             .setTitle(`Solicitud de ${config.name}`)
             .setThumbnail(user.displayAvatarURL({ dynamic: true } as CustomImageURLOptions))
             .setDescription(
                 `${config.requestMessage?.(
-                    message.member!,
+                    interaction.member,
                     user
                 ) || ""}\n\nEsta solicitud caduca <t:${expirationTimestamp}:R>.`
             )
@@ -138,35 +146,35 @@ export async function sendInteractionRequest(
                     .setStyle(ButtonStyle.Danger)
             );
 
-        const request = await message.channel.send({
+        const request = await interaction.followUp({
             embeds: [embedRequest],
             components: [buttons]
         });
 
-        addInteractionRequest(user.user.id, message.author.id, {
+        addInteractionRequest(user.user.id, interaction.user.id, {
             requestMessage: request,
-            requester: message.author.id,
+            requester: interaction.user.id,
             type: config.name,
         });
 
-        const filter = (interaction: Interaction) =>
-            interaction.isButton() && ["accept", "deny"].includes(interaction.customId) &&
-            interaction.user.id === user.user.id;
+        const filter = (i: Interaction) =>
+            i.isButton() && ["accept", "deny"].includes(i.customId) &&
+            i.user.id === user.user.id;
 
         const collector = request.createMessageComponentCollector({
             filter,
             time: 180000,
         });
 
-        collector.on('collect', async (interaction) => {
-            if (!interaction.isButton()) return;
+        collector.on('collect', async (i) => {
+            if (!i.isButton()) return;
 
-            if (interaction.customId === 'accept') {
-                removeInteractionRequest(user.user.id, message.author.id);
+            if (i.customId === 'accept') {
+                removeInteractionRequest(user.user.id, interaction.user.id);
                 await request.delete();
-                await handleDirectInteraction(message, user, config);
-            } else if (interaction.customId === 'deny') {
-                removeInteractionRequest(user.user.id, message.author.id);
+                await handleDirectInteraction(interaction, user, config);
+            } else if (i.customId === 'deny') {
+                removeInteractionRequest(user.user.id, interaction.user.id);
                 await request.edit({
                     embeds: [embedRequest.setDescription(config.rejectResponse || "Solicitud rechazada.")],
                     components: []
@@ -177,7 +185,7 @@ export async function sendInteractionRequest(
         collector.on('end', async (_, reason) => {
             if (reason !== 'time') return;
 
-            removeInteractionRequest(user.user.id, message.author.id);
+            removeInteractionRequest(user.user.id, interaction.user.id);
             await request.edit({
                 embeds: [embedRequest.setDescription(config.noResponse || "Solicitud no respondida.")],
                 components: []
@@ -185,6 +193,13 @@ export async function sendInteractionRequest(
         });
     } catch (error) {
         console.error("Error en sendInteractionRequest:", error);
-        message.reply("Ocurrió un error al enviar la solicitud de interacción.");
+        try {
+            await interaction.followUp({
+                content: "Ocurrió un error al enviar la solicitud de interacción. Por favor, inténtalo de nuevo más tarde.",
+                ephemeral: true,
+            });
+        } catch (followUpError) {
+            console.error("Error en followUp en sendInteractionRequest:", followUpError);
+        }
     }
 }

@@ -11,6 +11,7 @@ import firebase from "firebase-admin";
 import { prefijo } from "./constants/prefix.js";
 import { onMessageCreate } from "./commands/answers.js";
 import { openAiChat } from "./commands/openaiChat.js";
+import { onInteractionCreate } from "./slashCommands/interactionCreate.js";
 
 dotenv.config();
 
@@ -98,8 +99,8 @@ async function startBot() {
   });
 
   await openAiChat(client);
-  /*await onInteractionCreate(client);
-  await rankXpellitControl(client);
+  await onInteractionCreate(client);
+  /*await rankXpellitControl(client);
   await handleSpecialCommands(client, mirtZerckID); */
   await onMessageCreate(client);
 }

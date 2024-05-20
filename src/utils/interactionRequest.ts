@@ -27,4 +27,4 @@ export function hasInteractionRequest(userId: string, requesterId: string): bool
     return interactionRequests.has(requestKey);
 }
 
-export { interactionRequests }; 
+export { interactionRequests };
