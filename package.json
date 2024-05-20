@@ -1,0 +1,36 @@
+{
+  "name": "gatos-gatunos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/michi.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node ./dist/michi.js --omit=dev",
+    "register": "tsc && node ./dist/slashCommands/registerSlashCommands.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/voice": "^0.16.1",
+    "@google/generative-ai": "^0.11.1",
+    "axios": "^1.4.0",
+    "dayjs": "^1.11.11",
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.3.1",
+    "firebase-admin": "^12.1.0",
+    "libsodium-wrappers": "^0.7.13",
+    "moment-timezone": "^0.5.43",
+    "openai": "^4.47.1",
+    "play-dl": "^1.9.7"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.33",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.16.1"
+  }
+}
