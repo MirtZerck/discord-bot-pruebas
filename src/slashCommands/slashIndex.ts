@@ -1,16 +1,13 @@
-/* import { slashInteractCommand } from "./slashInteractionCommands.js"; */
-/* import { helpSlashCommands } from "./slashHelp.js";
-import { reloadCommand } from "./refreshCommands.js";*/
-/*import { slashPlayMusicCommand } from "./slashVoiceCommands.js/slashPlayMusic.js"; */
-/* import { slashUserAvatarCommand } from "./slashAvatar.js"; */
-/* import { slashAutomodCommand } from "../commands/moderation/automod.js"; */
+import { slashInteractCommand } from "./slashInteractionCommands.js";
+import { slashMusicCommand } from "./voice/slashPlayMusic.js";
+import { musicCommand } from "./voice/slashMusicControls.js";
+import { arraySlashMusicListControls } from "./voice/slashMusicList.js";
+/*import { helpSlashCommands } from "./slashHelp";*/
 
 export const arraySlashCommands = [
-  /* slashInteractCommand,
-  slashUserAvatarCommand, */
-  /* helpSlashCommands,
   slashInteractCommand,
-  slashPlayMusicCommand, */
-  /* slashAutomodCommand, */
-  /* reloadCommand */
+  slashMusicCommand,
+  musicCommand,
+  ...arraySlashMusicListControls
+  /* helpSlashCommands, */
 ];

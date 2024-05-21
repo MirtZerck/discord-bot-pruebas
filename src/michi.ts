@@ -11,11 +11,12 @@ import firebase from "firebase-admin";
 import { prefijo } from "./constants/prefix.js";
 import { onMessageCreate } from "./commands/answers.js";
 import { openAiChat } from "./commands/openaiChat.js";
+import { onInteractionCreate } from "./slashCommands/interactionCreate.js";
 
 dotenv.config();
 
-export const token = process.env.TOKEN2!;
-export const APPLICATION_ID = process.env.APPLICATION_ID2!;
+export const token = process.env.TOKEN!;
+export const APPLICATION_ID = process.env.APPLICATION_ID!;
 
 const firebaseConfig = JSON.parse(process.env.FIREBASE_ADMIN_SDK!);
 
@@ -98,8 +99,8 @@ async function startBot() {
   });
 
   await openAiChat(client);
-  /*await onInteractionCreate(client);
-  await rankXpellitControl(client);
+  await onInteractionCreate(client);
+  /*await rankXpellitControl(client);
   await handleSpecialCommands(client, mirtZerckID); */
   await onMessageCreate(client);
 }
