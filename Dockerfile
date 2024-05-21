@@ -19,8 +19,5 @@ RUN npm run build
 # Registra los comandos slash
 RUN npm run postbuild
 
-# Expon el puerto que utiliza el bot (opcional, si usa un puerto)
-EXPOSE 3000
-
 # Comando para ejecutar el bot
 CMD ["npm", "start"]
