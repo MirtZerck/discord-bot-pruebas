@@ -22,24 +22,50 @@ import { checkAndDisconnectIfAloneOrInactive } from "../../utils/voiceStateHandl
 import { musicQueue } from "../../utils/musicQueue.js";
 import { getAudioPlayer, setAudioPlayer } from "../../utils/audioPlayers.js";
 
-async function searchAndGetURL(query: string): Promise<{ url: string, title: string } | null> {
+async function searchAndGetURL(query: string): Promise<{ url: string, title: string, isPlaylist: boolean } | null> {
     try {
         let result = query.match(
             /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|soundcloud\.com)\/.+$/i
         )
-            ? { url: query, title: "" }
+            ? { url: query, title: "", isPlaylist: false }
             : null;
 
         if (result && !result.title) {
-            const info = await play.video_info(result.url);
-            result.title = info.video_details.title || result.url;
+            const url = new URL(result.url);
+            const isYouTubePlaylist = url.searchParams.get('list');
+            const isYouTubeVideo = url.searchParams.get('v');
+
+            if (isYouTubePlaylist) {
+                const playlistInfo = await play.playlist_info(result.url, { incomplete: true });
+
+                if (playlistInfo) {
+                    const videos = await playlistInfo.all_videos();
+                    if (videos.length > 0) {
+                        return { url: result.url, title: playlistInfo.title || "Lista de reproducción sin título", isPlaylist: true };
+                    }
+                }
+            } else if (isYouTubeVideo) {
+                const playlistID = url.searchParams.get('list');
+                if (playlistID) {
+                    const playlistInfo = await play.playlist_info(`https://www.youtube.com/playlist?list=${playlistID}`, { incomplete: true });
+
+                    if (playlistInfo) {
+                        const videos = await playlistInfo.all_videos();
+                        if (videos.length > 0) {
+                            return { url: `https://www.youtube.com/playlist?list=${playlistID}`, title: playlistInfo.title || "Lista de reproducción sin título", isPlaylist: true };
+                        }
+                    }
+                } else {
+                    const info = await play.video_info(result.url);
+                    result.title = info.video_details.title || result.url;
+                }
+            }
         }
 
         if (!result) {
-            console.log("Buscando tu canción...");
             const searchResults = await play.search(query, { limit: 1 });
             if (searchResults.length > 0) {
-                result = { url: searchResults[0].url, title: searchResults[0].title || searchResults[0].url };
+                result = { url: searchResults[0].url, title: searchResults[0].title || searchResults[0].url, isPlaylist: false };
             }
         }
 
@@ -152,7 +178,6 @@ export async function playSong(
         });
         audioPlayer.play(resource);
         const songTitle = musicQueue.getQueue(guildId).find(song => song.url === songUrl)?.title || songUrl;
-        textChannel.send(`Reproduciendo: ${songTitle}`);
     } catch (error) {
         console.error(`Error al intentar reproducir la canción ${songUrl}:`, error);
         textChannel.send("La canción no está disponible o no se puede reproducir.");
@@ -174,7 +199,6 @@ function setupAudioPlayerEvents(
                 newState.status === AudioPlayerStatus.Idle &&
                 oldState.status === AudioPlayerStatus.Playing
             ) {
-                console.log("El reproductor de audio está inactivo.");
                 if (musicQueue.hasSongs(guildId)) {
                     const nextSong = musicQueue.getNextSong(guildId);
                     if (nextSong) {
@@ -279,7 +303,24 @@ export const slashMusicCommand = {
 
                 const isPlaying = audioPlayer.state.status === AudioPlayerStatus.Playing;
 
-                musicQueue.addSong(guildId, result);
+                if (result.isPlaylist) {
+                    const playlistInfo = await play.playlist_info(result.url, { incomplete: true });
+
+                    if (playlistInfo) {
+                        const videos = await playlistInfo.all_videos();
+
+                        if (videos.length > 0) {
+                            for (const video of videos) {
+                                musicQueue.addSong(guildId, { url: video.url, title: video.title || "Vídeo sin título" });
+                            }
+                            const queue = musicQueue.getQueue(guildId);
+                            await interaction.editReply(`Lista de reproducción añadida: ${playlistInfo.title || "Lista de reproducción sin título"}`);
+                        }
+                    }
+
+                } else {
+                    musicQueue.addSong(guildId, result);
+                }
 
                 if (!isPlaying) {
                     const nextSong = musicQueue.getNextSong(guildId);
