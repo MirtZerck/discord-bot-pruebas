@@ -15,8 +15,8 @@ import { onInteractionCreate } from "./slashCommands/interactionCreate.js";
 
 dotenv.config();
 
-export const token = process.env.TOKEN2!;
-export const APPLICATION_ID = process.env.APPLICATION_ID2!;
+export const token = process.env.TOKEN!;
+export const APPLICATION_ID = process.env.APPLICATION_ID!;
 
 const firebaseConfig = JSON.parse(process.env.FIREBASE_ADMIN_SDK!);
 
