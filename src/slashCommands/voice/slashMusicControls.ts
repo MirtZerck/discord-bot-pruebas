@@ -103,13 +103,19 @@ export const musicCommand = {
                         return;
                     }
 
+                    const isInSameChannel = await verifyUserInSameVoiceChannel(interaction, true);
+                    if (isInSameChannel) {
+                        await interaction.editReply({ content: "Ya estamos en el mismo canal de voz." });
+                        return;
+                    }
+
                     const { status, connection, message: connectionMessage } = await handleVoiceConnection(member, interaction);
                     if (status === "error") {
                         await interaction.editReply({ content: connectionMessage || "Error de conexión desconocido." });
                     } else if (!connection) {
                         await interaction.editReply({ content: "No se pudo establecer una conexión de voz." });
                     } else {
-                        await interaction.editReply(`Conectado al canal de voz: ${voiceChannel.name}`);
+                        await interaction.editReply({ content: `Conectado al canal de voz: ${voiceChannel.name}` });
                     }
                     break;
 

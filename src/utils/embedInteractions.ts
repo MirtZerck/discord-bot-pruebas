@@ -5,7 +5,6 @@ import {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
-    ComponentType,
     Interaction,
 } from "discord.js";
 import { getDynamicColor } from "./getDynamicColor.js";
@@ -22,6 +21,7 @@ import {
 import { CustomImageURLOptions } from "../types/embeds.js";
 import { InteractionConfig } from "../types/interaction.js";
 
+// Función para crear un embed de interacción
 export const createInteractionEmbed = (
     authorMember: GuildMember,
     targetMember: GuildMember,
@@ -53,6 +53,7 @@ export const createInteractionEmbed = (
         .setTimestamp();
 };
 
+// Función para manejar la interacción directa
 export async function handleDirectInteraction(
     message: Message,
     user: GuildMember,
@@ -96,6 +97,7 @@ export async function handleDirectInteraction(
     }
 }
 
+// Función para enviar una solicitud de interacción
 export async function sendInteractionRequest(
     message: Message,
     user: GuildMember,
@@ -150,8 +152,7 @@ export async function sendInteractionRequest(
         });
 
         const filter = (interaction: Interaction) =>
-            interaction.isButton() && ["accept", "deny"].includes(interaction.customId) &&
-            interaction.user.id === user.user.id;
+            interaction.isButton() && ["accept", "deny"].includes(interaction.customId);
 
         const collector = request.createMessageComponentCollector({
             filter,
@@ -160,6 +161,14 @@ export async function sendInteractionRequest(
 
         collector.on('collect', async (interaction) => {
             if (!interaction.isButton()) return;
+
+            if (interaction.user.id !== user.user.id) {
+                await interaction.reply({
+                    content: "No puedes interactuar con esta solicitud.",
+                    ephemeral: true
+                });
+                return;
+            }
 
             if (interaction.customId === 'accept') {
                 removeInteractionRequest(user.user.id, message.author.id);
@@ -187,4 +196,4 @@ export async function sendInteractionRequest(
         console.error("Error en sendInteractionRequest:", error);
         message.reply("Ocurrió un error al enviar la solicitud de interacción.");
     }
-} 
+}

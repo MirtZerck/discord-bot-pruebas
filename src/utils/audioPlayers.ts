@@ -10,4 +10,8 @@ function setAudioPlayer(guildId: string, audioPlayer: AudioPlayer) {
     audioPlayers.set(guildId, audioPlayer);
 }
 
-export { audioPlayers, getAudioPlayer, setAudioPlayer };
+function deleteAudioPlayer(guildId: string) {
+    audioPlayers.delete(guildId);
+}
+
+export { audioPlayers, getAudioPlayer, setAudioPlayer, deleteAudioPlayer };

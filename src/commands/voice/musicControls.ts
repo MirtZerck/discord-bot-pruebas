@@ -83,6 +83,12 @@ const joinCommand: Command = {
             return;
         }
 
+        const isInSameChannel = await verifyUserInSameVoiceChannel(message, true);
+        if (isInSameChannel) {
+            message.channel.send("Ya estamos en el mismo canal de voz.");
+            return;
+        }
+
         const { status, connection, message: connectionMessage } = await handleVoiceConnection(member, message);
         if (status === "error") {
             message.channel.send(connectionMessage || "Error de conexión desconocido.");

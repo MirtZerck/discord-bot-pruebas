@@ -22,6 +22,7 @@ import { checkAndDisconnectIfAloneOrInactive } from "../../utils/voiceStateHandl
 import { musicQueue } from "../../utils/musicQueue.js";
 import { getAudioPlayer, setAudioPlayer } from "../../utils/audioPlayers.js";
 
+// Función para buscar y obtener URL
 async function searchAndGetURL(query: string): Promise<{ url: string, title: string, isPlaylist: boolean } | null> {
     try {
         let result = query.match(
@@ -80,6 +81,7 @@ async function searchAndGetURL(query: string): Promise<{ url: string, title: str
     }
 }
 
+// Función para manejar la conexión de voz
 async function handleVoiceConnection(member: GuildMember, interaction: CommandInteraction): Promise<{ status: string, connection?: VoiceConnection, message?: string }> {
     const guildId = member.guild.id;
     let connection = getVoiceConnection(guildId);
@@ -109,10 +111,7 @@ async function handleVoiceConnection(member: GuildMember, interaction: CommandIn
     }
 
     if (connection && connection.joinConfig.channelId !== voiceChannel.id) {
-        const existingChannel = member.guild.channels.cache.get(
-            connection.joinConfig.channelId!
-        ) as VoiceChannel;
-
+        const existingChannel = member.guild.channels.cache.get(connection.joinConfig.channelId!) as VoiceChannel;
         const otherMembers = existingChannel.members.filter((m) => !m.user.bot);
 
         if (otherMembers.size > 0) {
@@ -146,15 +145,14 @@ async function handleVoiceConnection(member: GuildMember, interaction: CommandIn
                 adapterCreator: member.guild.voiceAdapterCreator,
             });
 
-            checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId);
+            checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId, interaction.client);
 
             await entersState(connection, VoiceConnectionStatus.Ready, 10000);
         } catch (error) {
             console.error("Error al intentar unirse al canal de voz:", error);
             return {
                 status: "error",
-                message:
-                    "Hubo un error al intentar unirse al canal de voz. Por favor, intenta nuevamente.",
+                message: "Hubo un error al intentar unirse al canal de voz. Por favor, intenta nuevamente.",
             };
         }
     }
@@ -165,6 +163,7 @@ async function handleVoiceConnection(member: GuildMember, interaction: CommandIn
     };
 }
 
+// Función para reproducir una canción
 export async function playSong(
     songUrl: string,
     audioPlayer: AudioPlayer,
@@ -184,6 +183,7 @@ export async function playSong(
     }
 }
 
+// Configuración de eventos del reproductor de audio
 function setupAudioPlayerEvents(
     audioPlayer: AudioPlayer,
     textChannel: any,
@@ -191,44 +191,31 @@ function setupAudioPlayerEvents(
     voiceChannel: VoiceChannel,
     guildId: string
 ) {
-    try {
-        audioPlayer.on("stateChange", async (oldState, newState) => {
-            console.log(`Estado cambiado de ${oldState.status} a ${newState.status}`);
+    audioPlayer.on("stateChange", async (oldState, newState) => {
+        console.log(`Estado cambiado de ${oldState.status} a ${newState.status}`);
 
-            if (
-                newState.status === AudioPlayerStatus.Idle &&
-                oldState.status === AudioPlayerStatus.Playing
-            ) {
-                if (musicQueue.hasSongs(guildId)) {
-                    const nextSong = musicQueue.getNextSong(guildId);
-                    if (nextSong) {
-                        await playSong(nextSong.url, audioPlayer, textChannel, guildId);
-                        textChannel.send(`Ahora reproduciendo: ${nextSong.title}`);
-                    } else {
-                        textChannel.send("No hay más canciones en la cola.");
-                        checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId);
-                    }
+        if (newState.status === AudioPlayerStatus.Idle) {
+            if (musicQueue.hasSongs(guildId)) {
+                const nextSong = musicQueue.getNextSong(guildId);
+                if (nextSong) {
+                    await playSong(nextSong.url, audioPlayer, textChannel, guildId);
+                    textChannel.send(`Ahora reproduciendo: ${nextSong.title}`);
                 } else {
-                    textChannel.send("La reproducción ha terminado.");
-                    checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId);
+                    textChannel.send("No hay más canciones en la cola.");
                 }
+            } else {
+                textChannel.send("La reproducción ha terminado.");
             }
-        });
+        }
+    });
 
-        audioPlayer.on("error", (error) => {
-            console.error("Error en el reproductor de audio:", error);
-            textChannel.send(
-                "Error en la reproducción de audio. Por favor, intenta nuevamente."
-            );
-        });
-    } catch (error) {
-        console.error(
-            "Error al configurar eventos del reproductor de audio:",
-            error
-        );
-    }
+    audioPlayer.on("error", (error) => {
+        console.error("Error en el reproductor de audio:", error);
+        textChannel.send("Error en la reproducción de audio. Por favor, intenta nuevamente.");
+    });
 }
 
+// Comando para reproducir música en versión slash
 export const slashMusicCommand = {
     data: new SlashCommandBuilder()
         .setName("play")
@@ -247,98 +234,81 @@ export const slashMusicCommand = {
             const member = interaction.member as GuildMember;
             const voiceChannel = member.voice.channel as VoiceChannel | null;
             if (!voiceChannel) {
-                await interaction.reply("Debes estar en un canal de voz para usar este comando.");
+                await interaction.reply({ content: "Debes estar en un canal de voz para usar este comando.", ephemeral: true });
                 return;
             }
 
             await interaction.deferReply();
 
-            const {
-                status,
-                connection,
-                message: connectionMessage,
-            } = await handleVoiceConnection(member, interaction);
+            const { status, connection, message: connectionMessage } = await handleVoiceConnection(member, interaction);
             if (status === "error") {
-                await interaction.editReply(connectionMessage || "Error de conexión desconocido.");
+                await interaction.editReply({ content: connectionMessage || "Error de conexión desconocido." });
                 return;
             }
 
             if (!connection) {
-                await interaction.editReply("No se pudo establecer una conexión de voz.");
+                await interaction.editReply({ content: "No se pudo establecer una conexión de voz." });
                 return;
             }
 
             const guildId = member.guild.id;
 
             if (connection.state.status !== VoiceConnectionStatus.Ready) {
-                await interaction.editReply(
-                    "No se pudo conectar al canal de voz. Por favor, intenta nuevamente."
-                );
+                await interaction.editReply({ content: "No se pudo conectar al canal de voz. Por favor, intenta nuevamente." });
                 return;
             }
 
             const result = await searchAndGetURL(query);
 
             if (!result) {
-                await interaction.editReply(
-                    "Por favor, proporciona un enlace válido de YouTube o SoundCloud, o asegúrate de que el nombre de la canción sea correcto."
-                );
+                await interaction.editReply({ content: "Por favor, proporciona un enlace o nombre válido, si usas una playlist asegúrate de que no sea privada." });
                 return;
             }
 
-            if (connection) {
-                let audioPlayer = getAudioPlayer(guildId);
-                if (!audioPlayer) {
-                    audioPlayer = createAudioPlayer();
-                    setAudioPlayer(guildId, audioPlayer);
-                    setupAudioPlayerEvents(
-                        audioPlayer,
-                        interaction.channel,
-                        connection,
-                        voiceChannel,
-                        guildId
-                    );
-                }
-                connection.subscribe(audioPlayer);
+            let audioPlayer = getAudioPlayer(guildId);
+            if (!audioPlayer) {
+                audioPlayer = createAudioPlayer();
+                setAudioPlayer(guildId, audioPlayer);
+                setupAudioPlayerEvents(audioPlayer, interaction.channel, connection, voiceChannel, guildId);
+            }
+            connection.subscribe(audioPlayer);
 
-                const isPlaying = audioPlayer.state.status === AudioPlayerStatus.Playing;
+            const isPlaying = audioPlayer.state.status === AudioPlayerStatus.Playing;
 
-                if (result.isPlaylist) {
-                    const playlistInfo = await play.playlist_info(result.url, { incomplete: true });
+            if (result.isPlaylist) {
+                const playlistInfo = await play.playlist_info(result.url, { incomplete: true });
 
-                    if (playlistInfo) {
-                        const videos = await playlistInfo.all_videos();
+                if (playlistInfo) {
+                    const videos = await playlistInfo.all_videos();
 
-                        if (videos.length > 0) {
-                            for (const video of videos) {
-                                musicQueue.addSong(guildId, { url: video.url, title: video.title || "Vídeo sin título" });
-                            }
-                            const queue = musicQueue.getQueue(guildId);
-                            await interaction.editReply(`Lista de reproducción añadida: ${playlistInfo.title || "Lista de reproducción sin título"}`);
+                    if (videos.length > 0) {
+                        for (const video of videos) {
+                            musicQueue.addSong(guildId, { url: video.url, title: video.title || "Vídeo sin título" });
                         }
+                        const queue = musicQueue.getQueue(guildId);
+                        await interaction.editReply({ content: `Lista de reproducción añadida: ${playlistInfo.title || "Lista de reproducción sin título"}` });
                     }
-
-                } else {
-                    musicQueue.addSong(guildId, result);
                 }
 
-                if (!isPlaying) {
-                    const nextSong = musicQueue.getNextSong(guildId);
-                    if (nextSong) {
-                        await playSong(nextSong.url, audioPlayer, interaction.channel, guildId);
-                        await interaction.editReply(`Reproduciendo: ${nextSong.title}`);
-                    } else {
-                        await interaction.editReply("No hay más canciones en la cola.");
-                    }
+            } else {
+                musicQueue.addSong(guildId, result);
+                console.log(`Añadida canción a la cola: ${result.title}`);
+            }
+
+            if (!isPlaying) {
+                const nextSong = musicQueue.getNextSong(guildId);
+                if (nextSong) {
+                    await playSong(nextSong.url, audioPlayer, interaction.channel, guildId);
+                    await interaction.editReply({ content: `Reproduciendo: ${nextSong.title}` });
                 } else {
-                    await interaction.editReply(`Canción añadida a la cola: ${result.title}`);
+                    await interaction.editReply({ content: "No hay más canciones en la cola." });
                 }
+            } else {
+                await interaction.editReply({ content: `Canción añadida a la cola: ${result.title}` });
             }
         } catch (error) {
             console.error("Ocurrió un error inesperado:", error);
-            await interaction.editReply(
-                "Ocurrió un error inesperado. Por favor, intenta nuevamente más tarde."
-            );
+            await interaction.editReply({ content: "Ocurrió un error inesperado. Por favor, intenta nuevamente más tarde." });
         }
     },
 };

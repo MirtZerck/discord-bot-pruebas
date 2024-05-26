@@ -7,20 +7,21 @@ import {
     VoiceConnectionStatus,
     AudioPlayerStatus,
     AudioPlayer,
-    VoiceConnection,
+    VoiceConnection
 } from "@discordjs/voice";
 import play from "play-dl";
 import {
     GuildMember,
     Message,
     VoiceChannel,
-    PermissionsBitField,
+    PermissionsBitField
 } from "discord.js";
 import { checkAndDisconnectIfAloneOrInactive } from "../../utils/voiceStateHandler.js";
 import { musicQueue } from "../../utils/musicQueue.js";
 import { getAudioPlayer, setAudioPlayer } from "../../utils/audioPlayers.js";
 import { Command } from "../../types/command.js";
 
+// Función para buscar y obtener URL
 async function searchAndGetURL(query: string): Promise<{ url: string, title: string, isPlaylist: boolean } | null> {
     try {
         let result = query.match(
@@ -79,7 +80,7 @@ async function searchAndGetURL(query: string): Promise<{ url: string, title: str
     }
 }
 
-
+// Función para manejar la conexión de voz
 async function handleVoiceConnection(member: GuildMember, message: Message): Promise<{ status: string, connection?: VoiceConnection, message?: string }> {
     const guildId = member.guild.id;
     let connection = getVoiceConnection(guildId);
@@ -109,10 +110,7 @@ async function handleVoiceConnection(member: GuildMember, message: Message): Pro
     }
 
     if (connection && connection.joinConfig.channelId !== voiceChannel.id) {
-        const existingChannel = member.guild.channels.cache.get(
-            connection.joinConfig.channelId!
-        ) as VoiceChannel;
-
+        const existingChannel = member.guild.channels.cache.get(connection.joinConfig.channelId!) as VoiceChannel;
         const otherMembers = existingChannel.members.filter((m) => !m.user.bot);
 
         if (otherMembers.size > 0) {
@@ -146,15 +144,14 @@ async function handleVoiceConnection(member: GuildMember, message: Message): Pro
                 adapterCreator: member.guild.voiceAdapterCreator,
             });
 
-            checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId);
+            checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId, message.client);
 
             await entersState(connection, VoiceConnectionStatus.Ready, 10000);
         } catch (error) {
             console.error("Error al intentar unirse al canal de voz:", error);
             return {
                 status: "error",
-                message:
-                    "Hubo un error al intentar unirse al canal de voz. Por favor, intenta nuevamente.",
+                message: "Hubo un error al intentar unirse al canal de voz. Por favor, intenta nuevamente.",
             };
         }
     }
@@ -165,6 +162,7 @@ async function handleVoiceConnection(member: GuildMember, message: Message): Pro
     };
 }
 
+// Función para reproducir una canción
 export async function playSong(
     songUrl: string,
     audioPlayer: AudioPlayer,
@@ -184,6 +182,7 @@ export async function playSong(
     }
 }
 
+// Configuración de eventos del reproductor de audio
 function setupAudioPlayerEvents(
     audioPlayer: AudioPlayer,
     textChannel: any,
@@ -191,44 +190,31 @@ function setupAudioPlayerEvents(
     voiceChannel: VoiceChannel,
     guildId: string
 ) {
-    try {
-        audioPlayer.on("stateChange", async (oldState, newState) => {
-            console.log(`Estado cambiado de ${oldState.status} a ${newState.status}`);
+    audioPlayer.on("stateChange", async (oldState, newState) => {
+        console.log(`Estado cambiado de ${oldState.status} a ${newState.status}`);
 
-            if (
-                newState.status === AudioPlayerStatus.Idle &&
-                oldState.status === AudioPlayerStatus.Playing
-            ) {
-                if (musicQueue.hasSongs(guildId)) {
-                    const nextSong = musicQueue.getNextSong(guildId);
-                    if (nextSong) {
-                        await playSong(nextSong.url, audioPlayer, textChannel, guildId);
-                        textChannel.send(`Ahora reproduciendo: ${nextSong.title}`);
-                    } else {
-                        textChannel.send("No hay más canciones en la cola.");
-                        checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId);
-                    }
+        if (newState.status === AudioPlayerStatus.Idle) {
+            if (musicQueue.hasSongs(guildId)) {
+                const nextSong = musicQueue.getNextSong(guildId);
+                if (nextSong) {
+                    await playSong(nextSong.url, audioPlayer, textChannel, guildId);
+                    textChannel.send(`Ahora reproduciendo: ${nextSong.title}`);
                 } else {
-                    textChannel.send("La reproducción ha terminado.");
-                    checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId);
+                    textChannel.send("No hay más canciones en la cola.");
                 }
+            } else {
+                textChannel.send("La reproducción ha terminado.");
             }
-        });
+        }
+    });
 
-        audioPlayer.on("error", (error) => {
-            console.error("Error en el reproductor de audio:", error);
-            textChannel.send(
-                "Error en la reproducción de audio. Por favor, intenta nuevamente."
-            );
-        });
-    } catch (error) {
-        console.error(
-            "Error al configurar eventos del reproductor de audio:",
-            error
-        );
-    }
+    audioPlayer.on("error", (error) => {
+        console.error("Error en el reproductor de audio:", error);
+        textChannel.send("Error en la reproducción de audio. Por favor, intenta nuevamente.");
+    });
 }
 
+// Comando para reproducir música
 export const playMusicCommand: Command = {
     name: "play",
     alias: ["p", "reproducir"],

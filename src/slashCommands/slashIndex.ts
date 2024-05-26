@@ -8,6 +8,6 @@ export const arraySlashCommands = [
   slashInteractCommand,
   slashMusicCommand,
   musicCommand,
-  ...arraySlashMusicListControls
+  ...arraySlashMusicListControls,
   /* helpSlashCommands, */
 ];

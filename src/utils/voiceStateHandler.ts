@@ -1,55 +1,104 @@
-import { getVoiceConnection, AudioPlayerStatus, VoiceConnection } from "@discordjs/voice";
-import { VoiceChannel } from "discord.js";
-import { getAudioPlayer } from "./audioPlayers.js";
+import { VoiceConnection, VoiceConnectionStatus, entersState } from "@discordjs/voice";
+import { VoiceChannel, Client } from "discord.js";
+import { getAudioPlayer, deleteAudioPlayer } from "./audioPlayers.js";
 
-// Extendemos VoiceConnection para incluir la propiedad inactivityTimeout
-interface ExtendedVoiceConnection extends VoiceConnection {
-    inactivityTimeout?: NodeJS.Timeout;
-}
+export const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 * 60 * 1000 (5 minutos en ms)
+const CHECK_INTERVAL = 2 * 60 * 1000; // 2 * 60 * 1000 (2 minutos en ms)
 
-export async function checkAndDisconnectIfAloneOrInactive(
-    connection: ExtendedVoiceConnection,
-    channel: VoiceChannel,
-    guildId: string
+function checkAndDisconnectIfAloneOrInactive(
+    connection: VoiceConnection,
+    voiceChannel: VoiceChannel,
+    guildId: string,
+    client: Client
 ) {
-    if (connection.inactivityTimeout) clearTimeout(connection.inactivityTimeout);
-    connection.inactivityTimeout = setTimeout(async () => {
-        const currentConnection = getVoiceConnection(guildId) as ExtendedVoiceConnection;
-        if (currentConnection !== connection) {
-            console.log("La conexión ha cambiado o ya no es relevante.");
-            return;
+    let inactivityTimer: NodeJS.Timeout | null = null;
+    let intervalId: NodeJS.Timeout | null = null;
+
+    const clearInactivityTimer = () => {
+        if (inactivityTimer) {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = null;
         }
+    };
 
-        const freshChannel = await channel.guild.channels.fetch(channel.id) as VoiceChannel;
-        if (!freshChannel) {
-            console.log("El canal ya no existe.");
-            connection.destroy();
-            return;
+    const startInactivityTimer = () => {
+        if (!inactivityTimer) {
+            inactivityTimer = setTimeout(() => {
+                const audioPlayer = getAudioPlayer(guildId);
+                const stillAlone = voiceChannel.members.filter(member => !member.user.bot).size === 0;
+                const stillInactive = audioPlayer?.state.status !== "playing" && audioPlayer?.state.status !== "buffering";
+                if (stillAlone || stillInactive) {
+                    if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+                        connection.disconnect();
+                        deleteAudioPlayer(guildId);
+                    }
+                }
+            }, INACTIVITY_TIMEOUT);
         }
+    };
 
-        const memberCount = freshChannel.members.filter(
-            (member) => !member.user.bot
-        ).size;
 
-        // Verificar si no hay usuarios humanos en el canal
-        if (memberCount === 0) {
-            console.log("Desconectado porque no hay más usuarios en el canal...");
-            connection.destroy();
-            return;
+    const checkConditions = () => {
+        const audioPlayer = getAudioPlayer(guildId);
+        const isAlone = voiceChannel.members.filter(member => !member.user.bot).size === 0;
+        const isInactive = audioPlayer?.state.status !== "playing" && audioPlayer?.state.status !== "buffering";
+
+        if (isAlone || isInactive) {
+            startInactivityTimer();
+        } else {
+            clearInactivityTimer();
         }
+    };
 
-        // Obtener el reproductor de audio para el servidor
-        const player = getAudioPlayer(guildId);
-
-        // Verificar si el reproductor no está reproduciendo nada
-        if (player && player.state.status !== AudioPlayerStatus.Playing) {
-            console.log("Desconectado porque no se está reproduciendo nada...");
-            connection.destroy();
-            return;
+    connection.on(VoiceConnectionStatus.Disconnected, async () => {
+        clearInactivityTimer();
+        if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
         }
+        try {
+            await Promise.race([
+                entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+                entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+            ]);
+        } catch (error) {
+            if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+                connection.destroy();                
+            } else {
+                
+            }
+        }
+    });
 
-        console.log(
-            "Aún hay usuarios en el canal y el bot está reproduciendo algo."
-        );
-    }, 180000); // 180000 ms = 3 minutos
+    connection.on(VoiceConnectionStatus.Destroyed, () => {
+        clearInactivityTimer();
+        if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+        }        
+    });
+
+    connection.on(VoiceConnectionStatus.Ready, () => {
+        if (!intervalId) {
+            intervalId = setInterval(() => {
+                if (connection.state.status === VoiceConnectionStatus.Destroyed) {
+                    if (intervalId) {
+                        clearInterval(intervalId);
+                        intervalId = null;
+                    }
+                    console.log("Conexión destruida, deteniendo verificaciones periódicas.");
+                } else {
+                    checkConditions();
+                }
+            }, CHECK_INTERVAL);
+        }
+    });
+
+    client.on("voiceStateUpdate", (oldState, newState) => {
+        if (oldState.channelId !== newState.channelId) {
+            checkConditions();
+        }
+    });
 }
+
+export { checkAndDisconnectIfAloneOrInactive };

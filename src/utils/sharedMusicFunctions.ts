@@ -2,7 +2,7 @@ import { AudioPlayerStatus, getVoiceConnection, VoiceConnectionStatus, joinVoice
 import { GuildMember, VoiceChannel, CommandInteraction, Message, PermissionsBitField } from "discord.js";
 import { musicQueue } from "./musicQueue.js";
 import { getAudioPlayer } from "./audioPlayers.js";
-import { playSong } from "../slashCommands/voice/slashPlayMusic.js";
+import { playSong } from "../commands/voice/playMusic.js";
 import { checkAndDisconnectIfAloneOrInactive } from "./voiceStateHandler.js";
 
 export function pause(guildId: string): string {
@@ -41,7 +41,7 @@ export async function skip(guildId: string, textChannel: any): Promise<string> {
     } else {
         return "No hay una canción en reproducción para saltar.";
     }
-    return "No se pudo saltar la canción."; // Añadido para asegurar retorno en todas las ramas
+    return "No se pudo saltar la canción.";
 }
 
 export function stop(guildId: string): string {
@@ -55,7 +55,10 @@ export function stop(guildId: string): string {
     }
 }
 
-export async function verifyUserInSameVoiceChannel(interaction: CommandInteraction | Message): Promise<boolean> {
+export async function verifyUserInSameVoiceChannel(
+    interaction: CommandInteraction | Message, 
+    omitBotNotConnectedMessage: boolean = false
+): Promise<boolean> {
     const member = interaction.member as GuildMember;
     const botUser = interaction.client.user;
     if (!botUser) {
@@ -71,7 +74,9 @@ export async function verifyUserInSameVoiceChannel(interaction: CommandInteracti
 
     const connection = getVoiceConnection(interaction.guild!.id);
     if (!connection) {
-        await interaction.reply({ content: "El bot no está conectado a ningún canal de voz.", ephemeral: true });
+        if (!omitBotNotConnectedMessage) {
+            await interaction.reply({ content: "El bot no está conectado a ningún canal de voz.", ephemeral: true });
+        }
         return false;
     }
 
@@ -146,7 +151,7 @@ export async function handleVoiceConnection(member: GuildMember, interaction: Co
                 adapterCreator: member.guild.voiceAdapterCreator,
             });
 
-            checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId);
+            checkAndDisconnectIfAloneOrInactive(connection, voiceChannel, guildId, interaction.client);
             await entersState(connection, VoiceConnectionStatus.Ready, 10000);
         } catch (error) {
             console.error("Error al intentar unirse al canal de voz:", error);

@@ -39,6 +39,6 @@ export const arrayCommands: Command[] = [
     acceptProposalCommand,
     customCommandsList,
     playMusicCommand,
-    ...arrayMusicControls,
+    ...arrayMusicControls,  
     ...arrayMusicListControls,
 ];

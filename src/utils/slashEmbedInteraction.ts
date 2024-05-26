@@ -158,8 +158,7 @@ export async function sendInteractionRequest(
         });
 
         const filter = (i: Interaction) =>
-            i.isButton() && ["accept", "deny"].includes(i.customId) &&
-            i.user.id === user.user.id;
+            i.isButton() && ["accept", "deny"].includes(i.customId);
 
         const collector = request.createMessageComponentCollector({
             filter,
@@ -168,6 +167,14 @@ export async function sendInteractionRequest(
 
         collector.on('collect', async (i) => {
             if (!i.isButton()) return;
+
+            if (i.user.id !== user.user.id) {
+                await i.reply({
+                    content: "No puedes interactuar con esta solicitud.",
+                    ephemeral: true
+                });
+                return;
+            }
 
             if (i.customId === 'accept') {
                 removeInteractionRequest(user.user.id, interaction.user.id);
