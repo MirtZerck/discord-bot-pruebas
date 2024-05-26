@@ -1,5 +1,5 @@
 import { Command } from "../../types/command.js";
-import { Message, TextChannel, GuildMember, VoiceChannel, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from "discord.js";
+import { Message, TextChannel, GuildMember, VoiceChannel, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ButtonInteraction, Interaction } from "discord.js";
 import { musicQueue } from "../../utils/musicQueue.js";
 import { getVoiceConnection } from "@discordjs/voice";
 import { getDynamicColor } from "../../utils/getDynamicColor.js";
@@ -32,7 +32,7 @@ async function verifyUserInSameVoiceChannel(message: Message): Promise<boolean> 
     return true;
 }
 
-async function showQueue(message: Message, page: number = 1) {
+async function showQueue(message: Message, page: number = 1, interaction?: ButtonInteraction) {
     const guildId = message.guild!.id;
     const queue = musicQueue.getQueue(guildId);
     const itemsPerPage = 10;
@@ -44,7 +44,11 @@ async function showQueue(message: Message, page: number = 1) {
     }
 
     if (page > totalPages || page < 1) {
-        message.channel.send(`Página inválida. Por favor, selecciona una página entre 1 y ${totalPages}.`);
+        if (interaction) {
+            await interaction.reply({ content: `Página inválida. Por favor, selecciona una página entre 1 y ${totalPages}.`, ephemeral: true });
+        } else {
+            message.channel.send(`Página inválida. Por favor, selecciona una página entre 1 y ${totalPages}.`);
+        }
         return;
     }
 
@@ -73,24 +77,28 @@ async function showQueue(message: Message, page: number = 1) {
                 .setDisabled(page === totalPages)
         );
 
-    const sentMessage = await message.channel.send({ embeds: [embed], components: [buttons] });
+    if (interaction) {
+        await interaction.update({ embeds: [embed], components: [buttons] });
+    } else {
+        const sentMessage = await message.channel.send({ embeds: [embed], components: [buttons] });
 
-    const filter = (interaction: any) => interaction.user.id === message.author.id;
-    const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 });
+        const filter = (i: Interaction) => i.isButton() && i.user.id === message.author.id;
+        const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 });
 
-    collector.on("collect", async (interaction) => {
-        if (!interaction.isButton()) return;
-        if (interaction.customId.startsWith("queue_prev")) {
-            showQueue(message, page - 1);
-        } else if (interaction.customId.startsWith("queue_next")) {
-            showQueue(message, page + 1);
-        }
-        await interaction.deferUpdate();
-    });
+        collector.on("collect", async (i: ButtonInteraction) => {
+            let newPage = page;
+            if (i.customId.startsWith("queue_prev")) {
+                newPage = Math.max(1, page - 1); 
+            } else if (i.customId.startsWith("queue_next")) {
+                newPage = Math.min(totalPages, page + 1); 
+            }
+            await showQueue(message, newPage, i);
+        });
 
-    collector.on("end", () => {
-        sentMessage.edit({ components: [] });
-    });
+        collector.on("end", () => {
+            sentMessage.edit({ components: [] });
+        });
+    }
 }
 
 const queueCommand: Command = {

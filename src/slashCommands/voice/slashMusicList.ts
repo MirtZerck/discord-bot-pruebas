@@ -9,7 +9,10 @@ import {
     ButtonBuilder,
     ButtonStyle,
     CommandInteractionOptionResolver,
-    MessageComponentInteraction,
+    ButtonInteraction,
+    InteractionCollector,
+    CacheType,
+    MessageComponentInteraction
 } from "discord.js";
 import { getVoiceConnection } from "@discordjs/voice";
 import { musicQueue } from "../../utils/musicQueue.js";
@@ -43,7 +46,7 @@ async function verifyUserInSameVoiceChannel(interaction: CommandInteraction): Pr
     return true;
 }
 
-async function showQueue(interaction: CommandInteraction, page: number = 1) {
+async function showQueue(interaction: CommandInteraction, page: number = 1, collector?: InteractionCollector<ButtonInteraction<CacheType>>) {
     const guildId = interaction.guild!.id;
     const queue = musicQueue.getQueue(guildId);
     const itemsPerPage = 10;
@@ -84,24 +87,30 @@ async function showQueue(interaction: CommandInteraction, page: number = 1) {
                 .setDisabled(page === totalPages)
         );
 
-    const sentMessage = await interaction.reply({ embeds: [embed], components: [buttons], fetchReply: true });
+    if (collector) {
+        const message = await interaction.fetchReply();
+        await (message as any).edit({ embeds: [embed], components: [buttons] });
+    } else {
+        const sentMessage = await interaction.reply({ embeds: [embed], components: [buttons], fetchReply: true });
 
-    const filter = (i: MessageComponentInteraction) => i.user.id === interaction.user.id;
-    const collector = (sentMessage as any).createMessageComponentCollector({ filter, time: 60000 });
+        const filter = (i: ButtonInteraction) => i.user.id === interaction.user.id;
+        const collector = (sentMessage as any).createMessageComponentCollector({ filter, time: 60000 });
 
-    collector.on("collect", async (i: MessageComponentInteraction) => {
-        if (!i.isButton()) return;
-        if (i.customId.startsWith("queue_prev")) {
-            await showQueue(interaction, page - 1);
-        } else if (i.customId.startsWith("queue_next")) {
-            await showQueue(interaction, page + 1);
-        }
-        await i.deferUpdate();
-    });
+        collector.on("collect", async (i: ButtonInteraction) => {
+            let newPage = page;
+            if (i.customId.startsWith("queue_prev")) {
+                newPage = Math.max(1, page - 1); // Ensure the page is not less than 1
+            } else if (i.customId.startsWith("queue_next")) {
+                newPage = Math.min(totalPages, page + 1); // Ensure the page does not exceed totalPages
+            }
+            await showQueue(interaction, newPage, collector);
+            await i.deferUpdate();
+        });
 
-    collector.on("end", () => {
-        (sentMessage as any).edit({ components: [] });
-    });
+        collector.on("end", () => {
+            (sentMessage as any).edit({ components: [] });
+        });
+    }
 }
 
 async function executeQueueCommand(interaction: CommandInteraction) {
