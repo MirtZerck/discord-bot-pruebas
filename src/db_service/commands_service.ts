@@ -1,47 +1,33 @@
 import { db } from "../michi.js";
 import { Message } from "discord.js";
 
-export async function getCommandsValue(commandName: string): Promise<[string, any] | undefined> {
-    const comandos_db = await db.child("commands").once("value");
+export async function getCommandsValue(group: string, commandName: string): Promise<[string, any] | undefined> {
+    const comandos_db = await db.child(group).once("value");
     const comandos = Object.entries(comandos_db.val() as Record<string, any>);
+    return comandos.find((comando) => comando[1][commandName]);}
 
-    // comandos[0] son categorías y comandos[1] los valores
-    const comando = comandos.find((comando) => comando[1][commandName]);
-    return comando;
+
+export async function getGroupValues(group: string): Promise<[string, any][]> {
+    const comandos_db = await db.child(group).once("value");
+    return Object.entries(comandos_db.val());
 }
 
-export async function getInteraccionesValue(): Promise<[string, any][]> {
-    const comandos_db = await db.child("interacciones").once("value");
-    const comandos = Object.entries(comandos_db.val());
-
-    return comandos;
-}
-
-export async function updateInteractionsCount(
+export async function updateCount(
     userID1: string,
     userID2: string,
-    interactionType: string
+    type: string,
+    group: string
 ): Promise<number> {
     try {
         const [minorID, majorID] = [userID1, userID2].sort();
-
-        const countRef = db.child(
-            `interacciones/conteos/${interactionType}/${minorID}/${majorID}`
-        );
-
+        const countRef = db.child(`${group}/conteos/${type}/${minorID}/${majorID}`);
         const snapshot = await countRef.once("value");
         const currentCount = snapshot.val() || 0;
-
         const newCount = currentCount + 1;
-
         await countRef.set(newCount);
-
         return newCount;
     } catch (error) {
-        console.log(
-            `Error al actualizar el conteo de ${interactionType} en Firebase`,
-            error
-        );
+        console.log(`Error al actualizar el conteo de ${type} en Firebase`, error);
         throw error;
     }
 }

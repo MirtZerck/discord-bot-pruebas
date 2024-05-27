@@ -6,7 +6,7 @@ import { sendMichiTextCommand } from "./michiSay.js";
 /*import { helpCommand } from "./help";*/
 import { arrayCommandsHour } from "./hora.js";
 import { botPing } from "./ping.js";
-import { arrayInteractions } from "./interactionCommands.js";
+import { arrayInteractions } from "./social/interactionCommands.js";
 import { proposalCommand } from "./proposals.js";
 import {
     timeoutUser,
@@ -20,6 +20,8 @@ import { arrayMusicControls } from "./voice/musicControls.js";
 import { acceptProposalCommand } from "./acceptProposals.js";
 import { arrayMusicListControls } from "./voice/musicList.js";
 import { customCommandsList } from "./showCommands.js";
+import { arrayActions } from "./social/actionsCommands.js";
+import { arrayReactions } from "./social/reactionCommands.js";
 
 export const arrayCommands: Command[] = [
     userInfoCommand,
@@ -39,6 +41,8 @@ export const arrayCommands: Command[] = [
     acceptProposalCommand,
     customCommandsList,
     playMusicCommand,
-    ...arrayMusicControls,  
+    ...arrayMusicControls,
     ...arrayMusicListControls,
+    ...arrayActions,
+    ...arrayReactions
 ];

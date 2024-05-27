@@ -9,8 +9,8 @@ import {
 } from "discord.js";
 import { getDynamicColor } from "./getDynamicColor.js";
 import {
-    getInteraccionesValue,
-    updateInteractionsCount,
+    getGroupValues,
+    updateCount,
 } from "../db_service/commands_service.js";
 import { getRandomNumber } from "./utilsFunctions.js";
 import {
@@ -19,7 +19,7 @@ import {
     hasInteractionRequest,
 } from "./interactionRequest.js";
 import { CustomImageURLOptions } from "../types/embeds.js";
-import { InteractionConfig } from "../types/interaction.js";
+import { socialConfig } from "../types/social.js";
 
 // Función para crear un embed de interacción
 export const createInteractionEmbed = (
@@ -54,23 +54,14 @@ export const createInteractionEmbed = (
 };
 
 // Función para manejar la interacción directa
-export async function handleDirectInteraction(
-    message: Message,
-    user: GuildMember,
-    config: InteractionConfig
-) {
+export async function handleDirectInteraction(message: Message, user: GuildMember, config: socialConfig) {
     try {
-        let newCount: number | null = null;
-
+        let newCount = null;
         if (config.requiresCount) {
-            newCount = await updateInteractionsCount(
-                message.author.id,
-                user.user.id,
-                config.type
-            );
+            newCount = await updateCount(message.author.id, user.user.id, config.type, config.group);
         }
 
-        const callArray = await getInteraccionesValue();
+        const callArray = await getGroupValues(config.group);
         const interactionArray = callArray.find(([key]) => key === config.type);
 
         if (interactionArray) {
@@ -101,7 +92,7 @@ export async function handleDirectInteraction(
 export async function sendInteractionRequest(
     message: Message,
     user: GuildMember,
-    config: InteractionConfig
+    config: socialConfig
 ) {
     try {
         if (hasInteractionRequest(user.user.id, message.author.id)) {

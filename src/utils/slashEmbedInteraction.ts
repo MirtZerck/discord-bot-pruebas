@@ -1,10 +1,10 @@
 import { EmbedBuilder, CommandInteraction, GuildMember, ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction } from "discord.js";
 import { getDynamicColor } from "./getDynamicColor.js";
-import { getInteraccionesValue, updateInteractionsCount } from "../db_service/commands_service.js";
+import { getGroupValues, updateCount } from "../db_service/commands_service.js";
 import { getRandomNumber } from "./utilsFunctions.js";
 import { addInteractionRequest, removeInteractionRequest, hasInteractionRequest } from "./interactionRequest.js";
 import { CustomImageURLOptions } from "../types/embeds.js";
-import { InteractionConfig } from "../types/interaction.js";
+import { socialConfig } from "../types/social.js";
 
 export const createInteractionEmbed = (
     authorMember: GuildMember,
@@ -40,20 +40,21 @@ export const createInteractionEmbed = (
 export async function handleDirectInteraction(
     interaction: CommandInteraction,
     user: GuildMember,
-    config: InteractionConfig
+    config: socialConfig
 ) {
     try {
         let newCount: number | null = null;
 
         if (config.requiresCount) {
-            newCount = await updateInteractionsCount(
+            newCount = await updateCount(
                 interaction.user.id,
                 user.user.id,
-                config.type
+                config.type,
+                config.group
             );
         }
 
-        const callArray = await getInteraccionesValue();
+        const callArray = await getGroupValues(config.group);
         const interactionArray = callArray.find(([key]) => key === config.type);
 
         if (interactionArray) {
@@ -90,7 +91,7 @@ export async function handleDirectInteraction(
 export async function sendInteractionRequest(
     interaction: CommandInteraction,
     user: GuildMember,
-    config: InteractionConfig
+    config: socialConfig
 ) {
     try {
         if (config.requiresUser && interaction.user.id === user.user.id) {

@@ -1,20 +1,21 @@
 import { Message, GuildMember } from "discord.js";
-import { getMemberByFilter } from "../constants/get-user.js";
+import { getMemberByFilter } from "../../constants/get-user.js";
 import {
     handleDirectInteraction,
     sendInteractionRequest,
-} from "../utils/embedInteractions.js";
-import { hasInteractionRequest } from "../utils/interactionRequest.js";
-import { InteractionConfig } from "../types/interaction.js";
-import { Command } from "../types/command.js";
+} from "../../utils/embedInteractions.js";
+import { hasInteractionRequest } from "../../utils/interactionRequest.js";
+import { socialConfig } from "../../types/social.js";
+import { Command } from "../../types/command.js";
 
-const interactionCommands: Record<string, InteractionConfig> = {
+const interactionCommands: Record<string, socialConfig> = {
     abrazos: {
         name: "abrazo",
         requiresUser: true,
         requiresCount: true,
         descriptionCount: (count) => `\nSe han dado **${count}** abrazos. 🤗`,
         type: "abrazos",
+        group: "interacciones",
         action: "abrazar",
         description: (requester, receiver) =>
             `**${requester.displayName}** le ha dado un abrazo cariñoso a **${receiver.displayName}**. ^^`,
@@ -31,6 +32,7 @@ const interactionCommands: Record<string, InteractionConfig> = {
         requiresCount: true,
         descriptionCount: (count) => `\nSe han dado **${count}** caricias. 🐱`,
         type: "caricias",
+        group: "interacciones",
         action: "acariciar",
         description: (requester, receiver) =>
             `**${requester.displayName}** le ha dado una tierna caricia a **${receiver.displayName}**. :3`,
@@ -47,6 +49,7 @@ const interactionCommands: Record<string, InteractionConfig> = {
         requiresCount: true,
         descriptionCount: (count) => `\nSe han besado **${count}** veces. 💋`,
         type: "besos",
+        group: "interacciones",
         action: "besar",
         description: (requester, receiver) =>
             `**${requester.displayName}** ha besado a **${receiver.displayName}**. o:`,
@@ -57,82 +60,16 @@ const interactionCommands: Record<string, InteractionConfig> = {
         rejectResponse: "Solicitud de beso rechazada.",
         noResponse: "Solicitud de beso no respondida.",
     },
-    bailes: {
-        name: "baile",
-        requiresUser: false,
-        requiresCount: true,
-        descriptionCount: (count) => `\nHan bailado juntos **${count}** veces. 💃`,
-        type: "bailar",
-        action: "bailar",
-        description: (requester, receiver) =>
-            `**${requester.displayName}** está bailando con **${receiver.displayName}**.`,
-        soloDescription: (requester) =>
-            `**${requester.displayName}** se puso a bailar.`,
-        footer: "Bailar alegra el corazón.",
-        requiresRequest: true,
-        requestMessage: (requester, receiver) =>
-            `¡Hey ${receiver},! ${requester} quiere bailar contigo. ¿Te animas?`,
-        rejectResponse: "Solicitud de baile rechazada.",
-        noResponse: "Solicitud de baile no respondida.",
-    },
-    galletas: {
-        name: "galleta",
-        requiresUser: false,
-        requiresCount: false,
-        type: "cookie",
-        action: "dar una galleta",
-        description: (requester, receiver) =>
-            `**${requester.displayName}** le dió una galleta a **${receiver.displayName}**. 🍪`,
-        soloDescription: (requester) =>
-            `**${requester.displayName}** está comiendo una galleta. 🍪`,
-        footer: "Las galletas son muy ricas. uwu",
-        requiresRequest: true,
-        requestMessage: (requester, receiver) =>
-            `¡Oye ${receiver}!, ¿Te gustaría recibir una galleta de ${requester}?`,
-        rejectResponse: `Han rechazado tu galleta. x-x`,
-        noResponse: "Solicitud de galleta no respondida.",
-    },
-    caliente: {
-        name: "horny",
-        requiresUser: false,
-        requiresCount: false,
-        type: "horny",
-        action: "ponerse caliente",
-        description: (requester, receiver) =>
-            `**${requester.displayName}** se calentó con **${receiver.displayName}**. 🔥`,
-        soloDescription: (requester) =>
-            `**${requester.displayName}** se puso horny. 🔥`,
-        footer: "Hace mucho calor por aquí.",
-        requiresRequest: false,
-        requestMessage: () => "",
-        rejectResponse: "",
-        noResponse: "",
-    },
     molestar: {
         name: "molestia",
         requiresUser: true,
         requiresCount: false,
         type: "poke",
+        group: "interacciones",
         action: "molestar",
         description: (requester, receiver) =>
             `**${requester.displayName}** está fastidiando a **${receiver.displayName}**.`,
         footer: "Molestar",
-        requiresRequest: false,
-        requestMessage: () => "",
-        rejectResponse: "",
-        noResponse: "",
-    },
-    sonrojar: {
-        name: "sonrojo",
-        requiresUser: false,
-        requiresCount: false,
-        type: "sonrojar",
-        action: "sonrojar",
-        description: (requester, receiver) =>
-            `**${requester.displayName}** se ha sonrojado debido a **${receiver.displayName}**.`,
-        soloDescription: (requester) =>
-            `**${requester.displayName}** se sonrojó. owo`,
-        footer: "Sintiendo mucha penita.",
         requiresRequest: false,
         requestMessage: () => "",
         rejectResponse: "",
@@ -143,7 +80,7 @@ const interactionCommands: Record<string, InteractionConfig> = {
 async function executeinteractionCommands(
     message: Message,
     args: string[],
-    config: InteractionConfig
+    config: socialConfig
 ) {
     try {
         let userMention = message.mentions.members?.first() || null;
@@ -183,7 +120,7 @@ async function executeinteractionCommands(
             if (shouldSendRequest) {
                 if (hasInteractionRequest(user.user.id, message.author.id)) {
                     return message.reply(
-                        "Ya existe una solicitud de interacción pendiente para este usuario."
+                        "Ya existe una solicitud pendiente para este usuario."
                     );
                 }
                 await sendInteractionRequest(message, user, config);
@@ -250,57 +187,6 @@ const kissUserCommand: Command = {
     },
 };
 
-const danceUserCommand: Command = {
-    name: "baile",
-    alias: ["dance", "bailar"],
-    async execute(message: Message, args: string[]) {
-        try {
-            await executeinteractionCommands(
-                message,
-                args,
-                interactionCommands.bailes
-            );
-        } catch (error) {
-            console.error("Error en el comando baile:", error);
-            message.reply("Ocurrió un error al ejecutar el comando de baile.");
-        }
-    },
-};
-
-const cookieUserCommand: Command = {
-    name: "galleta",
-    alias: ["cookie"],
-    async execute(message: Message, args: string[]) {
-        try {
-            await executeinteractionCommands(
-                message,
-                args,
-                interactionCommands.galletas
-            );
-        } catch (error) {
-            console.error("Error en el comando galleta:", error);
-            message.reply("Ocurrió un error al ejecutar el comando de galleta.");
-        }
-    },
-};
-
-const hornyUserCommand: Command = {
-    name: "caliente",
-    alias: ["horny", "excitar"],
-    async execute(message: Message, args: string[]) {
-        try {
-            await executeinteractionCommands(
-                message,
-                args,
-                interactionCommands.caliente
-            );
-        } catch (error) {
-            console.error("Error en el comando caliente:", error);
-            message.reply("Ocurrió un error al ejecutar el comando de caliente.");
-        }
-    },
-};
-
 const pokeUserCommand: Command = {
     name: "molestia",
     alias: ["poke", "molestar"],
@@ -318,30 +204,10 @@ const pokeUserCommand: Command = {
     },
 };
 
-const blushUserCommand: Command = {
-    name: "sonrojo",
-    alias: ["blush", "sonrojar"],
-    async execute(message: Message, args: string[]) {
-        try {
-            await executeinteractionCommands(
-                message,
-                args,
-                interactionCommands.sonrojar
-            );
-        } catch (error) {
-            console.error("Error en el comando sonrojo:", error);
-            message.reply("Ocurrió un error al ejecutar el comando de sonrojo.");
-        }
-    },
-};
 
 export const arrayInteractions = [
     hugUserCommand,
     patUserCommand,
     kissUserCommand,
-    danceUserCommand,
-    cookieUserCommand,
-    hornyUserCommand,
     pokeUserCommand,
-    blushUserCommand,
 ];
