@@ -100,7 +100,7 @@ export async function sendInteractionRequest(
         }
 
         const dynamicColor = getDynamicColor(message.member!);
-        const expirationTimestamp = Math.floor(Date.now() / 1000) + 3 * 60;
+        const expirationTimestamp = Math.floor(Date.now() / 1000) + 10 * 60;
 
         const embedRequest = new EmbedBuilder()
             .setAuthor({
