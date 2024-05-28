@@ -32,9 +32,13 @@ async function verifyUserInSameVoiceChannel(message: Message): Promise<boolean> 
     return true;
 }
 
+const state = new Map<string, number>();
+
 async function showQueue(message: Message, page: number = 1, interaction?: ButtonInteraction) {
+
     const guildId = message.guild!.id;
     const queue = musicQueue.getQueue(guildId);
+
     const itemsPerPage = 10;
     const totalPages = Math.ceil(queue.length / itemsPerPage);
 
@@ -44,19 +48,21 @@ async function showQueue(message: Message, page: number = 1, interaction?: Butto
     }
 
     if (page > totalPages || page < 1) {
+        const errorMessage = `Página inválida. Por favor, selecciona una página entre 1 y ${totalPages}.`;
         if (interaction) {
-            await interaction.reply({ content: `Página inválida. Por favor, selecciona una página entre 1 y ${totalPages}.`, ephemeral: true });
+            await interaction.reply({ content: errorMessage, ephemeral: true });
         } else {
-            message.channel.send(`Página inválida. Por favor, selecciona una página entre 1 y ${totalPages}.`);
+            message.channel.send(errorMessage);
         }
         return;
     }
 
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const queuePage = queue.slice(startIndex, endIndex);
+    state.set(message.author.id, page);
 
-    const dynamicColor = getDynamicColor(message.member!)
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, queue.length);
+    const queuePage = queue.slice(startIndex, endIndex);
+    const dynamicColor = getDynamicColor(message.member!);
     const embed = new EmbedBuilder()
         .setTitle("Cola de Reproducción")
         .setDescription(queuePage.map((song, index) => `${startIndex + index + 1}. ${song.title}`).join("\n"))
@@ -66,36 +72,45 @@ async function showQueue(message: Message, page: number = 1, interaction?: Butto
     const buttons = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(
             new ButtonBuilder()
-                .setCustomId(`queue_prev_${page}`)
+                .setCustomId(`queue_prev`)
                 .setLabel("Anterior")
                 .setStyle(ButtonStyle.Primary)
                 .setDisabled(page === 1),
             new ButtonBuilder()
-                .setCustomId(`queue_next_${page}`)
+                .setCustomId(`queue_next`)
                 .setLabel("Siguiente")
                 .setStyle(ButtonStyle.Primary)
                 .setDisabled(page === totalPages)
         );
 
+
+
     if (interaction) {
+
         await interaction.update({ embeds: [embed], components: [buttons] });
     } else {
+
         const sentMessage = await message.channel.send({ embeds: [embed], components: [buttons] });
 
         const filter = (i: Interaction) => i.isButton() && i.user.id === message.author.id;
-        const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 });
+        const collector = sentMessage.createMessageComponentCollector({ filter, time: 300000 }); // 5 minutos
 
         collector.on("collect", async (i: ButtonInteraction) => {
-            let newPage = page;
-            if (i.customId.startsWith("queue_prev")) {
-                newPage = Math.max(1, page - 1); 
-            } else if (i.customId.startsWith("queue_next")) {
-                newPage = Math.min(totalPages, page + 1); 
+
+            let currentPage = state.get(message.author.id) || 1;
+            let newPage = currentPage;
+            if (i.customId === "queue_prev") {
+                newPage = Math.max(1, currentPage - 1);
+            } else if (i.customId === "queue_next") {
+                newPage = Math.min(totalPages, currentPage + 1);
             }
+
+            state.set(message.author.id, newPage);
             await showQueue(message, newPage, i);
         });
 
         collector.on("end", () => {
+
             sentMessage.edit({ components: [] });
         });
     }

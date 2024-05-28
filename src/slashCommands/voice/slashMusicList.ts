@@ -46,6 +46,8 @@ async function verifyUserInSameVoiceChannel(interaction: CommandInteraction): Pr
     return true;
 }
 
+const state = new Map<string, number>();
+
 async function showQueue(interaction: CommandInteraction, page: number = 1, collector?: InteractionCollector<ButtonInteraction<CacheType>>) {
     const guildId = interaction.guild!.id;
     const queue = musicQueue.getQueue(guildId);
@@ -62,8 +64,10 @@ async function showQueue(interaction: CommandInteraction, page: number = 1, coll
         return;
     }
 
+    state.set(interaction.user.id, page);
+
     const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, queue.length);
     const queuePage = queue.slice(startIndex, endIndex);
 
     const dynamicColor = getDynamicColor(interaction.member as GuildMember);
@@ -76,12 +80,12 @@ async function showQueue(interaction: CommandInteraction, page: number = 1, coll
     const buttons = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(
             new ButtonBuilder()
-                .setCustomId(`queue_prev_${page}`)
+                .setCustomId(`queue_prev`)
                 .setLabel("Anterior")
                 .setStyle(ButtonStyle.Primary)
                 .setDisabled(page === 1),
             new ButtonBuilder()
-                .setCustomId(`queue_next_${page}`)
+                .setCustomId(`queue_next`)
                 .setLabel("Siguiente")
                 .setStyle(ButtonStyle.Primary)
                 .setDisabled(page === totalPages)
@@ -97,12 +101,14 @@ async function showQueue(interaction: CommandInteraction, page: number = 1, coll
         const collector = (sentMessage as any).createMessageComponentCollector({ filter, time: 60000 });
 
         collector.on("collect", async (i: ButtonInteraction) => {
-            let newPage = page;
-            if (i.customId.startsWith("queue_prev")) {
-                newPage = Math.max(1, page - 1); // Ensure the page is not less than 1
-            } else if (i.customId.startsWith("queue_next")) {
-                newPage = Math.min(totalPages, page + 1); // Ensure the page does not exceed totalPages
+            let currentPage = state.get(interaction.user.id) || 1;
+            let newPage = currentPage;
+            if (i.customId === "queue_prev") {
+                newPage = Math.max(1, currentPage - 1);
+            } else if (i.customId === "queue_next") {
+                newPage = Math.min(totalPages, currentPage + 1);
             }
+            state.set(interaction.user.id, newPage);
             await showQueue(interaction, newPage, collector);
             await i.deferUpdate();
         });
