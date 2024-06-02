@@ -75,6 +75,21 @@ const interactionCommands: Record<string, socialConfig> = {
         rejectResponse: "",
         noResponse: "",
     },
+    spank: {
+        name: "nalguear",
+        requiresUser: true,
+        requiresCount: false,
+        type: "spank",
+        group: "interacciones",
+        action: "nalguear",
+        description: (requester, receiver) =>
+            `**${requester.displayName}** ha nalgueado a **${receiver.displayName}**. 🙀`,
+        footer: "Eso dolió, un poco.",
+        requiresRequest: false,
+        requestMessage: () => "",
+        rejectResponse: "",
+        noResponse: "",
+    },
 };
 
 async function executeinteractionCommands(
@@ -204,10 +219,28 @@ const pokeUserCommand: Command = {
     },
 };
 
+const spankUserCommand: Command = {
+    name: "spank",
+    alias: ["nalguear"],
+    async execute(message: Message, args: string[]) {
+        try {
+            await executeinteractionCommands(
+                message,
+                args,
+                interactionCommands.spank
+            );
+        } catch (error) {
+            console.error("Error en el comando molestia:", error);
+            message.reply("Ocurrió un error al ejecutar el comando de molestia.");
+        }
+    },
+};
+
 
 export const arrayInteractions = [
     hugUserCommand,
     patUserCommand,
     kissUserCommand,
     pokeUserCommand,
+    spankUserCommand
 ];

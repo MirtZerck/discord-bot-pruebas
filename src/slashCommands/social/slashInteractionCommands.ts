@@ -67,6 +67,18 @@ const interactionCommands: Record<string, socialConfig> = {
         footer: "Molestar",
         requiresRequest: false,
     },
+    spank: {
+        name: "nalguear",
+        requiresUser: true,
+        requiresCount: false,
+        type: "spank",
+        group: "interacciones",
+        action: "nalguear",
+        description: (requester, receiver) =>
+            `**${requester.displayName}** ha nalgueado a **${receiver.displayName}**. 🙀`,
+        footer: "Eso dolió, un poco.",
+        requiresRequest: false,
+    },
 };
 
 async function executeInteractionCommands(interaction: CommandInteraction, config: socialConfig) {
@@ -169,6 +181,12 @@ const subcommands = [
         name: "poke",
         description: "Molesta a alguien.",
         commandHandler: interactionCommands.molestar,
+        isTargetRequired: true,
+    },
+    {
+        name: "spank",
+        description: "Nalguea a alguien.",
+        commandHandler: interactionCommands.spank,
         isTargetRequired: true,
     },
 ];
