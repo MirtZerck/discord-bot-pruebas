@@ -5,7 +5,7 @@
   "main": "dist/michi.js",
   "type": "module",
   "scripts": {
-    "build": "npm run build && node ./dist/michi.js",
+    "build": "tsc && node ./dist/michi.js",
     "start": "npm run build && node ./dist/michi.js",
     "register": "npm run build && node ./dist/slashCommands/registerSlashCommands.js",
     "test": "echo \"Error: no test specified\" && exit 1"
