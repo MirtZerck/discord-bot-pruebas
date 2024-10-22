@@ -13,15 +13,6 @@ import { onMessageCreate } from "./commands/answers.js";
 import { openAiChat } from "./commands/openaiChat.js";
 import { onInteractionCreate } from "./slashCommands/interactionCreate.js";
 
-import express from 'express';
-
-const app = express();
-const port = 3000;
-
-app.listen(port, () => {
-  console.log(`Bot encendido, Nyan!`);
-});
-
 dotenv.config();
 
 export const token = process.env.TOKEN!;
