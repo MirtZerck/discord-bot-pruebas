@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+/* import OpenAI from "openai";
 import dotenv from "dotenv";
 import { getConversationOpenAI, setConversationOpenAI } from "../db_service/openaiService.js";
 dotenv.config();
@@ -51,3 +51,4 @@ export async function getPromptGTP(prompt: string): Promise<string> {
     await setConversationOpenAI(promptUser.content, response, messages.length - 1);
     return response;
 }
+ */

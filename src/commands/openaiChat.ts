@@ -1,4 +1,4 @@
-import { Client, Message, EmbedBuilder, Events } from "discord.js";
+/* import { Client, Message, EmbedBuilder, Events } from "discord.js";
 import { prefijo } from "../constants/prefix.js";
 import { getPromptGTP } from "../utils/openaiApi.js";
 import { CustomImageURLOptions } from "../types/embeds.js";
@@ -63,3 +63,4 @@ export const openAiChat = async (client: Client) => {
         }
     });
 };
+ */

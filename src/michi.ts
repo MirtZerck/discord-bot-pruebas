@@ -10,8 +10,8 @@ import dotenv from "dotenv";
 import firebase from "firebase-admin";
 import { prefijo } from "./constants/prefix.js";
 import { onMessageCreate } from "./commands/answers.js";
-import { openAiChat } from "./commands/openaiChat.js";
 import { onInteractionCreate } from "./slashCommands/interactionCreate.js";
+import { openAiChat } from "./commands/on-chatbot.js";
 
 dotenv.config();
 

@@ -1,4 +1,4 @@
-import { db } from "../michi.js";
+/* import { db } from "../michi.js";
 
 interface OpenAIMessage {
     role: "user" | "assistant";
@@ -51,3 +51,4 @@ export async function setConversationOpenAI(
     await db.child("openaiChat").child(index.toString()).set({ user: contentUser });
     await db.child("openaiChat").child((index + 1).toString()).set({ assistant: contentAssistant });
 }
+ */
